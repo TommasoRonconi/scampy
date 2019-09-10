@@ -1,0 +1,400 @@
+from ctypes import *
+
+lib = CDLL( "@HM_WRAP_PATH@" )
+
+# Wrap class halo_model:
+class halo_model () :
+
+    def __init__ ( self,
+                   DC = 0.5,
+                   M_min = 1.e+11,
+                   sigma_logM = 1.,
+                   M0 = 1.e+10,
+                   M1 = 1.e+10,
+                   alpha = 1.,
+                   redshift = 1.e-7,
+                   cosmology = None ) :
+
+        self.DC = DC
+        self.M_min = M_min
+        self.sigma_logM = sigma_logM
+        self.M0 = M0
+        self.M1 = M1
+        self.alpha = alpha
+        self.redshift = redshift
+        self.cosmology = cosmology
+        
+        # Halo Model Handler constructor:
+        lib.create_hm_handler.argtypes = [ c_double, c_double, c_double, c_double, c_double, c_double,
+                                           c_double, c_void_p ]
+        lib.create_hm_handler.restype = c_void_p
+
+        # Halo Model Handler destructor:
+        lib.free_hm_handler.argtypes = [ c_void_p ]
+        lib.free_hm_handler.restype = c_void_p
+
+        # Halo Model Handler thinness-returning function:
+        lib.hm_thinness.argtypes = [ c_void_p ]
+        lib.hm_thinness.restype = c_uint
+
+        # Halo Model constructor:
+        lib.create_halo_model.argtypes = [ c_void_p ]
+        lib.create_halo_model.restype = c_void_p
+
+        # Halo Model denstructor:
+        lib.free_halo_model.argtypes = [ c_void_p ]
+        lib.free_halo_model.restype = c_void_p
+
+        # Halo Model function set_parameters():
+        lib.set_parameters_hm.argtypes = [ c_double, c_double, c_double, c_double, c_double, c_double, c_void_p ]
+        lib.set_parameters_hm.restype = c_void_p
+
+        # Halo Model function Ncen():
+        lib.Ncen_hm.argtypes = [ c_double, c_void_p ]
+        lib.Ncen_hm.restype = c_double
+
+        # Halo Model function Nsat():
+        lib.Nsat_hm.argtypes = [ c_double, c_void_p ]
+        lib.Nsat_hm.restype = c_double
+
+        # Halo Model function ng():
+        lib.ng_hm.argtypes = [ c_void_p ]
+        lib.ng_hm.restype = c_double
+
+        # Halo Model function bias():
+        lib.bias_hm.argtypes = [ c_void_p ]
+        lib.bias_hm.restype = c_double
+
+        # Halo Model function Mhalo():
+        lib.Mhalo_hm.argtypes = [ c_void_p ]
+        lib.Mhalo_hm.restype = c_double
+
+        # Halo Model function Ncen():
+        lib.dngdM_hm.argtypes = [ c_double, c_void_p ]
+        lib.dngdM_hm.restype = c_double
+
+        # Halo Model function model_Pk():
+        lib.model_Pk_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_void_p ]
+        lib.model_Pk_hm.restype = c_void_p
+
+        # Halo Model function model_Pk_1halo():
+        lib.model_Pk_1halo_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_void_p ]
+        lib.model_Pk_1halo_hm.restype = c_void_p
+
+        # Halo Model function model_Pk_cs():
+        lib.model_Pk_cs_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_void_p ]
+        lib.model_Pk_cs_hm.restype = c_void_p
+
+        # Halo Model function model_Pk_ss():
+        lib.model_Pk_ss_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_void_p ]
+        lib.model_Pk_ss_hm.restype = c_void_p
+
+        # Halo Model function model_Pk_2halo():
+        lib.model_Pk_2halo_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_void_p ]
+        lib.model_Pk_2halo_hm.restype = c_void_p
+
+        # Halo Model function model_Xi():
+        lib.model_Xi_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_uint, c_void_p ]
+        lib.model_Xi_hm.restype = c_void_p
+
+        # Halo Model function model_Xi_1halo():
+        lib.model_Xi_1halo_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_uint, c_void_p ]
+        lib.model_Xi_1halo_hm.restype = c_void_p
+
+        # Halo Model function model_Xi_2halo():
+        lib.model_Xi_2halo_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_uint, c_void_p ]
+        lib.model_Xi_2halo_hm.restype = c_void_p
+
+        # Halo Model function model_Wr():
+        lib.model_Wr_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_uint, c_void_p ]
+        lib.model_Wr_hm.restype = c_void_p
+
+        # Halo Model function model_Wr_1halo():
+        lib.model_Wr_1halo_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_uint, c_void_p ]
+        lib.model_Wr_1halo_hm.restype = c_void_p
+
+        # Halo Model function model_Wr_2halo():
+        lib.model_Wr_2halo_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_uint, c_void_p ]
+        lib.model_Wr_2halo_hm.restype = c_void_p
+
+        # Halo Model function model_Wt():
+        lib.model_Wt_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_uint, c_void_p ]
+        lib.model_Wt_hm.restype = c_void_p
+
+        # Halo Model function model_Wt_1halo():
+        lib.model_Wt_1halo_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_uint, c_void_p ]
+        lib.model_Wt_1halo_hm.restype = c_void_p
+
+        # Halo Model function model_Wt_cs():
+        lib.model_Wt_cs_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_uint, c_void_p ]
+        lib.model_Wt_cs_hm.restype = c_void_p
+
+        # Halo Model function model_Wt_ss():
+        lib.model_Wt_ss_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_uint, c_void_p ]
+        lib.model_Wt_ss_hm.restype = c_void_p
+
+        # Halo Model function model_Wt_2halo():
+        lib.model_Wt_2halo_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_uint, c_void_p ]
+        lib.model_Wt_2halo_hm.restype = c_void_p
+
+        # Halo Model function model_Wt_large_scale():
+        lib.model_Wt_large_scale_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_uint, c_void_p ]
+        lib.model_Wt_large_scale_hm.restype = c_void_p
+
+        # Python call to halo_model_handler ctor:
+        self.handler = lib.create_hm_handler( DC, M_min, sigma_logM, M0, M1, alpha, redshift, cosmology.obj )
+
+        # Get thinness variable from halo model handler:
+        self.thinness = lib.hm_thinness( self.handler )
+        
+        # Python call to halo_model ctor:
+        self.obj = lib.create_halo_model( self.handler )
+        
+    def __del__ ( self ) :
+        
+        # Python call to halo_model dtor:
+        lib.free_halo_model( self.obj )
+        
+        # Python call to halo_model_handler dtor:
+        lib.free_hm_handler( self.handler )
+
+    def set_parameters ( self,
+                         DC = 0.5,
+                         M_min = 1.e+11,
+                         sigma_logM = 1.,
+                         M0 = 1.e+10,
+                         M1 = 1.e+10,
+                         alpha = 1. ) :
+
+        self.DC = DC
+        self.M_min = M_min
+        self.sigma_logM = sigma_logM
+        self.M0 = M0
+        self.M1 = M1
+        self.alpha = alpha
+        lib.set_parameters_hm( DC, M_min, sigma_logM, M0, M1, alpha, self.obj )
+
+        return;
+
+    def Ncen ( self, Mh ) :
+
+        return self.DC * lib.Ncen_hm( Mh, self.obj )
+
+    def Nsat ( self, Mh ) :
+
+        return self.DC * lib.Nsat_hm( Mh, self.obj )
+
+    def ng ( self ) :
+
+        return lib.ng_hm( self.obj )
+
+    def bias ( self ) :
+
+        return lib.bias_hm( self.obj )
+
+    def Mg ( self ) :
+
+        return lib.Mhalo_hm( self.obj )
+
+    def dngdM ( self, Mh ) :
+
+        return lib.dngdM_hm( Mh, self.obj )
+
+    def Pk ( self ) :
+        
+        kv = ( c_double * self.thinness )()
+        Pk = ( c_double * self.thinness )()
+        lib.model_Pk_hm( kv, Pk, self.obj )
+        
+        return list( kv ), list( Pk )
+
+    def Pk_1halo ( self ) :
+        
+        kv = ( c_double * self.thinness )()
+        Pk_1h = ( c_double * self.thinness )()
+        lib.model_Pk_1halo_hm( kv, Pk_1h, self.obj )
+        
+        return list( kv ), list( Pk_1h )
+
+    def Pk_cs ( self ) :
+        
+        kv = ( c_double * self.thinness )()
+        Pk_cs = ( c_double * self.thinness )()
+        lib.model_Pk_cs_hm( kv, Pk_cs, self.obj )
+        
+        return list( kv ), list( Pk_cs )
+
+    def Pk_ss ( self ) :
+        
+        kv = ( c_double * self.thinness )()
+        Pk_ss = ( c_double * self.thinness )()
+        lib.model_Pk_ss_hm( kv, Pk_ss, self.obj )
+        
+        return list( kv ), list( Pk_ss )
+
+    def Pk_2halo ( self ) :
+        
+        kv = ( c_double * self.thinness )()
+        Pk_2h = ( c_double * self.thinness )()
+        lib.model_Pk_2halo_hm( kv, Pk_2h, self.obj )
+        
+        return list( kv ), list( Pk_2h )
+
+    def Xi ( self, rv ) :
+
+        import numpy as np
+        
+        rv = ( c_double * len( rv ) )( *[ np.float64( _r ) for _r in rv ] )
+        Xi = ( c_double * len( rv ) )()
+        size = c_uint( len( rv ) )
+        lib.model_Xi_hm( rv, Xi, size, self.obj )
+        
+        return list( Xi )
+
+    def Xi_1halo ( self, rv ) :
+
+        import numpy as np
+        
+        rv = ( c_double * len( rv ) )( *[ np.float64( _r ) for _r in rv ] )
+        Xi_1h = ( c_double * len( rv ) )()
+        size = c_uint( len( rv ) )
+        lib.model_Xi_1halo_hm( rv, Xi_1h, size, self.obj )
+        
+        return list( Xi_1h )
+
+    def Xi_2halo ( self, rv ) :
+
+        import numpy as np
+        
+        rv = ( c_double * len( rv ) )( *[ np.float64( _r ) for _r in rv ] )
+        Xi_2h = ( c_double * len( rv ) )()
+        size = c_uint( len( rv ) )
+        lib.model_Xi_2halo_hm( rv, Xi_2h, size, self.obj )
+        
+        return list( Xi_2h )
+
+    def Wr ( self, rp ) :
+
+        import numpy as np
+        
+        rp = ( c_double * len( rp ) )( *[ np.float64( _r ) for _r in rp ] )
+        Wr = ( c_double * len( rp ) )()
+        size = c_uint( len( rp ) )
+        lib.model_Wr_hm( rp, Wr, size, self.obj )
+        
+        return list( Wr )
+
+    def Wr_1halo ( self, rp ) :
+
+        import numpy as np
+        
+        rp = ( c_double * len( rp ) )( *[ np.float64( _r ) for _r in rp ] )
+        Wr_1h = ( c_double * len( rp ) )()
+        size = c_uint( len( rp ) )
+        lib.model_Wr_1halo_hm( rp, Wr_1h, size, self.obj )
+        
+        return list( Wr_1h )
+
+    def Wr_2halo ( self, rp ) :
+
+        import numpy as np
+        
+        rp = ( c_double * len( rp ) )( *[ np.float64( _r ) for _r in rp ] )
+        Wr_2h = ( c_double * len( rp ) )()
+        size = c_uint( len( rp ) )
+        lib.model_Wr_2halo_hm( rp, Wr_2h, size, self.obj )
+        
+        return list( Wr_2h )
+
+    def Wt ( self, tt ) :
+
+        import numpy as np
+        
+        tt = ( c_double * len( tt ) )( *[ np.float64( _t ) for _t in tt ] )
+        Wt = ( c_double * len( tt ) )()
+        size = c_uint( len( tt ) )
+        lib.model_Wt_hm( tt, Wt, size, self.obj )
+        
+        return list( Wt )
+
+    def Wt_1halo ( self, tt ) :
+
+        import numpy as np
+        
+        tt = ( c_double * len( tt ) )( *[ np.float64( _t ) for _t in tt ] )
+        Wt_1h = ( c_double * len( tt ) )()
+        size = c_uint( len( tt ) )
+        lib.model_Wt_1halo_hm( tt, Wt_1h, size, self.obj )
+        
+        return list( Wt_1h )
+
+    def Wt_cs ( self, tt ) :
+
+        import numpy as np
+        
+        tt = ( c_double * len( tt ) )( *[ np.float64( _t ) for _t in tt ] )
+        Wt_cs = ( c_double * len( tt ) )()
+        size = c_uint( len( tt ) )
+        lib.model_Wt_cs_hm( tt, Wt_cs, size, self.obj )
+        
+        return list( Wt_cs )
+
+    def Wt_ss ( self, tt ) :
+
+        import numpy as np
+        
+        tt = ( c_double * len( tt ) )( *[ np.float64( _t ) for _t in tt ] )
+        Wt_ss = ( c_double * len( tt ) )()
+        size = c_uint( len( tt ) )
+        lib.model_Wt_ss_hm( tt, Wt_ss, size, self.obj )
+        
+        return list( Wt_ss )
+
+    def Wt_2halo ( self, tt ) :
+
+        import numpy as np
+        
+        tt = ( c_double * len( tt ) )( *[ np.float64( _t ) for _t in tt ] )
+        Wt_2h = ( c_double * len( tt ) )()
+        size = c_uint( len( tt ) )
+        lib.model_Wt_2halo_hm( tt, Wt_2h, size, self.obj )
+        
+        return list( Wt_2h )
+
+    def Wt_large_scale ( self, tt ) :
+
+        import numpy as np
+        
+        tt = ( c_double * len( tt ) )( *[ np.float64( _t ) for _t in tt ] )
+        Wt = ( c_double * len( tt ) )()
+        size = c_uint( len( tt ) )
+        lib.model_Wt_large_scale_hm( tt, Wt, size, self.obj )
+        
+        return list( Wt )
+
+    
+if __name__ == '__main__' :
+
+    input_dir = "../tests/integration_tests/input/"
+
+    import numpy as np
+    import cosmology as csm
+    
+    kh0, pk0 = np.genfromtxt( input_dir + "not-norm_pk_lcdm_camb.dat",
+                              unpack = True )
+    cosmo = csm.cosmology( kh0, pk0 )
+    print( "Built object cosmology." )
+    
+    hm = halo_model( cosmology = cosmo )
+    
+    print( "Galaxy density: ", hm.ng(), " with type = ", type( hm.ng() ) )
+    
+    nbin = 10
+    rmin = 1.e-2
+    rmax = 1.e+2
+    rbin = ( np.log( rmax ) - np.log( rmin ) )/( nbin - 1 )
+    rv = [ np.exp( np.log( rmin ) + rbin * ii ) for ii in range( nbin ) ]
+    xi = hm.Xi( rv )
+
+    for ii in range( len( rv ) ) :
+        print( rv[ ii ], xi[ ii ] )

@@ -1,0 +1,275 @@
+from ctypes import *
+
+lib = CDLL( "@COSMO_WRAP_PATH@" )
+
+class c_cosmo_params_t ( Structure ) :
+    _fields_ = [
+        ( "Om_M", c_double ),
+        ( "Om_b", c_double ),
+        ( "Om_L", c_double ),
+        ( "Om_n", c_double ),
+        ( "Om_r", c_double ),
+        ( "Om_K", c_double ),
+        ( "hh", c_double ),
+        ( "sigma8", c_double )
+    ]
+
+#Wrap class cosmology:
+class cosmology () :
+
+    params = { 'Om_M' : 0.3,
+               'Om_b' : 0.045,
+               'Om_L' : 0.7,
+               'Om_n' : 0.00,
+               'Om_r' : 0.00,
+               'Om_K' : 0.00,
+               'hh' : 0.7,
+               'sigma8' : 0.8 }
+    
+    _c_par = c_cosmo_params_t( params[ 'Om_M' ],
+                               params[ 'Om_b' ],
+                               params[ 'Om_L' ],
+                               params[ 'Om_n' ],
+                               params[ 'Om_r' ],
+                               params[ 'Om_K' ],
+                               params[ 'hh' ],
+                               params[ 'sigma8' ] )
+    
+    def __init__ ( self, kh0, pk0,
+                   zmin = 1.e-7, zmax = 1.e+7,
+                   thinness = 200 ) :
+        
+        # Cosmology constructor
+        lib.create_cosmology.argtypes = [ POINTER( c_cosmo_params_t ),
+                                          POINTER( c_double ),
+                                          POINTER( c_double ),
+                                          c_size_t,
+                                          c_double, c_double,
+                                          c_size_t ]
+        lib.create_cosmology.restype = c_void_p
+
+        # Cosmology destructor
+        lib.free_cosmology.argtypes = [ c_void_p ]
+        lib.free_cosmology.restype = c_void_p
+
+        #
+        lib.cosmo_Hz.argtypes = [ c_double, c_void_p ]
+        lib.cosmo_Hz.restype = c_double
+
+        #
+        lib.cosmo_dC.argtypes = [ c_double, c_void_p ]
+        lib.cosmo_dC.restype = c_double
+
+        #
+        lib.cosmo_ddC.argtypes = [ c_double, c_void_p ]
+        lib.cosmo_ddC.restype = c_double
+
+        #
+        lib.cosmo_comoving_volume_unit.argtypes = [ c_double, c_void_p ]
+        lib.cosmo_comoving_volume_unit.restype = c_double
+
+        #
+        lib.cosmo_comoving_volume.argtypes = [ c_double, c_void_p ]
+        lib.cosmo_comoving_volume.restype = c_double
+
+        #
+        lib.cosmo_cosmic_time.argtypes = [ c_double, c_void_p ]
+        lib.cosmo_cosmic_time.restype = c_double
+
+        #
+        lib.cosmo_rho_crit.argtypes = [ c_double, c_void_p ]
+        lib.cosmo_rho_crit.restype = c_double
+
+        #
+        lib.cosmo_rho_crit_comoving.argtypes = [ c_double, c_void_p ]
+        lib.cosmo_rho_crit_comoving.restype = c_double
+
+        #
+        lib.cosmo_OmegaM.argtypes = [ c_double, c_void_p ]
+        lib.cosmo_OmegaM.restype = c_double
+
+        #
+        lib.cosmo_deltac.argtypes = [ c_double, c_void_p ]
+        lib.cosmo_deltac.restype = c_double
+
+        #
+        lib.cosmo_Deltac_BN98.argtypes = [ c_double, c_void_p ]
+        lib.cosmo_Deltac_BN98.restype = c_double
+
+        #
+        lib.cosmo_Deltac_NS98.argtypes = [ c_double, c_void_p ]
+        lib.cosmo_Deltac_NS98.restype = c_double
+
+        #
+        lib.cosmo_DD.argtypes = [ c_double, c_void_p ]
+        lib.cosmo_DD.restype = c_double
+
+        #
+        lib.cosmo_gz.argtypes = [ c_double, c_void_p ]
+        lib.cosmo_gz.restype = c_double
+
+        #
+        lib.cosmo_Pk.argtypes = [ c_double, c_double, c_void_p ]
+        lib.cosmo_Pk.restype = c_double
+
+        #
+        lib.cosmo_sigma2M.argtypes = [ c_double, c_double, c_void_p ]
+        lib.cosmo_sigma2M.restype = c_double
+
+        #
+        lib.cosmo_dndM.argtypes = [ c_double, c_double, c_void_p ]
+        lib.cosmo_dndM.restype = c_double
+
+        #
+        lib.cosmo_hbias.argtypes = [ c_double, c_double, c_void_p ]
+        lib.cosmo_hbias.restype = c_double
+
+        #
+        lib.cosmo_density_profile_FS.argtypes = [ c_double, c_double, c_double, c_void_p ]
+        lib.cosmo_density_profile_FS.restype = c_double
+
+        #
+        lib.cosmo_dphidL.argtypes = [ c_double, c_double, c_void_p ]
+        lib.cosmo_dphidL.restype = c_double
+
+        if len( kh0 ) == len( pk0 ) :
+            self._size_k = len( kh0 )
+        else :
+            raise ValueError( "list kh0 and list pk0 must have the same length" )
+            
+        self._kh0 = ( c_double * len( kh0 ) )( *[ _k for _k in kh0 ] )
+        self._pk0 = ( c_double * len( pk0 ) )( *[ _p for _p in pk0 ] )
+        self._zmin = zmin
+        self._zmax = zmax
+        self._thinness = thinness
+        self.obj = lib.create_cosmology( self._c_par,
+                                         self._kh0, self._pk0,
+                                         c_size_t( self._size_k ),
+                                         c_double( self._zmin ), c_double( self._zmax ),
+                                         c_size_t( self._thinness ) )
+
+
+    def __del__ ( self ) :
+
+        # Python call to cosmology dtor:
+        lib.free_cosmology( self.obj )
+
+    def set_parameters ( self,
+                         Om_M = 0.3,
+                         Om_b = 0.045,
+                         Om_L = 0.7,
+                         Om_n = 0.,
+                         Om_r = 0.,
+                         Om_K = 0.,
+                         hh = 0.7,
+                         sigma8 = 0.8 ) :
+        self._c_par = c_cosmo_params_t( Om_M, Om_b, Om_L, Om_n, Om_r, Om_K, hh, sigma8 )
+        self.params= { 'Om_M' : Om_M,
+                       'Om_b' : Om_b,
+                       'Om_L' : Om_L,
+                       'Om_n' : Om_n,
+                       'Om_r' : Om_r,
+                       'Om_K' : Om_K,
+                       'hh' : hh,
+                       'sigma8' : sigma8 }
+        self.obj = lib.create_cosmology( self._c_par,
+                                         self._kh0, self._pk0,
+                                         c_size_t( self._size_k ),
+                                         c_double( self._zmin ), c_double( self._zmax ),
+                                         c_size_t( self._thinness ) )
+        return
+
+    def Hz ( self, zz ) :
+
+        return lib.cosmo_Hz( c_double( zz ), self.obj )
+
+    def dC ( self, zz ) :
+
+        return lib.cosmo_dC( c_double( zz ), self.obj )
+
+    def ddCdz ( self, zz ) :
+
+        return lib.cosmo_ddC( c_double( zz ), self.obj )
+
+    def comoving_volume_unit ( self, zz ) :
+
+        return lib.cosmo_comoving_volume_unit( c_double( zz ), self.obj )
+
+    def comoving_volume ( self, zz ) :
+
+        return lib.cosmo_comoving_volume( c_double( zz ), self.obj )
+
+    def cosmic_time ( self, zz ) :
+
+        return lib.cosmo_cosmic_time( c_double( zz ), self.obj )
+
+    def rho_crit ( self, zz ) :
+
+        return lib.cosmo_rho_crit( c_double( zz ), self.obj )
+
+    def rho_crit_comoving ( self, zz ) :
+
+        return lib.cosmo_rho_crit_comoving( c_double( zz ), self.obj )
+
+    def OmegaM ( self, zz ) :
+
+        return lib.cosmo_OmegaM( c_double( zz ), self.obj )
+
+    def deltac ( self, zz ) :
+
+        return lib.cosmo_deltac( c_double( zz ), self.obj )
+
+    def Deltac_BN98 ( self, zz ) :
+
+        return lib.cosmo_Deltac_BN98( c_double( zz ), self.obj )
+
+    def Deltac_NS98 ( self, zz ) :
+
+        return lib.cosmo_Deltac_NS98( c_double( zz ), self.obj )
+
+    def DD ( self, zz ) :
+
+        return lib.cosmo_DD( c_double( zz ), self.obj )
+
+    def gz ( self, zz ) :
+
+        return lib.cosmo_gz( c_double( zz ), self.obj )
+
+    def Pk ( self, kk, zz ) :
+
+        return lib.cosmo_Pk( c_double( kk ), c_double( zz ), self.obj )
+
+    def sigma2M ( self, mm, zz ) :
+
+        return lib.cosmo_sigma2M( c_double( mm ), c_double( zz ), self.obj )
+
+    def dndM ( self, mm, zz ) :
+
+        return lib.cosmo_dndM( c_double( mm ), c_double( zz ), self.obj )
+
+    def hbias ( self, mm, zz ) :
+
+        return lib.cosmo_hbias( c_double( mm ), c_double( zz ), self.obj )
+
+    def density_profile_FS ( self, kk, mm, zz ) :
+
+        return lib.cosmo_density_profile_FS( c_double( kk ), c_double( mm ), c_double( zz ), self.obj )
+
+    def dphidL ( self, ll, zz ) :
+
+        return lib.cosmo_dphidL( c_double( ll ), c_double( zz ), self.obj )
+
+if __name__ == '__main__' :
+
+    input_dir = "../tests/integration_tests/input/"
+
+    import numpy as np
+    kh0, pk0 = np.genfromtxt( input_dir + "not-norm_pk_lcdm_camb.dat",
+                              unpack = True )
+    cosmo = cosmology( kh0, pk0 )
+
+    print( "H( z = 2 )\t=\t{:e}".format( cosmo.Hz( 2. ) ) )
+    print( "tt( z = 3 )\t=\t{:e}".format( cosmo.cosmic_time( 3. ) ) )
+    print( "dV( z = 2 )\t=\t{:e}".format( cosmo.comoving_volume_unit( 2. ) ) )
+    print( "V( z = 2 )\t=\t{:e}".format( cosmo.comoving_volume( 2. ) ) )
+    
