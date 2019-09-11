@@ -11,15 +11,6 @@ project( 'master',
          version : '0.1.0',
          license : 'SISSA' )
 
-# project( 'master',
-#          'cpp',
-#          default_options : [ 'cpp_std=c++17',
-#                              'buildtype=debugoptimized',
-#                              'prefix=' + meson.source_root() + '/install',
-#                              'libdir=lib' ],
-#          version : '0.1',
-#          license : 'SISSA' )
-
 root = meson.source_root()
 
 cxx = meson.get_compiler( 'cpp' )
