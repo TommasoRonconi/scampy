@@ -1,0 +1,11 @@
+Doxygen/html/*
+Doxygen/latex/*
+tmp/*
+*.data
+*.svg
+build*
+install*
+*.pyc
+*.o
+*.so
+*.x
