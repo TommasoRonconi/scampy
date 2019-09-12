@@ -49,7 +49,9 @@ class catalogue () :
         if self.gadget is None :
             self.gadget = gadget_file.gadget_file( filebase )
             for ii in range( self.gadget.glob[ 'task' ] ) :
-                self.gadget.read_file( ii, scale_mass = self.scale_mass, scale_lenght = self.scale_lenght, add_to_internal = True )
+                self.gadget.read_file( ii, scale_mass = self.scale_mass,
+                                       scale_lenght = self.scale_lenght,
+                                       add_to_internal = True )
         
         self.tree = BallTree( self.gadget.sub_coord, leaf_size = 10 )
     
@@ -68,7 +70,9 @@ class catalogue () :
         if self.gadget is None :
             self.gadget = gadget_file.gadget_file( filebase )
             for ii in range( self.gadget.glob[ 'task' ] ) :
-                self.gadget.read_file( ii, scale_mass = self.scale_mass, scale_lenght = self.scale_lenght, add_to_internal = True )
+                self.gadget.read_file( ii, scale_mass = self.scale_mass,
+                                       scale_lenght = self.scale_lenght,
+                                       add_to_internal = True )
         
         self.tree = KDTree( self.gadget.sub_coord, leaf_size = 10 )        
 
@@ -88,7 +92,9 @@ class catalogue () :
         if self.gadget is None :
             self.gadget = gadget_file.gadget_file( filebase )
             for ii in range( self.gadget.glob[ 'task' ] ) :
-                self.gadget.read_file( ii, scale_mass = self.scale_mass, scale_lenght = self.scale_lenght, add_to_internal = True )
+                self.gadget.read_file( ii, scale_mass = self.scale_mass,
+                                       scale_lenght = self.scale_lenght,
+                                       add_to_internal = True )
         
         self.content = numpy.empty( self.gadget.glob[ 'tot_groups' ], 
                                     dtype = host_halo )
@@ -204,11 +210,13 @@ class catalogue () :
             self.mass_halo = mass_halo
         return mass_halo
     
-    def populate ( self, model ) :
+    def populate ( self, model, extract = False ) :
         
         ll = numpy.array( sorted( copy.deepcopy( self.content ),
                                   key = lambda x : x.mass,
                                   reverse = True ) )
+
+        Ngxy = 0
         for obj in ll :
             
             Nc = model.Ncen( obj.mass )
@@ -230,9 +238,29 @@ class catalogue () :
             else :
                 satellites = obj.satellites
             obj.set_satellites( satellites = satellites )
-        
-        return catalogue( ll )
 
+            Ngxy += ( obj.Ncen + obj.Nsat )
+
+        if extract :
+            return extract_galaxies( ll, Ngxy )
+        else :
+            return catalogue( ll )
+
+def extract_galaxies ( hhaloes, ngxy ) :
+    
+    galaxies = numpy.empty( ngxy, dtype = galaxy )
+    idx = 0
+    for obj in hhaloes :
+
+        for cen in obj.central :
+            galaxies[ idx ] = galaxy.from_halo( cen )
+            idx += 1
+
+        for sat in obj.satellites :
+            galaxies[ idx ] = galaxy.from_halo( sat )
+            idx += 1
+            
+    return galaxies
 
 if __name__ == '__main__' :
 
