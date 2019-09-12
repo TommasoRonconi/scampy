@@ -51,7 +51,11 @@ hm_c_lib = library( 'hm_c_wrap',
 hm_c_dep = declare_dependency( link_with : hm_c_lib,
                                include_directories : [ inc_hm ] )
 
-hm_c_path = custom_prefix + '/lib/libhm_c_wrap.so'
+hm_c_lib_name = hm_c_lib.full_path().split('/')[-1]
+
+hm_c_path = '/'.join( [ get_option( 'prefix' ),
+                        get_option( 'libdir' ),
+                        hm_c_lib_name ] )
 
 lib_headers += [ root + '/halo_model/' + inc_dir + '/halo_model_c_interface.h' ]
 

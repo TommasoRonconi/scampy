@@ -42,7 +42,11 @@ cosmo_c_lib = library( 'cosmo_c_wrap',
 cosmo_c_dep = declare_dependency( link_with : cosmo_c_lib,
                                   include_directories : [ inc_cosmo ] )
 
-cosmo_c_path = custom_prefix + '/lib/libcosmo_c_wrap.so'
+cosmo_c_lib_name = cosmo_c_lib.full_path().split('/')[-1]
+
+cosmo_c_path = '/'.join( [ get_option( 'prefix' ),
+                           get_option( 'libdir' ),
+                           cosmo_c_lib_name ] )
 
 lib_headers += [ root + '/cosmology/' + inc_dir + '/cosmo_c_interface.h' ]
 

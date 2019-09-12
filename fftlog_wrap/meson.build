@@ -8,7 +8,7 @@ inc_fftlwrap = include_directories( inc_dir )
 #######################################################################
 # FFTLog Wrap Lib
 
-fftlwrap_lib = library( 'fftlog',
+fftlwrap_lib = library( 'fftlog_wrap',
                         [ 'src/fftlog_handler.cpp' ],
        	 	        include_directories : [ inc_fftlwrap,
                                                 inc_intrp ],

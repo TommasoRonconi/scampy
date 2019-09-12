@@ -26,9 +26,6 @@ add_global_arguments( cxx_arg,
 endif
 endforeach
 
-custom_prefix = get_option( 'prefix' )
-message( 'Library will be installed in ' + custom_prefix )
-
 #######################################################################
 # External dependencies
 
