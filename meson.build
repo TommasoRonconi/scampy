@@ -4,7 +4,6 @@
 project( 'master',
          'cpp',
          default_options : [ 'cpp_std=c++17',
-#                              'b_sanitize=address',
                              'buildtype=debugoptimized',
                              'prefix=' + meson.source_root() + '/install',
                              'libdir=lib' ],
