@@ -244,7 +244,7 @@ class catalogue () :
         if extract :
             return extract_galaxies( ll, Ngxy )
         else :
-            return catalogue( ll )
+            return catalogue( ll ), Ngxy
 
 def extract_galaxies ( hhaloes, ngxy ) :
     

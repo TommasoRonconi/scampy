@@ -15,36 +15,36 @@ class halo ( object ) :
 
 # REMEMBER THAT: a galaxy IS NOT a halo, but a halo HAS a galaxy
 #                ==> inheritance here is conceptually wrong!!
-# class galaxy ( halo ) :
+class galaxy ( halo ) :
 
-#     @classmethod
-#     def from_halo ( cls, halo, luminosity = None ) :
-#         return cls( halo.centre,
-#                     halo.mass,
-#                     halo.spin,
-#                     halo.veldisp,
-#                     halo.radius,
-#                     luminosity )
+    @classmethod
+    def from_halo ( cls, halo, luminosity = None ) :
+        return cls( coords = halo.centre,
+                    mass = halo.mass,
+                    spin = halo.spin,
+                    veldisp = halo.veldisp,
+                    radius = halo.radius,
+                    luminosity = luminosity )
         
     
-#     def __init__ ( self,
-#                    coords, mass,
-#                    spin = None,
-#                    veldisp = None,
-#                    radius = None,
-#                    luminosity = None ) :
+    def __init__ ( self,
+                   coords, mass,
+                   spin = None,
+                   veldisp = None,
+                   radius = None,
+                   luminosity = None ) :
 
-#         self.luminosity = luminosity
+        self.luminosity = luminosity
         
-#         halo.__init__( self,
-#                        coords, mass,
-#                        spin = None,
-#                        veldisp = None,
-#                        radius = None )
+        halo.__init__( self,
+                       coords, mass,
+                       spin = None,
+                       veldisp = None,
+                       radius = None )
 
-#     def __repr__ ( self ) :
-#         return 'Galaxy({0:s}, luminosity = {1:f})'.format( super( galaxy, self ).__repr__(),
-#                                                            self.luminosity )
+    # def __repr__ ( self ) :
+    #     return 'Galaxy({0:s}, luminosity = {1:f})'.format( super( galaxy, self ).__repr__() )
+    #, self.luminosity )
         
 
 class host_halo ( object ) :
