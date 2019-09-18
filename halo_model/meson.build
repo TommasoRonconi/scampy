@@ -9,7 +9,10 @@ inc_hm = include_directories( inc_dir )
 # Halo-Model Lib
 
 hm_lib = library( 'halo_model',
-                  [ 'src/halo_model.cpp' ],
+                  [ 'src/halo_model.cpp',
+                    'src/occupation_p.cpp',
+                    'src/harikane16_p.cpp',
+                    'src/tinker10_p.cpp' ],
        	 	  include_directories : [ inc_hm,
                                           inc_cosmo,
                                           inc_intrp,
@@ -29,6 +32,9 @@ hm_dep = declare_dependency( link_with : hm_lib,
                                                      inc_fftlwrap ] )
 
 lib_headers += [ root + '/halo_model/' + inc_dir + '/halo_model.h' ]
+lib_headers += [ root + '/halo_model/' + inc_dir + '/occupation_p.h' ]
+lib_headers += [ root + '/halo_model/' + inc_dir + '/harikane16_p.h' ]
+lib_headers += [ root + '/halo_model/' + inc_dir + '/tinker10_p.h' ]
 
 #######################################################################
 # Halo-Model C Lib Interface
