@@ -2,7 +2,7 @@ from ctypes import *
 
 class occupation_p :
 
-    _param = None
+    # _param = None
 
     def __init__ ( self ) :
         pass
@@ -61,9 +61,9 @@ class harikane16_p ( occupation_p ) :
         # Python call to occupation dtor:
         lib.free_H16_occupation( self.obj )
 
-    def __call__ ( self, idx ) :
+    # def __call__ ( self, idx ) :
 
-        return _param[ idx ]
+    #     return _param[ idx ]
 
     def set_parameters ( self,
                          DC = None,
