@@ -4,7 +4,6 @@
 
 //==============================================================================================
 
-// sico::halo_model::halo_model ( sico::halo_model_handler handler ) : _handler{ handler } {
 sico::halo_model::halo_model ( sico::occupation_p * ocp,
 			       sico::cosmology * cosmo,
 			       const double redshift,
@@ -36,8 +35,7 @@ sico::halo_model::halo_model ( sico::occupation_p * ocp,
 					   _thinness };
 
   _Mv = Ncen_f.get_xv();
-  // std::vector< double > f_DC ( _thinness, _handler->DC );
-  // DC_f = sico::halo_model::interp_func { _Mv, f_DC };
+
   std::vector< double > f_const2 ( _thinness, 2 );
   const2_f = sico::halo_model::interp_func { _Mv, f_const2 };
 
@@ -84,82 +82,15 @@ void sico::halo_model::set_parameters ( sico::occupation_p * ocp ) {
 					   _mass_integ_lim.inf,
 					   _mass_integ_lim.sup,
 					   _thinness };
-  // std::vector< double > f_DC ( _thinness, _handler->DC );
-  // DC_f = sico::halo_model::interp_func { _Mv, f_DC };
 
   return;
   
 }
 
-// void sico::halo_model::set_parameters ( const double DC,
-// 					const double Mmin,
-// 					const double sigma_logM,
-// 					const double M0,
-// 					const double M1,
-// 					const double alpha ) {
-
-//   _handler->DC = DC;
-//   _handler->M_min = Mmin;
-//   _handler->sigma_logM = sigma_logM;
-//   _handler->M0 = M0;
-//   _handler->M1 = M1;
-//   _handler->alpha = alpha;
-//   auto f_Ncen = [ & ] ( double Mh ) { return _handler->Ncen( Mh ); };
-//   Ncen_f = sico::halo_model::interp_func { f_Ncen,
-// 					   _mass_integ_lim.inf,
-// 					   _mass_integ_lim.sup,
-// 					   _thinness };
-//   auto f_Nsat = [ & ] ( double Mh ) { return _handler->Nsat( Mh ); };
-//   Nsat_f = sico::halo_model::interp_func { f_Nsat,
-// 					   _mass_integ_lim.inf,
-// 					   _mass_integ_lim.sup,
-// 					   _thinness };
-//   std::vector< double > f_DC ( _thinness, _handler->DC );
-//   DC_f = sico::halo_model::interp_func { _Mv, f_DC };
-
-//   return;
-  
-// }
-
-//==============================================================================================
-
-// double sico::halo_model::PP (const double AA, const double Amin, const double sigma_logA) {
-
-//   double xx = ( std::log10( AA ) - std::log10( Amin ) ) / sigma_logA;
-//   double erf = gsl_sf_erf( xx );
-
-//   return 0.5 * ( 1. + erf );
-
-// }
-
-//==============================================================================================
-
-
-// double sico::halo_model::Ncen ( const double Mhalo ) {
-  
-//   double Nc = PP( Mhalo, _handler->M_min, _handler->sigma_logM );
-  
-//   return ( Nc < 0 || std::isnan( Nc ) ) ? 0. : Nc;
-  
-// }
-
-
-//==============================================================================================
-
-// double sico::halo_model::Nsat ( const double Mhalo ) {
-
-//   const double Nc = sico::halo_model::Ncen( Mhalo );
-//   const double Ns = Nc * std::pow( ( ( Mhalo - _handler->M0 ) / _handler->M1 ), _handler->alpha );
-  
-//   return ( Ns < 0 || std::isnan( Ns ) ) ? 0. : Ns;
-  
-// }
-
 //==============================================================================================
 
 double sico::halo_model::ng () {
   
-  // auto integrand = ( Ncen_f + Nsat_f ) * DC_f * dndM_f;
   auto integrand = ( Ncen_f + Nsat_f ) * dndM_f;
     
   // integration limits of ng are from 0. up to some Mmax
@@ -172,7 +103,6 @@ double sico::halo_model::ng () {
 
 double sico::halo_model::bias () {
 
-  // auto integrand = ( Ncen_f + Nsat_f ) * DC_f * dndM_f * hbias_f;
   auto integrand = ( Ncen_f + Nsat_f ) * dndM_f * hbias_f;
 
   return 1 / ng() * integrand.integrate( _mass_integ_lim.inf, _mass_integ_lim.sup );
@@ -184,7 +114,6 @@ double sico::halo_model::bias () {
 double sico::halo_model::Mhalo () {
 
   sico::halo_model::interp_func Mh_f { _Mv, _Mv };
-  // auto integrand = ( Ncen_f + Nsat_f ) * DC_f * dndM_f * Mh_f;
   auto integrand = ( Ncen_f + Nsat_f ) * dndM_f * Mh_f;
 
   return 1 / ng() * integrand.integrate( _mass_integ_lim.inf, _mass_integ_lim.sup );
@@ -195,7 +124,6 @@ double sico::halo_model::Mhalo () {
 
 double sico::halo_model::dngdM ( const double Mhalo ) {
 
-  // return ( Ncen( Mhalo ) + Nsat( Mhalo ) ) * _handler->DC * _cosmo->dndM( Mhalo );
   return ( Ncen_f( Mhalo ) + Nsat_f( Mhalo ) ) * _cosmo->dndM( Mhalo );
 
 }
@@ -267,7 +195,6 @@ double sico::halo_model::Pk_1halo ( const size_t ii, const double fact_ng2 ) {
   // const double ukp_cs = ( Nc * Ns > 1 ) ? uk * uk : uk;
   // const double ukp_ss = ( Ns * Ns > 1 ) ? uk * uk : uk;
 
-  //    DC_f * DC_f						
   auto integrand =						\
     ( const2_f * Ncen_f + Nsat_f )				\
     * Nsat_f * dndM_f						\
@@ -286,7 +213,6 @@ double sico::halo_model::Pk_cs ( const size_t ii, const double fact_ng2 ) {
   // const double ukp_cs = ( Nc * Ns > 1 ) ? uk * uk : uk;
   // const double ukp_ss = ( Ns * Ns > 1 ) ? uk * uk : uk;
 
-    //    DC_f * DC_f *
   auto integrand =						\
     const2_f							\
     * Ncen_f * Nsat_f * dndM_f					\
@@ -305,7 +231,6 @@ double sico::halo_model::Pk_ss ( const size_t ii, const double fact_ng2 ) {
   // const double ukp_cs = ( Nc * Ns > 1 ) ? uk * uk : uk;
   // const double ukp_ss = ( Ns * Ns > 1 ) ? uk * uk : uk;
 
-  //    DC_f * DC_f						
   auto integrand =						\
     Nsat_f * Nsat_f * dndM_f					\
     * density_profile_FS[ ii ]					\
@@ -320,7 +245,6 @@ double sico::halo_model::Pk_ss ( const size_t ii, const double fact_ng2 ) {
 
 double sico::halo_model::Pk_2halo ( const size_t ii, const double fact_ng2 ) {
 
-  // auto integrand = ( Ncen_f + Nsat_f ) * DC_f * dndM_f * hbias_f * density_profile_FS[ ii ];
   auto integrand = ( Ncen_f + Nsat_f ) * dndM_f * hbias_f * density_profile_FS[ ii ];
 
   double integral = integrand.integrate( _mass_integ_lim.inf,

@@ -31,24 +31,7 @@ extern "C" {
     return new sico::tinker10_p { Amin, siglogA, Asat, alpsat };
 
   }
-  
-  // hm_handler_t create_hm_handler ( double DC,
-  // 				   double Mmin,
-  // 				   double sigma_logM,
-  // 				   double M0,
-  // 				   double M1,
-  // 				   double alpha,
-  // 				   double redshift,
-  // 				   cosmology_t cosmo ) {
-
-  //   if ( cosmo )
-  //     return new sico::halo_model_handler { DC, Mmin, sigma_logM, M0, M1, alpha, redshift,
-  // 	  * static_cast< sico::cosmology * >( cosmo ) };
-  //   else
-  //     return new sico::halo_model_handler { DC, Mmin, sigma_logM, M0, M1, alpha, redshift };
-
-  // }
-  
+   
   // ========================================================================================
 
   double Ncen_H16_ocp ( double Mh, H16_occupation_t ocp_h16 ) {
@@ -76,14 +59,6 @@ extern "C" {
   }
   
   // ========================================================================================
-
-  // unsigned int hm_thinness ( hm_handler_t hm_h ) {
-
-  //   return static_cast< sico::halo_model_handler * >( hm_h )->thinness;
-
-  // }
-  
-  // ========================================================================================
   
   void free_H16_occupation ( H16_occupation_t ocp_h16 ) {
 
@@ -100,15 +75,6 @@ extern "C" {
     return;
 
   }
-
-  // void free_hm_handler ( hm_handler_t hm_h ) {
-
-  //   delete static_cast< sico::halo_model_handler * >( hm_h );
-
-  //   return;
-
-  // }
-
   
   // ========================================================================================
 

@@ -34,11 +34,9 @@ int main () {
   
   harikane16_t ocp_h16 = create_H16_occupation( 0.5, 1.e+11, 1., 1.e+10, 1.e+10, 1. );
   tinker10_t ocp_t10 = create_T10_occupation( 1.e+11, 1., 1.e+10, 1. );
-  // hm_handler_t hm_h = create_hm_handler( 0.5, 1.e+11, 1., 1.e+10, 1.e+10, 1., 4., cosmo );
+
   halo_model_t hm_h16 = create_halo_model_H16( ocp_h16, cosmo );
   halo_model_t hm_t10 = create_halo_model_T10( ocp_t10, cosmo );
-
-  /* set_parameters_hm( 0.5, pow( 10, 11.42 ), 0.2, pow( 10, 11.6 ), pow( 10, 12.2 ), 1., hm ); */
 
   // compute galaxy density
   printf( "%f\t%f\n", ng_hm( hm_h16 ), ng_hm( hm_t10 ) );

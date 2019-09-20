@@ -3,21 +3,6 @@ from ctypes import *
 
 lib = CDLL( "@HM_WRAP_PATH@" )
 
-# # Halo Model Handler constructor:
-# lib.create_hm_handler.argtypes = [ c_double, c_double,
-#                                    c_double, c_double,
-#                                    c_double, c_double,
-#                                    c_double, c_void_p ]
-# lib.create_hm_handler.restype = c_void_p
-
-# # Halo Model Handler destructor:
-# lib.free_hm_handler.argtypes = [ c_void_p ]
-# lib.free_hm_handler.restype = c_void_p
-
-# # Halo Model Handler thinness-returning function:
-# lib.hm_thinness.argtypes = [ c_void_p ]
-# lib.hm_thinness.restype = c_uint
-
 # Halo Model constructor:
 lib.create_halo_model_H16.argtypes = [ c_void_p, c_void_p,
                                        c_double, c_size_t ]
@@ -40,14 +25,6 @@ lib.set_parameters_hm_T10.argtypes = [ c_double, c_double,
                                        c_double, c_double,
                                        c_void_p ]
 lib.set_parameters_hm_T10.restype = c_void_p
-
-# # Halo Model function Ncen():
-# lib.Ncen_hm.argtypes = [ c_double, c_void_p ]
-# lib.Ncen_hm.restype = c_double
-
-# # Halo Model function Nsat():
-# lib.Nsat_hm.argtypes = [ c_double, c_void_p ]
-# lib.Nsat_hm.restype = c_double
 
 # Halo Model function ng():
 lib.ng_hm.argtypes = [ c_void_p ]
@@ -176,12 +153,6 @@ class halo_model () :
                    redshift = 1.e-7,
                    thinness = 50 ) :
 
-        # self.DC = DC
-        # self.M_min = M_min
-        # self.sigma_logM = sigma_logM
-        # self.M0 = M0
-        # self.M1 = M1
-        # self.alpha = alpha
         self.cosmology = cosmology
         self.thinness = c_size_t( thinness )
         self.redshift = c_double( redshift )
@@ -229,32 +200,6 @@ class halo_model () :
         lib.set_parameters_hm_T10( Amin, siglogA, Asat, alpsat, self.obj )
 
         return;
-
-    # def set_parameters ( self,
-    #                      DC = 0.5,
-    #                      M_min = 1.e+11,
-    #                      sigma_logM = 1.,
-    #                      M0 = 1.e+10,
-    #                      M1 = 1.e+10,
-    #                      alpha = 1. ) :
-
-    #     self.DC = DC
-    #     self.M_min = M_min
-    #     self.sigma_logM = sigma_logM
-    #     self.M0 = M0
-    #     self.M1 = M1
-    #     self.alpha = alpha
-    #     lib.set_parameters_hm( DC, M_min, sigma_logM, M0, M1, alpha, self.obj )
-
-    #     return;
-
-    # def Ncen ( self, Mh ) :
-
-    #     return self.DC * lib.Ncen_hm( Mh, self.obj )
-
-    # def Nsat ( self, Mh ) :
-
-    #     return self.DC * lib.Nsat_hm( Mh, self.obj )
 
     def ng ( self ) :
 

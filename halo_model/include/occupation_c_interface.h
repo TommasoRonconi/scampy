@@ -1,7 +1,6 @@
 #ifndef _OCP_C_INTERFACE_
 #define _OCP_C_INTERFACE_
 
-// typedef void * hm_handler_t;
 typedef void * H16_occupation_t;
 typedef void * T10_occupation_t;
 
@@ -39,19 +38,6 @@ extern "C" {
   
   void free_T10_occupation ( T10_occupation_t ocp_t10);
   
-  // hm_handler_t create_hm_handler ( double DC,
-  // 				   double Mmin,
-  // 				   double sigma_logM,
-  // 				   double M0,
-  // 				   double M1,
-  // 				   double alpha,
-  // 				   double redshift,
-  // 				   cosmology_t cosmo );
-
-  // unsigned int hm_thinness ( hm_handler_t hm_h );
-  
-  // void free_hm_handler ( hm_handler_t hm_h );
-
   /// @} End of Halo Model Handler C-wrapping
 
 

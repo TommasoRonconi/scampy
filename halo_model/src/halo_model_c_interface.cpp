@@ -5,112 +5,6 @@
 #include <tinker10_p.h>
 
 extern "C" {
-
-  
-  // // ========================================================================================
-  // // ========================================================================================
-  // // ========================================================================================
-  // // Handler
-
-  // H16_occupation_t create_H16_occupation ( double DC,
-  // 					   double Mmin,
-  // 					   double sigma_logM,
-  // 					   double M0,
-  // 					   double M1,
-  // 					   double alpha ) {
-
-  //   return new sico::harikane16_p { DC, Mmin, sigma_logM, M0, M1, alpha };
-
-  // }
-
-  
-
-  // T10_occupation_t create_T10_occupation ( double Amin,
-  // 					   double siglogA,
-  // 					   double Asat,
-  // 					   double alpsat ) {
-
-  //   return new sico::tinker10_p { Amin, siglogA, Asat, alpsat };
-
-  // }
-  
-  // // hm_handler_t create_hm_handler ( double DC,
-  // // 				   double Mmin,
-  // // 				   double sigma_logM,
-  // // 				   double M0,
-  // // 				   double M1,
-  // // 				   double alpha,
-  // // 				   double redshift,
-  // // 				   cosmology_t cosmo ) {
-
-  // //   if ( cosmo )
-  // //     return new sico::halo_model_handler { DC, Mmin, sigma_logM, M0, M1, alpha, redshift,
-  // // 	  * static_cast< sico::cosmology * >( cosmo ) };
-  // //   else
-  // //     return new sico::halo_model_handler { DC, Mmin, sigma_logM, M0, M1, alpha, redshift };
-
-  // // }
-  
-  // // ========================================================================================
-
-  // double Ncen_h16_ocp ( double Mh, H16_occupation_t ocp_h16 ) {
-
-  //   return static_cast< sico::harikane16_p * >( ocp_h16 )->Ncen( Mh );
-
-  // }
-  
-  // double Nsat_h16_ocp ( double Mh, H16_occupation_t ocp_h16 ) {
-
-  //   return static_cast< sico::harikane16_p * >( ocp_h16 )->Nsat( Mh );
-
-  // }
-
-  // double Ncen_t10_ocp ( double Mh, T10_occupation_t ocp_t10 ) {
-
-  //   return static_cast< sico::tinker10_p * >( ocp_t10 )->Ncen( Mh );
-
-  // }
-  
-  // double Nsat_t10_ocp ( double Mh, T10_occupation_t ocp_t10 ) {
-
-  //   return static_cast< sico::tinker10_p * >( ocp_t10 )->Nsat( Mh );
-
-  // }
-  
-  // // ========================================================================================
-
-  // // unsigned int hm_thinness ( hm_handler_t hm_h ) {
-
-  // //   return static_cast< sico::halo_model_handler * >( hm_h )->thinness;
-
-  // // }
-  
-  // // ========================================================================================
-  
-  // void free_H16_occupation_t ( H16_occupation_t ocp_h16 ) {
-
-  //   delete static_cast< sico::harikane16_p * >( ocp_h16 );
-
-  //   return;
-
-  // }
-  
-  // void free_T10_occupation_t ( T10_occupation_t ocp_t10 ) {
-
-  //   delete static_cast< sico::tinker10_p * >( ocp_t10 );
-
-  //   return;
-
-  // }
-
-  // // void free_hm_handler ( hm_handler_t hm_h ) {
-
-  // //   delete static_cast< sico::halo_model_handler * >( hm_h );
-
-  // //   return;
-
-  // // }
-
   
   // ========================================================================================
   // ========================================================================================
@@ -137,18 +31,10 @@ extern "C" {
 
   }
   
-  // halo_model_t create_halo_model ( hm_handler_t hm_h ) {
-
-  //   // std::cout << "Building halo_model..." << std::endl;
-  //   return new sico::halo_model { * static_cast< sico::halo_model_handler * >( hm_h ) };
-
-  // }
-  
   // ========================================================================================
 
   void free_halo_model ( halo_model_t hm ) {
 
-    // std::cout << "Deleting halo_model..." << std::endl;
     delete static_cast< sico::halo_model * >( hm );
 
     return;
@@ -180,19 +66,6 @@ extern "C" {
         Amin, siglogA, Asat, alpsat } );
     
   }
-  
-  // void set_parameters_hm ( double DC,
-  // 			   double Mmin,
-  // 			   double sigma_logM,
-  // 			   double M0,
-  // 			   double M1,
-  // 			   double alpha,
-  // 			   halo_model_t hm ) {
-    
-  //   static_cast< sico::halo_model * >( hm )->set_parameters( DC, Mmin, sigma_logM, M0, M1, alpha );
-  //   return;
-    
-  // }
   
   // ========================================================================================
 
