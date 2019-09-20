@@ -37,7 +37,7 @@ omp_dep = dependency( 'openmp',
 
 gsl_dep = dependency( 'gsl',
                       required : true,
-                      version : '>=2.5' )
+                      version : '>=2' )
 
 # FFTLog
 
