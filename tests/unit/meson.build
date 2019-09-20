@@ -1,7 +1,7 @@
 #######################################################################
 # C++ tests
 
-tests_cxx = [ 'occupation_p' ]
+tests_cxx = [ 'occupation_p', 'halo_model' ]
 
 foreach _t : tests_cxx
 
@@ -10,6 +10,7 @@ exe_cxx = executable( 'test_' + _t + '.x',
                       include_directories : [ inc_hm,
                                               inc_utl ],
                       dependencies : [ hm_dep,
+                                       cosmo_dep,
                                        gsl_dep,
                                        utl_dep ],
                       install : true )
