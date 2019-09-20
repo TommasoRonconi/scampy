@@ -10,57 +10,75 @@
 #include <interpolation.h>
 #include <fftlog_handler.h>
 #include <abel_transform.h>
+#include <occupation_p.h>
 
 namespace sico {
 
-  struct halo_model_handler {
+  // struct halo_model_handler {
 
-    double DC;
-    double M_min;
-    double sigma_logM;
-    double M0;
-    double M1;
-    double alpha;
-    double redshift = 1.e-7;
+  //   double DC;
+  //   double M_min;
+  //   double sigma_logM;
+  //   double M0;
+  //   double M1;
+  //   double alpha;
+  //   double redshift = 1.e-7;
 
-    struct {
-      double inf = 1.e+5;
-      double sup = 1.e+17;
-    } mass_integ_lim {};
+  //   struct {
+  //     double inf = 1.e+5;
+  //     double sup = 1.e+17;
+  //   } mass_integ_lim {};
 
-    struct {
-      double inf = 1.e-3;
-      double sup = 1.e+3;
-    } wavk_integ_lim {};
+  //   struct {
+  //     double inf = 1.e-3;
+  //     double sup = 1.e+3;
+  //   } wavk_integ_lim {};
 
-    size_t thinness = 200;
+  //   size_t thinness = 200;
 
-    cosmology cosmo {};
+  //   cosmology cosmo {};
 
-    halo_model_handler () = default;
+  //   halo_model_handler () = default;
 
-    halo_model_handler ( const double & DC,
-			 const double & Mmin,
-			 const double & siglogM,
-			 const double & M0,
-			 const double & M1,
-			 const double & alpha,
-			 const double & zz = 1.e-7,
-			 const cosmology & cosmo = {} ) :
-      DC { DC }, M_min { Mmin }, sigma_logM { siglogM }, M0 { M0 }, M1 { M1 }, alpha { alpha },
-      redshift { zz }, cosmo { cosmo } {}
+  //   halo_model_handler ( const double & DC,
+  // 			 const double & Mmin,
+  // 			 const double & siglogM,
+  // 			 const double & M0,
+  // 			 const double & M1,
+  // 			 const double & alpha,
+  // 			 const double & zz = 1.e-7,
+  // 			 const cosmology & cosmo = {} ) :
+  //     DC { DC }, M_min { Mmin }, sigma_logM { siglogM }, M0 { M0 }, M1 { M1 }, alpha { alpha },
+  //     redshift { zz }, cosmo { cosmo } {}
 
-    halo_model_handler ( const halo_model_handler & handler ) = default;
+  //   halo_model_handler ( const halo_model_handler & handler ) = default;
 
-    ~halo_model_handler() = default;
+  //   ~halo_model_handler() = default;
     
-  }; //endstruct halo_model_handler
+  // }; //endstruct halo_model_handler
 
   class halo_model {
 
   private:
 
-    halo_model_handler _handler {};
+    std::unique_ptr< occupation_p > _handler {};
+    std::unique_ptr< cosmology > _cosmo {};
+    
+    double _redshift = 1.e-7;
+
+    struct {
+      double inf = 1.e+5;
+      double sup = 1.e+17;
+    } _mass_integ_lim {};
+
+    struct {
+      double inf = 1.e-3;
+      double sup = 1.e+3;
+    } _wavk_integ_lim {};
+
+    size_t _thinness = 200;
+    
+    //halo_model_handler _handler {};
 
     /**
      *  @name Interpolated Functions
@@ -70,7 +88,7 @@ namespace sico {
 
     using interp_func = class sico::utl::interpolator< sico::utl::gsl_log_interp >;
 
-    interp_func dndM_f {}, hbias_f {}, Ncen_f {}, Nsat_f {}, DC_f {}, const2_f {};
+    interp_func dndM_f {}, hbias_f {}, Ncen_f {}, Nsat_f {}, const2_f {}; //, DC_f {};
 
     std::vector< interp_func > density_profile_FS;
 
@@ -78,7 +96,7 @@ namespace sico {
     
     std::vector< double > _kv, _Mv;
     
-    double PP ( const double AA, const double Amin, const double sigma_logA );
+    // double PP ( const double AA, const double Amin, const double sigma_logA );
 
     double Pk_cc_integrand ( const double Mh, const double kk );
 
@@ -88,24 +106,30 @@ namespace sico {
 
   public:
 
-    double Ncen ( const double Mhalo );
+    double Ncen ( const double Mhalo ) { return _handler->Ncen( Mhalo ); }
     
-    double Nsat ( const double Mhalo );
+    double Nsat ( const double Mhalo ) { return _handler->Nsat( Mhalo ); }
 
     halo_model () = default;
 
-    halo_model ( halo_model_handler handler );
+    halo_model ( occupation_p * ocp, cosmology * cosmo,
+		 const double redshift = 1.e-7,
+		 const size_t thinness = 50 );
+    // halo_model ( halo_model_handler handler );
 
     ~halo_model () = default;
 
+    size_t get_thinness () { return _thinness; }
+
     std::vector< double > get_kv () { return _kv; }
 
-    void set_parameters ( const double DC,
-			  const double Mmin,
-			  const double sigma_logM,
-			  const double M0,
-			  const double M1,
-			  const double alpha );
+    void set_parameters ( occupation_p * ocp );
+    // void set_parameters ( const double DC,
+    // 			  const double Mmin,
+    // 			  const double sigma_logM,
+    // 			  const double M0,
+    // 			  const double M1,
+    // 			  const double alpha );
     // void set_parameters ( const double A_min,
     // 			  const double sigma_logA,
     // 			  const double A_sat,

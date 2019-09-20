@@ -1,0 +1,165 @@
+from ctypes import *
+
+class occupation_p :
+
+    _param = None
+
+    def __init__ ( self ) :
+        pass
+
+    def Ncen ( self, *args, **kwargs ) :
+        pass
+
+    def Nsat ( self, *args, **kwargs ) :
+        pass
+
+
+lib = CDLL( "@OCP_WRAP_PATH@" )
+
+#
+lib.create_H16_occupation.argtypes = [ c_double, c_double,
+                                       c_double, c_double,
+                                       c_double, c_double ]
+lib.create_H16_occupation.restype = c_void_p
+
+#
+lib.free_H16_occupation.argtypes = [ c_void_p ]
+lib.free_H16_occupation.restype = c_void_p
+
+#
+lib.Ncen_H16_ocp.argtypes = [ c_double, c_void_p ]
+lib.Ncen_H16_ocp.restype = c_double
+
+#
+lib.Nsat_H16_ocp.argtypes = [ c_double, c_void_p ]
+lib.Nsat_H16_ocp.restype = c_double
+
+class harikane16_p ( occupation_p ) :
+
+    def __init__ ( self,
+                   DC = 0.5,
+                   M_min = 1.e+11,
+                   sigma_logM = 1.,
+                   M0 = 1.e+10,
+                   M1 = 1.e+10,
+                   alpha = 1. ) :
+
+        self._DC = c_double( DC )
+        self._M_min = c_double( M_min )
+        self._sigma_logM = c_double( sigma_logM )
+        self._M0 = c_double( M0 )
+        self._M1 = c_double( M1 )
+        self._alpha = c_double( alpha )
+
+        # Python call to occupation ctor:
+        self.obj = lib.create_H16_occupation( self._DC, self._M_min,
+                                              self._sigma_logM, self._M0,
+                                              self._M1, self._alpha )
+        
+    def __del__ ( self ) :
+
+        # Python call to occupation dtor:
+        lib.free_H16_occupation( self.obj )
+
+    def __call__ ( self, idx ) :
+
+        return _param[ idx ]
+
+    def set_parameters ( self,
+                         DC = None,
+                         M_min = None,
+                         sigma_logM = None,
+                         M0 = None,
+                         M1 = None,
+                         alpha = None ) :
+
+        self._DC = c_double( DC ) if DC is not None else self._DC
+        self._M_min = c_double( M_min ) if DC is not None else self._M_min
+        self._sigma_logM = c_double( sigma_logM ) if DC is not None else self._sigma_logM
+        self._M0 = c_double( M0 ) if DC is not None else self._M0
+        self._M1 = c_double( M1 ) if DC is not None else self._M1
+        self._alpha = c_double( alpha ) if DC is not None else self._alpha
+        
+        self.obj = lib.create_H16_occupation( self._DC, self._M_min,
+                                              self._sigma_logM, self._M0,
+                                              self._M1, self._alpha )
+        return
+        
+    def Ncen ( self, Mh ) :
+
+        return lib.Ncen_H16_ocp( c_double( Mh ), self.obj )
+
+    def Nsat ( self, Mh ) :
+
+        return lib.Nsat_H16_ocp( c_double( Mh ), self.obj )
+
+#
+lib.create_T10_occupation.argtypes = [ c_double, c_double,
+                                       c_double, c_double ]
+lib.create_T10_occupation.restype = c_void_p
+
+#
+lib.free_T10_occupation.argtypes = [ c_void_p ]
+lib.free_T10_occupation.restype = c_void_p
+
+#
+lib.Ncen_T10_ocp.argtypes = [ c_double, c_void_p ]
+lib.Ncen_T10_ocp.restype = c_double
+
+#
+lib.Nsat_T10_ocp.argtypes = [ c_double, c_void_p ]
+lib.Nsat_T10_ocp.restype = c_double
+
+class tinker10_p ( occupation_p ) :
+
+    # _param = { 'Amin' : _Amin,
+    #            'siglogA' : _siglogA,
+    #            'Asat' : _Asat,
+    #            'alpsat' : _alpsat }
+    
+    def __init__ ( self,
+                   Amin = 1.e+11,
+                   siglogA = 1.,
+                   Asat = 1.e+10,
+                   alpsat = 1. ) :
+
+        self._Amin = c_double( Amin )
+        self._siglogA = c_double( siglogA )
+        self._Asat = c_double( Asat )
+        self._alpsat = c_double( alpsat )
+
+        # Python call to occupation ctor:
+        self.obj = lib.create_T10_occupation( self._Amin, self._siglogA,
+                                              self._Asat, self._alpsat )
+        
+    def __del__ ( self ) :
+
+        # Python call to occupation dtor:
+        lib.free_T10_occupation( self.obj )
+
+    # def __call__ ( self, idx ) :
+
+    #     return _param[ idx ]
+
+    def set_parameters ( self,
+                         Amin = None,
+                         siglogA = None,
+                         Asat = None,
+                         alpsat = None ) :
+
+        self._Amin = c_double( Amin ) if DC is not None else self._Amin
+        self._siglogA = c_double( siglogA ) if DC is not None else self._siglogA
+        self._Asat = c_double( Asat ) if DC is not None else self._Asat
+        self._alpsat = c_double( alpsat ) if DC is not None else self._alpsat
+        
+        self.obj = lib.create_T10_occupation( self._Amin, self._siglogA,
+                                              self._Asat, self._alpsat )
+        return
+    
+    def Ncen ( self, Mh ) :
+
+        return lib.Ncen_T10_ocp( c_double( Mh ), self.obj )
+
+    def Nsat ( self, Mh ) :
+
+        return lib.Nsat_T10_ocp( c_double( Mh ), self.obj )

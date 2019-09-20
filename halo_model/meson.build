@@ -37,7 +37,36 @@ lib_headers += [ root + '/halo_model/' + inc_dir + '/harikane16_p.h' ]
 lib_headers += [ root + '/halo_model/' + inc_dir + '/tinker10_p.h' ]
 
 #######################################################################
-# Halo-Model C Lib Interface
+# Occupation C Interface
+
+ocp_c_lib = library( 'ocp_c_wrap',
+                     [ 'src/occupation_c_interface.cpp' ],
+                     include_directories : [ inc_hm,
+                                             inc_cosmo,
+                                             inc_intrp,
+                                             inc_fftlwrap ],
+		     dependencies : [ hm_dep,
+                                      omp_dep,
+                                      gsl_dep,
+                                      utl_dep,
+                                      intrp_dep,
+                                      fftlwrap_dep,
+                                      cosmo_dep ],
+                     install : true )
+
+ocp_c_dep = declare_dependency( link_with : ocp_c_lib,
+                                include_directories : [ inc_hm ] )
+
+ocp_c_lib_name = ocp_c_lib.full_path().split('/')[-1]
+
+ocp_c_path = '/'.join( [ get_option( 'prefix' ),
+                         get_option( 'libdir' ),
+                         ocp_c_lib_name ] )
+
+lib_headers += [ root + '/halo_model/' + inc_dir + '/occupation_c_interface.h' ]
+
+#######################################################################
+# Halo-Model Lib C Interface
 
 hm_c_lib = library( 'hm_c_wrap',
                     [ 'src/halo_model_c_interface.cpp' ],
@@ -46,6 +75,7 @@ hm_c_lib = library( 'hm_c_wrap',
                                             inc_intrp,
                                             inc_fftlwrap ],
 		    dependencies : [ hm_dep,
+                                     ocp_c_dep,
                                      omp_dep,
                                      gsl_dep,
                                      utl_dep,

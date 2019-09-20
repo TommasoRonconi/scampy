@@ -2,34 +2,61 @@
 #define _HM_C_INTERFACE_
 
 #include <cosmo_c_interface.h>
+#include <occupation_c_interface.h>
 
-typedef void * hm_handler_t;
+// typedef void * hm_handler_t;
+typedef void * H16_occupation_t;
+typedef void * T10_occupation_t;
 typedef void * halo_model_t;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-  /**
-   *  @name Halo Model Handler C-wrapping
-   *  
-   *  @{
-   */
-  
-  hm_handler_t create_hm_handler ( double DC,
-				   double Mmin,
-				   double sigma_logM,
-				   double M0,
-				   double M1,
-				   double alpha,
-				   double redshift,
-				   cosmology_t cosmo );
+  // /**
+  //  *  @name Halo Model Handler C-wrapping
+  //  *  
+  //  *  @{
+  //  */
 
-  unsigned int hm_thinness ( hm_handler_t hm_h );
-  
-  void free_hm_handler ( hm_handler_t hm_h );
+  // H16_occupation_t create_H16_occupation ( double DC,
+  // 					   double Mmin,
+  // 					   double sigma_logM,
+  // 					   double M0,
+  // 					   double M1,
+  // 					   double alpha );
 
-  /// @} End of Halo Model Handler C-wrapping
+  // double Ncen_h16_ocp ( double Mh, H16_occupation_t ocp_h16 );
+  
+  // double Nsat_h16_ocp ( double Mh, H16_occupation_t ocp_h16 );
+  
+  // void free_H16_occupation_t ( H16_occupation_t ocp_h16 );
+
+  // T10_occupation_t create_T10_occupation ( double Amin,
+  // 					   double siglogA,
+  // 					   double Asat,
+  // 					   double alpsat );
+
+  // double Ncen_t10_ocp ( double Mh, T10_occupation_t ocp_t10 );
+  
+  // double Nsat_t10_ocp ( double Mh, T10_occupation_t ocp_t10 );
+  
+  // void free_T10_occupation_t ( T10_occupation_t ocp_t10);
+  
+  // // hm_handler_t create_hm_handler ( double DC,
+  // // 				   double Mmin,
+  // // 				   double sigma_logM,
+  // // 				   double M0,
+  // // 				   double M1,
+  // // 				   double alpha,
+  // // 				   double redshift,
+  // // 				   cosmology_t cosmo );
+
+  // // unsigned int hm_thinness ( hm_handler_t hm_h );
+  
+  // // void free_hm_handler ( hm_handler_t hm_h );
+
+  // /// @} End of Halo Model Handler C-wrapping
 
   /**
    *  @name Halo Model C-wrapping
@@ -37,21 +64,47 @@ extern "C" {
    *  @{
    */
 
-  halo_model_t create_halo_model ( hm_handler_t hm_h );
+  halo_model_t create_halo_model_H16 ( H16_occupation_t ocp_h16,
+				       cosmology_t cosmo,
+				       const double redshift = 1.e-7,
+				       const size_t thinness = 50 );
+
+  halo_model_t create_halo_model_T10 ( T10_occupation_t ocp_t10,
+				       cosmology_t cosmo,
+				       const double redshift = 1.e-7,
+				       const size_t thinness = 50 );
+  
+  // halo_model_t create_halo_model ( hm_handler_t hm_h );
 
   void free_halo_model ( halo_model_t hm );
 
-  void set_parameters_hm ( double DC,
-			   double Mmin,
-			   double sigma_logM,
-			   double M0,
-			   double M1,
-			   double alpha,
-			   halo_model_t hm );
+  void set_parameters_hm_H16 ( double DC,
+			       double Mmin,
+			       double sigma_logM,
+			       double M0,
+			       double M1,
+			       double alpha,
+			       halo_model_t hm );
+
+  void set_parameters_hm_T10 ( double Amin,
+			       double siglogA,
+			       double Asat,
+			       double alpsat,
+			       halo_model_t hm );
+
+  // void set_parameters_hm ( double DC,
+  // 			   double Mmin,
+  // 			   double sigma_logM,
+  // 			   double M0,
+  // 			   double M1,
+  // 			   double alpha,
+  // 			   halo_model_t hm );
+
+  size_t get_thinness_hm ( halo_model_t hm );
 
   double Ncen_hm ( double Mh, halo_model_t hm );
   
-    double Nsat_hm ( double Mh, halo_model_t hm );
+  double Nsat_hm ( double Mh, halo_model_t hm );
 
   double ng_hm ( halo_model_t hm );
 

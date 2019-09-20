@@ -1,188 +1,260 @@
+from mockpy.occupation_p import *
 from ctypes import *
 
 lib = CDLL( "@HM_WRAP_PATH@" )
+
+# # Halo Model Handler constructor:
+# lib.create_hm_handler.argtypes = [ c_double, c_double,
+#                                    c_double, c_double,
+#                                    c_double, c_double,
+#                                    c_double, c_void_p ]
+# lib.create_hm_handler.restype = c_void_p
+
+# # Halo Model Handler destructor:
+# lib.free_hm_handler.argtypes = [ c_void_p ]
+# lib.free_hm_handler.restype = c_void_p
+
+# # Halo Model Handler thinness-returning function:
+# lib.hm_thinness.argtypes = [ c_void_p ]
+# lib.hm_thinness.restype = c_uint
+
+# Halo Model constructor:
+lib.create_halo_model_H16.argtypes = [ c_void_p, c_void_p,
+                                       c_double, c_size_t ]
+lib.create_halo_model_H16.restype = c_void_p
+lib.create_halo_model_T10.argtypes = [ c_void_p, c_void_p,
+                                       c_double, c_size_t ]
+lib.create_halo_model_T10.restype = c_void_p
+
+# Halo Model denstructor:
+lib.free_halo_model.argtypes = [ c_void_p ]
+lib.free_halo_model.restype = c_void_p
+
+# Halo Model function set_parameters():
+lib.set_parameters_hm_H16.argtypes = [ c_double, c_double,
+                                       c_double, c_double,
+                                       c_double, c_double,
+                                       c_void_p ]
+lib.set_parameters_hm_H16.restype = c_void_p
+lib.set_parameters_hm_T10.argtypes = [ c_double, c_double,
+                                       c_double, c_double,
+                                       c_void_p ]
+lib.set_parameters_hm_T10.restype = c_void_p
+
+# # Halo Model function Ncen():
+# lib.Ncen_hm.argtypes = [ c_double, c_void_p ]
+# lib.Ncen_hm.restype = c_double
+
+# # Halo Model function Nsat():
+# lib.Nsat_hm.argtypes = [ c_double, c_void_p ]
+# lib.Nsat_hm.restype = c_double
+
+# Halo Model function ng():
+lib.ng_hm.argtypes = [ c_void_p ]
+lib.ng_hm.restype = c_double
+
+# Halo Model function bias():
+lib.bias_hm.argtypes = [ c_void_p ]
+lib.bias_hm.restype = c_double
+
+# Halo Model function Mhalo():
+lib.Mhalo_hm.argtypes = [ c_void_p ]
+lib.Mhalo_hm.restype = c_double
+
+# Halo Model function Ncen():
+lib.dngdM_hm.argtypes = [ c_double, c_void_p ]
+lib.dngdM_hm.restype = c_double
+
+# Halo Model function model_Pk():
+lib.model_Pk_hm.argtypes = [ POINTER( c_double ),
+                             POINTER( c_double ),
+                             c_void_p ]
+lib.model_Pk_hm.restype = c_void_p
+
+# Halo Model function model_Pk_1halo():
+lib.model_Pk_1halo_hm.argtypes = [ POINTER( c_double ),
+                                   POINTER( c_double ),
+                                   c_void_p ]
+lib.model_Pk_1halo_hm.restype = c_void_p
+
+# Halo Model function model_Pk_cs():
+lib.model_Pk_cs_hm.argtypes = [ POINTER( c_double ),
+                                POINTER( c_double ),
+                                c_void_p ]
+lib.model_Pk_cs_hm.restype = c_void_p
+
+# Halo Model function model_Pk_ss():
+lib.model_Pk_ss_hm.argtypes = [ POINTER( c_double ),
+                                POINTER( c_double ),
+                                c_void_p ]
+lib.model_Pk_ss_hm.restype = c_void_p
+
+# Halo Model function model_Pk_2halo():
+lib.model_Pk_2halo_hm.argtypes = [ POINTER( c_double ),
+                                   POINTER( c_double ),
+                                   c_void_p ]
+lib.model_Pk_2halo_hm.restype = c_void_p
+
+# Halo Model function model_Xi():
+lib.model_Xi_hm.argtypes = [ POINTER( c_double ),
+                             POINTER( c_double ),
+                             c_uint, c_void_p ]
+lib.model_Xi_hm.restype = c_void_p
+
+# Halo Model function model_Xi_1halo():
+lib.model_Xi_1halo_hm.argtypes = [ POINTER( c_double ),
+                                   POINTER( c_double ),
+                                   c_uint, c_void_p ]
+lib.model_Xi_1halo_hm.restype = c_void_p
+
+# Halo Model function model_Xi_2halo():
+lib.model_Xi_2halo_hm.argtypes = [ POINTER( c_double ),
+                                   POINTER( c_double ),
+                                   c_uint, c_void_p ]
+lib.model_Xi_2halo_hm.restype = c_void_p
+
+# Halo Model function model_Wr():
+lib.model_Wr_hm.argtypes = [ POINTER( c_double ),
+                             POINTER( c_double ),
+                             c_uint, c_void_p ]
+lib.model_Wr_hm.restype = c_void_p
+
+# Halo Model function model_Wr_1halo():
+lib.model_Wr_1halo_hm.argtypes = [ POINTER( c_double ),
+                                   POINTER( c_double ),
+                                   c_uint, c_void_p ]
+lib.model_Wr_1halo_hm.restype = c_void_p
+
+# Halo Model function model_Wr_2halo():
+lib.model_Wr_2halo_hm.argtypes = [ POINTER( c_double ),
+                                   POINTER( c_double ),
+                                   c_uint, c_void_p ]
+lib.model_Wr_2halo_hm.restype = c_void_p
+
+# Halo Model function model_Wt():
+lib.model_Wt_hm.argtypes = [ POINTER( c_double ),
+                             POINTER( c_double ),
+                             c_uint, c_void_p ]
+lib.model_Wt_hm.restype = c_void_p
+
+# Halo Model function model_Wt_1halo():
+lib.model_Wt_1halo_hm.argtypes = [ POINTER( c_double ),
+                                   POINTER( c_double ),
+                                   c_uint, c_void_p ]
+lib.model_Wt_1halo_hm.restype = c_void_p
+
+# Halo Model function model_Wt_cs():
+lib.model_Wt_cs_hm.argtypes = [ POINTER( c_double ),
+                                POINTER( c_double ),
+                                c_uint, c_void_p ]
+lib.model_Wt_cs_hm.restype = c_void_p
+
+# Halo Model function model_Wt_ss():
+lib.model_Wt_ss_hm.argtypes = [ POINTER( c_double ),
+                                POINTER( c_double ),
+                                c_uint, c_void_p ]
+lib.model_Wt_ss_hm.restype = c_void_p
+
+# Halo Model function model_Wt_2halo():
+lib.model_Wt_2halo_hm.argtypes = [ POINTER( c_double ),
+                                   POINTER( c_double ),
+                                   c_uint, c_void_p ]
+lib.model_Wt_2halo_hm.restype = c_void_p
+
+# Halo Model function model_Wt_large_scale():
+lib.model_Wt_large_scale_hm.argtypes = [ POINTER( c_double ),
+                                         POINTER( c_double ),
+                                         c_uint, c_void_p ]
+lib.model_Wt_large_scale_hm.restype = c_void_p
 
 # Wrap class halo_model:
 class halo_model () :
 
     def __init__ ( self,
-                   DC = 0.5,
-                   M_min = 1.e+11,
-                   sigma_logM = 1.,
-                   M0 = 1.e+10,
-                   M1 = 1.e+10,
-                   alpha = 1.,
+                   occupation = None,
+                   cosmology = None,
                    redshift = 1.e-7,
-                   cosmology = None ) :
+                   thinness = 50 ) :
 
-        self.DC = DC
-        self.M_min = M_min
-        self.sigma_logM = sigma_logM
-        self.M0 = M0
-        self.M1 = M1
-        self.alpha = alpha
-        self.redshift = redshift
+        # self.DC = DC
+        # self.M_min = M_min
+        # self.sigma_logM = sigma_logM
+        # self.M0 = M0
+        # self.M1 = M1
+        # self.alpha = alpha
         self.cosmology = cosmology
-        
-        # Halo Model Handler constructor:
-        lib.create_hm_handler.argtypes = [ c_double, c_double, c_double, c_double, c_double, c_double,
-                                           c_double, c_void_p ]
-        lib.create_hm_handler.restype = c_void_p
-
-        # Halo Model Handler destructor:
-        lib.free_hm_handler.argtypes = [ c_void_p ]
-        lib.free_hm_handler.restype = c_void_p
-
-        # Halo Model Handler thinness-returning function:
-        lib.hm_thinness.argtypes = [ c_void_p ]
-        lib.hm_thinness.restype = c_uint
-
-        # Halo Model constructor:
-        lib.create_halo_model.argtypes = [ c_void_p ]
-        lib.create_halo_model.restype = c_void_p
-
-        # Halo Model denstructor:
-        lib.free_halo_model.argtypes = [ c_void_p ]
-        lib.free_halo_model.restype = c_void_p
-
-        # Halo Model function set_parameters():
-        lib.set_parameters_hm.argtypes = [ c_double, c_double, c_double, c_double, c_double, c_double, c_void_p ]
-        lib.set_parameters_hm.restype = c_void_p
-
-        # Halo Model function Ncen():
-        lib.Ncen_hm.argtypes = [ c_double, c_void_p ]
-        lib.Ncen_hm.restype = c_double
-
-        # Halo Model function Nsat():
-        lib.Nsat_hm.argtypes = [ c_double, c_void_p ]
-        lib.Nsat_hm.restype = c_double
-
-        # Halo Model function ng():
-        lib.ng_hm.argtypes = [ c_void_p ]
-        lib.ng_hm.restype = c_double
-
-        # Halo Model function bias():
-        lib.bias_hm.argtypes = [ c_void_p ]
-        lib.bias_hm.restype = c_double
-
-        # Halo Model function Mhalo():
-        lib.Mhalo_hm.argtypes = [ c_void_p ]
-        lib.Mhalo_hm.restype = c_double
-
-        # Halo Model function Ncen():
-        lib.dngdM_hm.argtypes = [ c_double, c_void_p ]
-        lib.dngdM_hm.restype = c_double
-
-        # Halo Model function model_Pk():
-        lib.model_Pk_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_void_p ]
-        lib.model_Pk_hm.restype = c_void_p
-
-        # Halo Model function model_Pk_1halo():
-        lib.model_Pk_1halo_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_void_p ]
-        lib.model_Pk_1halo_hm.restype = c_void_p
-
-        # Halo Model function model_Pk_cs():
-        lib.model_Pk_cs_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_void_p ]
-        lib.model_Pk_cs_hm.restype = c_void_p
-
-        # Halo Model function model_Pk_ss():
-        lib.model_Pk_ss_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_void_p ]
-        lib.model_Pk_ss_hm.restype = c_void_p
-
-        # Halo Model function model_Pk_2halo():
-        lib.model_Pk_2halo_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_void_p ]
-        lib.model_Pk_2halo_hm.restype = c_void_p
-
-        # Halo Model function model_Xi():
-        lib.model_Xi_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_uint, c_void_p ]
-        lib.model_Xi_hm.restype = c_void_p
-
-        # Halo Model function model_Xi_1halo():
-        lib.model_Xi_1halo_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_uint, c_void_p ]
-        lib.model_Xi_1halo_hm.restype = c_void_p
-
-        # Halo Model function model_Xi_2halo():
-        lib.model_Xi_2halo_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_uint, c_void_p ]
-        lib.model_Xi_2halo_hm.restype = c_void_p
-
-        # Halo Model function model_Wr():
-        lib.model_Wr_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_uint, c_void_p ]
-        lib.model_Wr_hm.restype = c_void_p
-
-        # Halo Model function model_Wr_1halo():
-        lib.model_Wr_1halo_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_uint, c_void_p ]
-        lib.model_Wr_1halo_hm.restype = c_void_p
-
-        # Halo Model function model_Wr_2halo():
-        lib.model_Wr_2halo_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_uint, c_void_p ]
-        lib.model_Wr_2halo_hm.restype = c_void_p
-
-        # Halo Model function model_Wt():
-        lib.model_Wt_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_uint, c_void_p ]
-        lib.model_Wt_hm.restype = c_void_p
-
-        # Halo Model function model_Wt_1halo():
-        lib.model_Wt_1halo_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_uint, c_void_p ]
-        lib.model_Wt_1halo_hm.restype = c_void_p
-
-        # Halo Model function model_Wt_cs():
-        lib.model_Wt_cs_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_uint, c_void_p ]
-        lib.model_Wt_cs_hm.restype = c_void_p
-
-        # Halo Model function model_Wt_ss():
-        lib.model_Wt_ss_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_uint, c_void_p ]
-        lib.model_Wt_ss_hm.restype = c_void_p
-
-        # Halo Model function model_Wt_2halo():
-        lib.model_Wt_2halo_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_uint, c_void_p ]
-        lib.model_Wt_2halo_hm.restype = c_void_p
-
-        # Halo Model function model_Wt_large_scale():
-        lib.model_Wt_large_scale_hm.argtypes = [ POINTER( c_double ), POINTER( c_double ), c_uint, c_void_p ]
-        lib.model_Wt_large_scale_hm.restype = c_void_p
-
-        # Python call to halo_model_handler ctor:
-        self.handler = lib.create_hm_handler( DC, M_min, sigma_logM, M0, M1, alpha, redshift, cosmology.obj )
-
-        # Get thinness variable from halo model handler:
-        self.thinness = lib.hm_thinness( self.handler )
-        
-        # Python call to halo_model ctor:
-        self.obj = lib.create_halo_model( self.handler )
+        self.thinness = c_size_t( thinness )
+        self.redshift = c_double( redshift )
+        self.handler = occupation
+        if isinstance( self.handler, harikane16_p ) :
+            self.obj = lib.create_halo_model_H16( self.handler.obj,
+                                                  self.cosmology.obj,
+                                                  self.redshift,
+                                                  self.thinness )
+            self.set_parameters = self._set_parameters_H16
+            
+        elif isinstance( self.handler, tinker10_p ) :
+            self.obj = lib.create_halo_model_T10( self.handler.obj,
+                                                  self.cosmology.obj,
+                                                  self.redshift,
+                                                  self.thinness )
+            self.set_parameters = self._set_parameters_T10
+            
+        else :
+            raise ValueError( 'Wrong value of occupation argument' ) 
         
     def __del__ ( self ) :
         
         # Python call to halo_model dtor:
         lib.free_halo_model( self.obj )
-        
-        # Python call to halo_model_handler dtor:
-        lib.free_hm_handler( self.handler )
 
-    def set_parameters ( self,
-                         DC = 0.5,
-                         M_min = 1.e+11,
-                         sigma_logM = 1.,
-                         M0 = 1.e+10,
-                         M1 = 1.e+10,
-                         alpha = 1. ) :
+    def _set_parameters_H16 ( self,
+                              DC = 0.5,
+                              M_min = 1.e+11,
+                              sigma_logM = 1.,
+                              M0 = 1.e+10,
+                              M1 = 1.e+10,
+                              alpha = 1. ) :
 
-        self.DC = DC
-        self.M_min = M_min
-        self.sigma_logM = sigma_logM
-        self.M0 = M0
-        self.M1 = M1
-        self.alpha = alpha
-        lib.set_parameters_hm( DC, M_min, sigma_logM, M0, M1, alpha, self.obj )
+        lib.set_parameters_hm_H16( DC, M_min, sigma_logM, M0, M1, alpha, self.obj )
 
         return;
 
-    def Ncen ( self, Mh ) :
+    def _set_parameters_T10 ( self,
+                              Amin = 1.e+11,
+                              siglogA = 1.,
+                              Asat = 1.e+10,
+                              alpsat = 1. ) :
 
-        return self.DC * lib.Ncen_hm( Mh, self.obj )
+        lib.set_parameters_hm_T10( Amin, siglogA, Asat, alpsat, self.obj )
 
-    def Nsat ( self, Mh ) :
+        return;
 
-        return self.DC * lib.Nsat_hm( Mh, self.obj )
+    # def set_parameters ( self,
+    #                      DC = 0.5,
+    #                      M_min = 1.e+11,
+    #                      sigma_logM = 1.,
+    #                      M0 = 1.e+10,
+    #                      M1 = 1.e+10,
+    #                      alpha = 1. ) :
+
+    #     self.DC = DC
+    #     self.M_min = M_min
+    #     self.sigma_logM = sigma_logM
+    #     self.M0 = M0
+    #     self.M1 = M1
+    #     self.alpha = alpha
+    #     lib.set_parameters_hm( DC, M_min, sigma_logM, M0, M1, alpha, self.obj )
+
+    #     return;
+
+    # def Ncen ( self, Mh ) :
+
+    #     return self.DC * lib.Ncen_hm( Mh, self.obj )
+
+    # def Nsat ( self, Mh ) :
+
+    #     return self.DC * lib.Nsat_hm( Mh, self.obj )
 
     def ng ( self ) :
 
