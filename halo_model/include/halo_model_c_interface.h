@@ -21,13 +21,13 @@ extern "C" {
 
   halo_model_t create_halo_model_H16 ( H16_occupation_t ocp_h16,
 				       cosmology_t cosmo,
-				       const double redshift = 1.e-7,
-				       const size_t thinness = 50 );
+				       const double redshift,
+				       const size_t thinness );
 
   halo_model_t create_halo_model_T10 ( T10_occupation_t ocp_t10,
 				       cosmology_t cosmo,
-				       const double redshift = 1.e-7,
-				       const size_t thinness = 50 );
+				       const double redshift,
+				       const size_t thinness );
 
   void free_halo_model ( halo_model_t hm );
 
