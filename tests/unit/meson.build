@@ -12,8 +12,7 @@ exe_cxx = executable( 'test_' + _t + '.x',
                       dependencies : [ hm_dep,
                                        cosmo_dep,
                                        gsl_dep,
-                                       utl_dep ],
-                      install : true )
+                                       utl_dep ] )
 
 # test( _t + '_run_and_diff',
 #       compare,
