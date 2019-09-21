@@ -1,3 +1,4 @@
+#include <memory>
 #include <cosmology.h>
 #include <halo_model.h>
 #include <harikane16_p.h>
@@ -20,13 +21,15 @@ int main () {
   sico::cosmology * pcosmo = new sico::cosmology { csmp, kh0, Pk0 };
 
   sico::tinker10_p * pocp_tinkr = new sico::tinker10_p { 1.e+11, 1., 1.e+11, 1. };
-  sico::halo_model hm { pocp_tinkr, pcosmo, 1.e-7, 20 };
+  sico::halo_model hm { std::make_shared< sico::tinker10_p >( ( *pocp_tinkr ) ),
+      std::make_shared< sico::cosmology >( ( *pcosmo ) ), 1.e-7, 20 };
 
-  hm.set_parameters( new sico::tinker10_p{ 1.e+10, 1., 1.e+11, 1. } );
+  hm.set_parameters( std::make_shared< sico::tinker10_p >( 1.e+10, 1., 1.e+11, 1. ) );
 
-  // these give segfault:
-  // delete pocp_tinkr;
-  // delete pcosmo;
+  std::cout << hm.ng() << "\t" << hm.Mhalo() << "\t" << hm.bias() << std::endl;
+
+  delete pocp_tinkr;
+  delete pcosmo;
   
   return 0;
 

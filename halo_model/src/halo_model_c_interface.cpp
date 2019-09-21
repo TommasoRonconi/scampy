@@ -1,8 +1,8 @@
 #include <cosmology.h>
-#include <halo_model_c_interface.h>
 #include <halo_model.h>
 #include <harikane16_p.h>
 #include <tinker10_p.h>
+#include <halo_model_c_interface.h>
 
 extern "C" {
   
@@ -16,8 +16,10 @@ extern "C" {
 				       const double redshift,
 				       const size_t thinness ) {
 
-    return new sico::halo_model { static_cast< sico::harikane16_p * >( ocp_h16 ),
-	static_cast< sico::cosmology * >( cosmo ), redshift, thinness };
+    return new sico::halo_model {
+      std::make_shared< sico::harikane16_p >( ( *static_cast< sico::harikane16_p * >( ocp_h16 ) ) ),
+	std::make_shared< sico::cosmology >( ( *static_cast< sico::cosmology * >( cosmo ) ) ),
+	redshift, thinness }; 
 
   }
 
@@ -26,8 +28,10 @@ extern "C" {
 				       const double redshift,
 				       const size_t thinness ) {
 
-    return new sico::halo_model { static_cast< sico::tinker10_p * >( ocp_t10 ),
-	static_cast< sico::cosmology * >( cosmo ), redshift, thinness };
+    return new sico::halo_model {
+      std::make_shared< sico::tinker10_p >( ( *static_cast< sico::tinker10_p * >( ocp_t10 ) ) ),
+	std::make_shared< sico::cosmology >( ( *static_cast< sico::cosmology * >( cosmo ) ) ),
+	redshift, thinness };
 
   }
   
@@ -51,8 +55,13 @@ extern "C" {
 			       double alpha,
 			       halo_model_t hm ) {
 
-    static_cast< sico::halo_model * >( hm )->set_parameters( new sico::harikane16_p {
-	DC, Mmin, sigma_logM, M0, M1, alpha } );
+    static_cast< sico::halo_model * >( hm )->
+      set_parameters( std::make_shared< sico::harikane16_p >( DC, Mmin,
+							      sigma_logM,
+							      M0, M1,
+							      alpha  ) );
+    // static_cast< sico::halo_model * >( hm )->set_parameters( new sico::harikane16_p {
+    // 	DC, Mmin, sigma_logM, M0, M1, alpha } );
     
   }
 
@@ -62,8 +71,11 @@ extern "C" {
 			       double alpsat,
 			       halo_model_t hm ) {
 
-    static_cast< sico::halo_model * >( hm )->set_parameters( new sico::tinker10_p {
-        Amin, siglogA, Asat, alpsat } );
+    static_cast< sico::halo_model * >( hm )->
+      set_parameters( std::make_shared< sico::tinker10_p >( Amin, siglogA,
+							    Asat, alpsat ) );
+    // static_cast< sico::halo_model * >( hm )->set_parameters( new sico::tinker10_p {
+    //     Amin, siglogA, Asat, alpsat } );
     
   }
   

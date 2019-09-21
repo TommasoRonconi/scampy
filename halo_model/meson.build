@@ -16,7 +16,8 @@ hm_lib = library( 'halo_model',
        	 	  include_directories : [ inc_hm,
                                           inc_cosmo,
                                           inc_intrp,
-                                          inc_fftlwrap ],
+                                          inc_fftlwrap,
+                                          inc_utl ],
 		  dependencies : [ omp_dep,
                                    gsl_dep,
                                    utl_dep,
@@ -29,7 +30,8 @@ hm_dep = declare_dependency( link_with : hm_lib,
                              include_directories : [ inc_hm,
                                                      inc_cosmo,
                                                      inc_intrp,
-                                                     inc_fftlwrap ] )
+                                                     inc_fftlwrap,
+                                                     inc_utl] )
 
 lib_headers += [ root + '/halo_model/' + inc_dir + '/halo_model.h' ]
 lib_headers += [ root + '/halo_model/' + inc_dir + '/occupation_p.h' ]

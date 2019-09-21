@@ -4,8 +4,8 @@
 
 //==============================================================================================
 
-sico::halo_model::halo_model ( sico::occupation_p * ocp,
-			       sico::cosmology * cosmo,
+sico::halo_model::halo_model ( const std::shared_ptr< sico::occupation_p > & ocp,
+			       const std::shared_ptr< sico::cosmology > & cosmo,
 			       const double redshift,
 			       const size_t thinness ) : _handler{ ocp },
 							 _cosmo{ cosmo },
@@ -68,9 +68,10 @@ sico::halo_model::halo_model ( sico::occupation_p * ocp,
 
 //==============================================================================================
 
-void sico::halo_model::set_parameters ( sico::occupation_p * ocp ) {
+void sico::halo_model::set_parameters ( const std::shared_ptr< sico::occupation_p > & ocp ) {
 
-  _handler = std::unique_ptr< sico::occupation_p >{ ocp };
+  _handler = ocp;
+  // _handler = std::unique_ptr< sico::occupation_p >{ ocp };
   
   auto f_Ncen = [ & ] ( double Mh ) { return _handler->Ncen( Mh ); };
   Ncen_f = sico::halo_model::interp_func { f_Ncen,

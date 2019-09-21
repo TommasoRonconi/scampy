@@ -4,6 +4,8 @@
 /// gsl includes
 #include <gsl/gsl_sf_erf.h>
 
+#include <memory>
+
 /// internal includes
 #include <utilities.h>
 #include <cosmology.h>
@@ -18,8 +20,8 @@ namespace sico {
 
   private:
 
-    std::unique_ptr< occupation_p > _handler {};
-    std::unique_ptr< cosmology > _cosmo {};
+    std::shared_ptr< occupation_p > _handler {};
+    std::shared_ptr< cosmology > _cosmo {};
     
     double _redshift = 1.e-7;
 
@@ -65,7 +67,8 @@ namespace sico {
 
     halo_model () = default;
 
-    halo_model ( occupation_p * ocp, cosmology * cosmo,
+    halo_model ( const std::shared_ptr< occupation_p > & ocp,
+		 const std::shared_ptr< cosmology > & cosmo,
 		 const double redshift = 1.e-7,
 		 const size_t thinness = 50 );
 
@@ -75,7 +78,7 @@ namespace sico {
 
     std::vector< double > get_kv () { return _kv; }
 
-    void set_parameters ( occupation_p * ocp );
+    void set_parameters ( const std::shared_ptr< occupation_p > & ocp );
 
     double ng ();
     
