@@ -285,7 +285,7 @@ class cosmology () :
 
     def stromgren_radius ( self, tt, Nion, nH, trec ) :
 
-        return Nion * trec * ( 1. - np.exp( - tt / trec ) ) / nH
+        return ( 0.75 * Nion * trec * ( 1. - np.exp( - tt / trec ) ) / ( nH * np.pi ) )**0.3333333333333333
         
 
         
