@@ -259,6 +259,37 @@ class cosmology () :
 
         return lib.cosmo_dphidL( c_double( ll ), c_double( zz ), self.obj )
 
+    def ionizing_photons ( self, sfr, fesc, kion ) :
+
+        return sfr * fesc * kion
+
+    def hydrogen_density ( self, zz ) :
+        """
+        Returns
+        -------
+        Hydrogen mean density at given redshift [ cm^-3 ]
+        """      
+        return 2.e-7 * self.OmegaM( zz ) * 45.454545455
+
+
+    def recombination_time ( self, zz, cHII = 3. ) :
+        """
+        Returns
+        -------
+        Recombination time in [ Gyr ]
+        """
+
+        red = 7. / ( 1. + zz )
+        
+        return 3.2 * red * red * red / cHII
+
+    def stromgren_radius ( self, tt, Nion, nH, trec ) :
+
+        return Nion * trec * ( 1. - np.exp( - tt / trec ) ) / nH
+        
+
+        
+
 if __name__ == '__main__' :
 
     input_dir = "../tests/integration_tests/input/"
