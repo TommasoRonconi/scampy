@@ -127,7 +127,15 @@ class catalogue () :
                                             mass       = self.gadget.mass[ ii ], 
                                             central    = central,
                                             satellites = satellites )
-        
+
+    # def get_num_cen ( self, store = False ) :
+
+    #     num_cen += len( obj.central ) for obj in self.content
+    #     if store :
+    #         self.num_cen = num_cen
+
+    #     return num_cen
+            
     def get_coord_cen ( self, store = False ) :
         """ Get the coordinates of all the central objects in the catalogue
         
