@@ -10,3 +10,4 @@ install*
 *.so
 *.x
 python/mockpy/__pycache__/*
+docs/build/*
