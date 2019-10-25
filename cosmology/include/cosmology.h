@@ -161,13 +161,6 @@ namespace sico {
     double phi_Lapi17_uvir ( const double & LL, const double & zz );
 
     double phi (const double & LL, const double & zz, const std::string & modelLF);
-    
-    double int_phi_Lapi17 ( const double & Lmin, const double & Lmax, const double & zz,
-			    const std::vector< double > & param );
-    
-    double int_phi_Lapi17_uv ( const double & Lmin, const double & Lmax, const double & zz );
-    
-    double int_phi_Lapi17_uvir ( const double & Lmin, const double & Lmax, const double & zz );
 
     /// @} End of luminosity functions
     

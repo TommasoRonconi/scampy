@@ -197,5 +197,31 @@ extern "C" {
   
   // ========================================================================================
 
+  double cosmo_dphidL_Bouwens15  ( const double ll, const double zz, const cosmology_t cosmo ) {
+
+    return static_cast< sico::cosmology * >( cosmo )->phi_Bouwens15( ll, zz );
+
+  }
+  
+  // ========================================================================================
+
+  double cosmo_dphidL_Bouwens16  ( const double ll, const double zz, const cosmology_t cosmo ) {
+
+    return static_cast< sico::cosmology * >( cosmo )->phi_Bouwens16( ll, zz );
+
+  }
+  
+  // ========================================================================================
+
+  double cosmo_dphidL_Lapi17  ( const double ll, const double zz,
+				const double * param, const cosmology_t cosmo ) {
+
+    std::vector< double > param_v { param, param + 12 };
+    return static_cast< sico::cosmology * >( cosmo )->phi_Lapi17( ll, zz, param_v );
+
+  }
+  
+  // ========================================================================================
+
 
 } // end extern "C"
