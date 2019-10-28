@@ -213,6 +213,22 @@ extern "C" {
   
   // ========================================================================================
 
+  double cosmo_dphidL_Lapi17_uv  ( const double ll, const double zz, const cosmology_t cosmo ) {
+
+    return static_cast< sico::cosmology * >( cosmo )->phi_Lapi17_uv( ll, zz );
+
+  }
+  
+  // ========================================================================================
+
+  double cosmo_dphidL_Lapi17_uvir  ( const double ll, const double zz, const cosmology_t cosmo ) {
+
+    return static_cast< sico::cosmology * >( cosmo )->phi_Lapi17_uvir( ll, zz );
+
+  }
+  
+  // ========================================================================================
+
   double cosmo_dphidL_Lapi17  ( const double ll, const double zz,
 				const double * param, const cosmology_t cosmo ) {
 

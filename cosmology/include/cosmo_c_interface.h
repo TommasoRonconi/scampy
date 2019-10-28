@@ -102,6 +102,10 @@ extern "C" {
 
   double cosmo_dphidL_Bouwens16 ( const double ll, const double zz, const cosmology_t cosmo );
 
+  double cosmo_dphidL_Lapi17_uv ( const double ll, const double zz, const cosmology_t cosmo );
+
+  double cosmo_dphidL_Lapi17_uvir ( const double ll, const double zz, const cosmology_t cosmo );
+
   double cosmo_dphidL_Lapi17 ( const double ll, const double zz,
 			       const double * param, const cosmology_t cosmo );
   

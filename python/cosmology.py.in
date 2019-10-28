@@ -140,6 +140,14 @@ class cosmology () :
         lib.cosmo_dphidL_Bouwens16.argtypes = [ c_double, c_double, c_void_p ]
         lib.cosmo_dphidL_Bouwens16.restype = c_double
 
+        #
+        lib.cosmo_dphidL_Lapi17_uv.argtypes = [ c_double, c_double, c_void_p ]
+        lib.cosmo_dphidL_Lapi17_uv.restype = c_double
+
+        #
+        lib.cosmo_dphidL_Lapi17_uvir.argtypes = [ c_double, c_double, c_void_p ]
+        lib.cosmo_dphidL_Lapi17_uvir.restype = c_double
+
         if len( kh0 ) == len( pk0 ) :
             self._size_k = len( kh0 )
         else :
@@ -274,6 +282,14 @@ class cosmology () :
     def dphidL_B16 ( self, ll, zz ) :
 
         return lib.cosmo_dphidL_Bouwens16( c_double( ll ), c_double( zz ), self.obj )
+
+    def dphidL_L17_uv ( self, ll, zz ) :
+
+        return lib.cosmo_dphidL_Lapi17_uv( c_double( ll ), c_double( zz ), self.obj )
+
+    def dphidL_L17_uvir ( self, ll, zz ) :
+
+        return lib.cosmo_dphidL_Lapi17_uvir( c_double( ll ), c_double( zz ), self.obj )
 
     def ionizing_photons ( self, sfr, fesc, kion ) :
 
