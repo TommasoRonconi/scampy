@@ -292,11 +292,26 @@ class cosmology () :
         return lib.cosmo_dphidL_Lapi17_uvir( c_double( ll ), c_double( zz ), self.obj )
 
     def ionizing_photons ( self, sfr, fesc, kion ) :
+        """
+        Parameters
+        ----------
+        sfr : star formation rate (S.F.R.)
+        fesc : escape fraction ( float between 0 and 1 )
+        kion : average production of ionizing photons per unit S.F.R.
+
+        Returns
+        -------
+        number of ionizing photons produced by the source per unit time
+        """
 
         return sfr * fesc * kion
 
     def hydrogen_density ( self, zz ) :
         """
+        Parameters
+        ----------
+        zz : redshift
+
         Returns
         -------
         Hydrogen mean density at given redshift [ cm^-3 ]
@@ -306,6 +321,11 @@ class cosmology () :
 
     def recombination_time ( self, zz, cHII = 3. ) :
         """
+        Parameters
+        ----------
+        zz : redshift
+        cHII : clumping factor of HII regions ( default = 3 )
+        
         Returns
         -------
         Recombination time in [ Gyr ]
@@ -316,6 +336,18 @@ class cosmology () :
         return 3.2 * red * red * red / cHII
 
     def stromgren_radius ( self, tt, Nion, nH, trec ) :
+        """
+        Parameters
+        ----------
+        tt : time elapsed since the production of ionizing photons started ( in [ Gyr ] )
+        Nion : number of ionizing photons produced in unit time
+        nH : average density of neutral hydrogen around source
+        trec : recombination time in [ Gyr ]
+
+        Returns
+        -------
+        radius of the completelly ionized region around source (i.e. Stromgren sphere )
+        """
 
         return ( 0.75 * Nion * trec * ( 1. - np.exp( - tt / trec ) ) / ( nH * np.pi ) )**0.3333333333333333
         
