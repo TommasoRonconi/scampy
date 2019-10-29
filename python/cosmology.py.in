@@ -1,4 +1,5 @@
 from ctypes import *
+import numpy as np
 
 lib = CDLL( "@COSMO_WRAP_PATH@" )
 
@@ -291,6 +292,19 @@ class cosmology () :
 
         return lib.cosmo_dphidL_Lapi17_uvir( c_double( ll ), c_double( zz ), self.obj )
 
+    def logsfr_from_Muv ( self, Muv ) :
+        """
+        Parameters
+        ----------
+        Muv : UV luminosity in [ mag ]
+
+        Returns
+        -------
+        Log10 S.F.R. in [ M_sol / yr ]
+        """
+
+        return 7.4 - 0.4 * Muv
+
     def ionizing_photons ( self, sfr, fesc, kion ) :
         """
         Parameters
@@ -358,7 +372,6 @@ if __name__ == '__main__' :
 
     input_dir = "../tests/integration_tests/input/"
 
-    import numpy as np
     kh0, pk0 = np.genfromtxt( input_dir + "not-norm_pk_lcdm_camb.dat",
                               unpack = True )
     cosmo = cosmology( kh0, pk0 )
