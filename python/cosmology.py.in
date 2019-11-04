@@ -1,7 +1,117 @@
 from ctypes import *
-import numpy as np
+import numpy 
 
 lib = CDLL( "@COSMO_WRAP_PATH@" )
+
+# Cosmology constructor
+lib.create_cosmology.argtypes = [ POINTER( c_cosmo_params_t ),
+                                  POINTER( c_double ),
+                                  POINTER( c_double ),
+                                  c_size_t,
+                                  c_double, c_double,
+                                  c_size_t ]
+lib.create_cosmology.restype = c_void_p
+
+# Cosmology destructor
+lib.free_cosmology.argtypes = [ c_void_p ]
+lib.free_cosmology.restype = c_void_p
+
+# H( z )
+lib.cosmo_Hz.argtypes = [ c_double, c_void_p ]
+lib.cosmo_Hz.restype = c_double
+
+# d_C
+lib.cosmo_dC.argtypes = [ c_double, c_void_p ]
+lib.cosmo_dC.restype = c_double
+
+# derivative of d_C
+lib.cosmo_ddC.argtypes = [ c_double, c_void_p ]
+lib.cosmo_ddC.restype = c_double
+
+# dV/dzdOmega
+lib.cosmo_comoving_volume_unit.argtypes = [ c_double, c_void_p ]
+lib.cosmo_comoving_volume_unit.restype = c_double
+
+# V( z )
+lib.cosmo_comoving_volume.argtypes = [ c_double, c_void_p ]
+lib.cosmo_comoving_volume.restype = c_double
+
+# t_age( z )
+lib.cosmo_cosmic_time.argtypes = [ c_double, c_void_p ]
+lib.cosmo_cosmic_time.restype = c_double
+
+# rho_crit( z )
+lib.cosmo_rho_crit.argtypes = [ c_double, c_void_p ]
+lib.cosmo_rho_crit.restype = c_double
+
+# rho_crit( z ) comoving
+lib.cosmo_rho_crit_comoving.argtypes = [ c_double, c_void_p ]
+lib.cosmo_rho_crit_comoving.restype = c_double
+
+# matter density parameter
+lib.cosmo_OmegaM.argtypes = [ c_double, c_void_p ]
+lib.cosmo_OmegaM.restype = c_double
+
+# linear critical overdensity at given redshift
+lib.cosmo_deltac.argtypes = [ c_double, c_void_p ]
+lib.cosmo_deltac.restype = c_double
+
+# overdensity parameter ( Bryan & Norman '98 )
+lib.cosmo_Deltac_BN98.argtypes = [ c_double, c_void_p ]
+lib.cosmo_Deltac_BN98.restype = c_double
+
+# overdensity parameter ( Nakamura & Suto '98 )
+lib.cosmo_Deltac_NS98.argtypes = [ c_double, c_void_p ]
+lib.cosmo_Deltac_NS98.restype = c_double
+
+# growth factor at given redshift
+lib.cosmo_DD.argtypes = [ c_double, c_void_p ]
+lib.cosmo_DD.restype = c_double
+
+# growth factor at given redshift
+lib.cosmo_gz.argtypes = [ c_double, c_void_p ]
+lib.cosmo_gz.restype = c_double
+
+# linear power spectrum at given redshift
+lib.cosmo_Pk.argtypes = [ c_double, c_double, c_void_p ]
+lib.cosmo_Pk.restype = c_double
+
+# cosmic mass-variance
+lib.cosmo_sigma2M.argtypes = [ c_double, c_double, c_void_p ]
+lib.cosmo_sigma2M.restype = c_double
+
+# halo-mass function
+lib.cosmo_dndM.argtypes = [ c_double, c_double, c_void_p ]
+lib.cosmo_dndM.restype = c_double
+
+# halo bias
+lib.cosmo_hbias.argtypes = [ c_double, c_double, c_void_p ]
+lib.cosmo_hbias.restype = c_double
+
+# density profile of DM haloes in fourier space
+lib.cosmo_density_profile_FS.argtypes = [ c_double, c_double, c_double, c_void_p ]
+lib.cosmo_density_profile_FS.restype = c_double
+
+# luminosity function ( default )
+lib.cosmo_dphidL.argtypes = [ c_double, c_double, c_void_p ]
+lib.cosmo_dphidL.restype = c_double
+
+# luminosity function ( Bouwens et al., 2015 )
+lib.cosmo_dphidL_Bouwens15.argtypes = [ c_double, c_double, c_void_p ]
+lib.cosmo_dphidL_Bouwens15.restype = c_double
+
+# luminosity function ( Bouwens et al., 2016 )
+lib.cosmo_dphidL_Bouwens16.argtypes = [ c_double, c_double, c_void_p ]
+lib.cosmo_dphidL_Bouwens16.restype = c_double
+
+# UV luminosity function ( Lapi et al., 2017 )
+lib.cosmo_dphidL_Lapi17_uv.argtypes = [ c_double, c_double, c_void_p ]
+lib.cosmo_dphidL_Lapi17_uv.restype = c_double
+
+# UV+IR-corrected luminosity function ( Lapi et al., 2017 )
+lib.cosmo_dphidL_Lapi17_uvir.argtypes = [ c_double, c_double, c_void_p ]
+lib.cosmo_dphidL_Lapi17_uvir.restype = c_double
+        
 
 class c_cosmo_params_t ( Structure ) :
     _fields_ = [
@@ -17,6 +127,9 @@ class c_cosmo_params_t ( Structure ) :
 
 #Wrap class cosmology:
 class cosmology () :
+    """ 
+    Class to handle cosmology parameterisation and functions
+    """
 
     params = { 'Om_M' : 0.3,
                'Om_b' : 0.045,
@@ -39,116 +152,21 @@ class cosmology () :
     def __init__ ( self, kh0, pk0,
                    zmin = 1.e-7, zmax = 1.e+7,
                    thinness = 200 ) :
-        
-        # Cosmology constructor
-        lib.create_cosmology.argtypes = [ POINTER( c_cosmo_params_t ),
-                                          POINTER( c_double ),
-                                          POINTER( c_double ),
-                                          c_size_t,
-                                          c_double, c_double,
-                                          c_size_t ]
-        lib.create_cosmology.restype = c_void_p
+        """
+        Constructor of the class cosmology
 
-        # Cosmology destructor
-        lib.free_cosmology.argtypes = [ c_void_p ]
-        lib.free_cosmology.restype = c_void_p
+        Parameters
+        ----------
+        kh0, pk0 : input power spectrum binned at logarithmically equispaced values of k/h at redshift z = 0
+                   the P(k) will be authomatically re-normalized at the required value of sigma_8
+        zmin : minimum value of redshift for interpolation (note: must be > 0.)
+        zmax : maximum value of redshift for interpolation
+        thinness : number of bins of the interpolation in redshift-space
 
-        #
-        lib.cosmo_Hz.argtypes = [ c_double, c_void_p ]
-        lib.cosmo_Hz.restype = c_double
-
-        #
-        lib.cosmo_dC.argtypes = [ c_double, c_void_p ]
-        lib.cosmo_dC.restype = c_double
-
-        #
-        lib.cosmo_ddC.argtypes = [ c_double, c_void_p ]
-        lib.cosmo_ddC.restype = c_double
-
-        #
-        lib.cosmo_comoving_volume_unit.argtypes = [ c_double, c_void_p ]
-        lib.cosmo_comoving_volume_unit.restype = c_double
-
-        #
-        lib.cosmo_comoving_volume.argtypes = [ c_double, c_void_p ]
-        lib.cosmo_comoving_volume.restype = c_double
-
-        #
-        lib.cosmo_cosmic_time.argtypes = [ c_double, c_void_p ]
-        lib.cosmo_cosmic_time.restype = c_double
-
-        #
-        lib.cosmo_rho_crit.argtypes = [ c_double, c_void_p ]
-        lib.cosmo_rho_crit.restype = c_double
-
-        #
-        lib.cosmo_rho_crit_comoving.argtypes = [ c_double, c_void_p ]
-        lib.cosmo_rho_crit_comoving.restype = c_double
-
-        #
-        lib.cosmo_OmegaM.argtypes = [ c_double, c_void_p ]
-        lib.cosmo_OmegaM.restype = c_double
-
-        #
-        lib.cosmo_deltac.argtypes = [ c_double, c_void_p ]
-        lib.cosmo_deltac.restype = c_double
-
-        #
-        lib.cosmo_Deltac_BN98.argtypes = [ c_double, c_void_p ]
-        lib.cosmo_Deltac_BN98.restype = c_double
-
-        #
-        lib.cosmo_Deltac_NS98.argtypes = [ c_double, c_void_p ]
-        lib.cosmo_Deltac_NS98.restype = c_double
-
-        #
-        lib.cosmo_DD.argtypes = [ c_double, c_void_p ]
-        lib.cosmo_DD.restype = c_double
-
-        #
-        lib.cosmo_gz.argtypes = [ c_double, c_void_p ]
-        lib.cosmo_gz.restype = c_double
-
-        #
-        lib.cosmo_Pk.argtypes = [ c_double, c_double, c_void_p ]
-        lib.cosmo_Pk.restype = c_double
-
-        #
-        lib.cosmo_sigma2M.argtypes = [ c_double, c_double, c_void_p ]
-        lib.cosmo_sigma2M.restype = c_double
-
-        #
-        lib.cosmo_dndM.argtypes = [ c_double, c_double, c_void_p ]
-        lib.cosmo_dndM.restype = c_double
-
-        #
-        lib.cosmo_hbias.argtypes = [ c_double, c_double, c_void_p ]
-        lib.cosmo_hbias.restype = c_double
-
-        #
-        lib.cosmo_density_profile_FS.argtypes = [ c_double, c_double, c_double, c_void_p ]
-        lib.cosmo_density_profile_FS.restype = c_double
-
-        #
-        lib.cosmo_dphidL.argtypes = [ c_double, c_double, c_void_p ]
-        lib.cosmo_dphidL.restype = c_double
-
-        #
-        lib.cosmo_dphidL_Bouwens15.argtypes = [ c_double, c_double, c_void_p ]
-        lib.cosmo_dphidL_Bouwens15.restype = c_double
-
-        #
-        lib.cosmo_dphidL_Bouwens16.argtypes = [ c_double, c_double, c_void_p ]
-        lib.cosmo_dphidL_Bouwens16.restype = c_double
-
-        #
-        lib.cosmo_dphidL_Lapi17_uv.argtypes = [ c_double, c_double, c_void_p ]
-        lib.cosmo_dphidL_Lapi17_uv.restype = c_double
-
-        #
-        lib.cosmo_dphidL_Lapi17_uvir.argtypes = [ c_double, c_double, c_void_p ]
-        lib.cosmo_dphidL_Lapi17_uvir.restype = c_double
-
+        Returns
+        -------
+        Object of class cosmology        
+        """
         if len( kh0 ) == len( pk0 ) :
             self._size_k = len( kh0 )
         else :
@@ -363,7 +381,7 @@ class cosmology () :
         radius of the completelly ionized region around source (i.e. Stromgren sphere )
         """
 
-        return ( 0.75 * Nion * trec * ( 1. - np.exp( - tt / trec ) ) / ( nH * np.pi ) )**0.3333333333333333
+        return ( 0.75 * Nion * trec * ( 1. - numpy.exp( - tt / trec ) ) / ( nH * numpy.pi ) )**0.3333333333333333
         
 
         
@@ -372,7 +390,7 @@ if __name__ == '__main__' :
 
     input_dir = "../tests/integration_tests/input/"
 
-    kh0, pk0 = np.genfromtxt( input_dir + "not-norm_pk_lcdm_camb.dat",
+    kh0, pk0 = numpy.genfromtxt( input_dir + "not-norm_pk_lcdm_camb.dat",
                               unpack = True )
     cosmo = cosmology( kh0, pk0 )
 
