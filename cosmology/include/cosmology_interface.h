@@ -255,6 +255,12 @@ namespace sico {
       
     }
 
+    double Omegab ( const double zz ) {
+
+      return  param->Om_b / ( Ea2( zz ) * ( 1 + zz ) );
+      
+    }
+
     double deltac ( const double & zz );
 
     double Delta_c_BryanNorman98 ( const double & zz );

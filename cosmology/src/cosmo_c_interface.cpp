@@ -106,6 +106,14 @@ extern "C" {
   
   // ========================================================================================
 
+  double cosmo_Omegab  ( const double zz, const cosmology_t cosmo ) {
+
+    return static_cast< sico::cosmology * >( cosmo )->Omegab( zz );
+
+  }
+  
+  // ========================================================================================
+
   double cosmo_deltac  ( const double zz, const cosmology_t cosmo ) {
 
     return static_cast< sico::cosmology * >( cosmo )->deltac( zz );

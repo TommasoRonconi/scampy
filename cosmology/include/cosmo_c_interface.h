@@ -73,6 +73,8 @@ extern "C" {
 
   double cosmo_OmegaM ( const double zz, const cosmology_t cosmo );
 
+  double cosmo_Omegab ( const double zz, const cosmology_t cosmo );
+
   double cosmo_deltac ( const double zz, const cosmology_t cosmo );
 
   double cosmo_Deltac_BN98 ( const double zz, const cosmology_t cosmo );
