@@ -90,6 +90,10 @@ class cosmology () :
         lib.cosmo_OmegaM.restype = c_double
 
         #
+        lib.cosmo_Omegab.argtypes = [ c_double, c_void_p ]
+        lib.cosmo_Omegab.restype = c_double
+
+        #
         lib.cosmo_deltac.argtypes = [ c_double, c_void_p ]
         lib.cosmo_deltac.restype = c_double
 
@@ -232,6 +236,10 @@ class cosmology () :
 
         return lib.cosmo_OmegaM( c_double( zz ), self.obj )
 
+    def Omegab ( self, zz ) :
+
+        return lib.cosmo_Omegab( c_double( zz ), self.obj )
+
     def deltac ( self, zz ) :
 
         return lib.cosmo_deltac( c_double( zz ), self.obj )
@@ -303,7 +311,7 @@ class cosmology () :
         Log10 S.F.R. in [ M_sol / yr ]
         """
 
-        return 7.4 - 0.4 * Muv
+        return - 7.4 - 0.4 * Muv
 
     def ionizing_photons ( self, sfr, fesc, kion ) :
         """
@@ -315,7 +323,7 @@ class cosmology () :
 
         Returns
         -------
-        number of ionizing photons produced by the source per unit time
+        number of ionizing photons produced by the source per unit time [ sec^-1 ]
         """
 
         return sfr * fesc * kion
@@ -330,7 +338,7 @@ class cosmology () :
         -------
         Hydrogen mean density at given redshift [ cm^-3 ]
         """      
-        return 2.e-7 * self.OmegaM( zz ) * 45.454545455
+        return 2.e-7 * self.Omegab( zz ) * 45.454545455
 
 
     def recombination_time ( self, zz, cHII = 3. ) :
@@ -363,7 +371,7 @@ class cosmology () :
         radius of the completelly ionized region around source (i.e. Stromgren sphere )
         """
 
-        return ( 0.75 * Nion * trec * ( 1. - np.exp( - tt / trec ) ) / ( nH * np.pi ) )**0.3333333333333333
+        return ( 0.75 * ( np.pi * 1.e+7 * Nion ) * ( 1.e+9 * trec ) * ( 1. - np.exp( - tt / trec ) ) / ( nH * np.pi ) )**0.3333333333333333 * 3.2407789e-25
         
 
         
