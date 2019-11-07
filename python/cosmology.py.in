@@ -185,6 +185,10 @@ class cosmology () :
 
 
     def __del__ ( self ) :
+        """
+        Destructor of the class cosmology
+        It calls the corresponding destructor wrapped from C
+        """
 
         # Python call to cosmology dtor:
         lib.free_cosmology( self.obj )
@@ -198,6 +202,24 @@ class cosmology () :
                          Om_K = 0.,
                          hh = 0.7,
                          sigma8 = 0.8 ) :
+        """
+        Function to set cosmological parameters
+
+        Parameters
+        ----------
+        Om_M :
+        Om_b :
+        Om_L :
+        Om_n :
+        Om_r :
+        Om_K :
+        hh :
+        sigma8 :
+
+        Returns 
+        -------
+        nothing
+        """
         self._c_par = c_cosmo_params_t( Om_M, Om_b, Om_L, Om_n, Om_r, Om_K, hh, sigma8 )
         self.params= { 'Om_M' : Om_M,
                        'Om_b' : Om_b,
@@ -215,98 +237,266 @@ class cosmology () :
         return
 
     def Hz ( self, zz ) :
+        """
+        Parameters
+        ----------
+
+        Returns
+        -------
+        """
 
         return lib.cosmo_Hz( c_double( zz ), self.obj )
 
     def dC ( self, zz ) :
+        """
+        Parameters
+        ----------
+
+        Returns
+        -------
+        """
 
         return lib.cosmo_dC( c_double( zz ), self.obj )
 
     def ddCdz ( self, zz ) :
+        """
+        Parameters
+        ----------
+
+        Returns
+        -------
+        """
 
         return lib.cosmo_ddC( c_double( zz ), self.obj )
 
     def comoving_volume_unit ( self, zz ) :
+        """
+        Parameters
+        ----------
+
+        Returns
+        -------
+        """
 
         return lib.cosmo_comoving_volume_unit( c_double( zz ), self.obj )
 
     def comoving_volume ( self, zz ) :
+        """
+        Parameters
+        ----------
+
+        Returns
+        -------
+        """
 
         return lib.cosmo_comoving_volume( c_double( zz ), self.obj )
 
     def cosmic_time ( self, zz ) :
+        """
+        Parameters
+        ----------
+
+        Returns
+        -------
+        """
 
         return lib.cosmo_cosmic_time( c_double( zz ), self.obj )
 
     def rho_crit ( self, zz ) :
+        """
+        Parameters
+        ----------
+
+        Returns
+        -------
+        """
 
         return lib.cosmo_rho_crit( c_double( zz ), self.obj )
 
     def rho_crit_comoving ( self, zz ) :
+        """
+        Parameters
+        ----------
+
+        Returns
+        -------
+        """
 
         return lib.cosmo_rho_crit_comoving( c_double( zz ), self.obj )
 
     def OmegaM ( self, zz ) :
+        """
+        Parameters
+        ----------
+
+        Returns
+        -------
+        """
 
         return lib.cosmo_OmegaM( c_double( zz ), self.obj )
 
     def deltac ( self, zz ) :
+        """
+        Parameters
+        ----------
+
+        Returns
+        -------
+        """
 
         return lib.cosmo_deltac( c_double( zz ), self.obj )
 
     def Deltac_BN98 ( self, zz ) :
+        """
+        Parameters
+        ----------
+
+        Returns
+        -------
+        """
 
         return lib.cosmo_Deltac_BN98( c_double( zz ), self.obj )
 
     def Deltac_NS98 ( self, zz ) :
+        """
+        Parameters
+        ----------
+
+        Returns
+        -------
+        """
 
         return lib.cosmo_Deltac_NS98( c_double( zz ), self.obj )
 
     def DD ( self, zz ) :
+        """
+        Parameters
+        ----------
+
+        Returns
+        -------
+        """
 
         return lib.cosmo_DD( c_double( zz ), self.obj )
 
     def gz ( self, zz ) :
+        """
+        Parameters
+        ----------
+
+        Returns
+        -------
+        """
 
         return lib.cosmo_gz( c_double( zz ), self.obj )
 
     def Pk ( self, kk, zz ) :
+        """
+        Parameters
+        ----------
+
+        Returns
+        -------
+        """
 
         return lib.cosmo_Pk( c_double( kk ), c_double( zz ), self.obj )
 
     def sigma2M ( self, mm, zz ) :
+        """
+        Parameters
+        ----------
+
+        Returns
+        -------
+        """
 
         return lib.cosmo_sigma2M( c_double( mm ), c_double( zz ), self.obj )
 
     def dndM ( self, mm, zz ) :
+        """
+        Parameters
+        ----------
+
+        Returns
+        -------
+        """
 
         return lib.cosmo_dndM( c_double( mm ), c_double( zz ), self.obj )
 
     def hbias ( self, mm, zz ) :
+        """
+        Parameters
+        ----------
+
+        Returns
+        -------
+        """
 
         return lib.cosmo_hbias( c_double( mm ), c_double( zz ), self.obj )
 
     def density_profile_FS ( self, kk, mm, zz ) :
+        """
+        Parameters
+        ----------
+
+        Returns
+        -------
+        """
 
         return lib.cosmo_density_profile_FS( c_double( kk ), c_double( mm ), c_double( zz ), self.obj )
 
     def dphidL ( self, ll, zz ) :
+        """
+        Parameters
+        ----------
+
+        Returns
+        -------
+        """
 
         return lib.cosmo_dphidL( c_double( ll ), c_double( zz ), self.obj )
 
     def dphidL_B15 ( self, ll, zz ) :
+        """
+        Parameters
+        ----------
+
+        Returns
+        -------
+        """
 
         return lib.cosmo_dphidL_Bouwens15( c_double( ll ), c_double( zz ), self.obj )
 
     def dphidL_B16 ( self, ll, zz ) :
+        """
+        Parameters
+        ----------
+
+        Returns
+        -------
+        """
 
         return lib.cosmo_dphidL_Bouwens16( c_double( ll ), c_double( zz ), self.obj )
 
     def dphidL_L17_uv ( self, ll, zz ) :
+        """
+        Parameters
+        ----------
+
+        Returns
+        -------
+        """
 
         return lib.cosmo_dphidL_Lapi17_uv( c_double( ll ), c_double( zz ), self.obj )
 
     def dphidL_L17_uvir ( self, ll, zz ) :
+        """
+        Parameters
+        ----------
+
+        Returns
+        -------
+        """
 
         return lib.cosmo_dphidL_Lapi17_uvir( c_double( ll ), c_double( zz ), self.obj )
 
