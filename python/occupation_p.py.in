@@ -1,8 +1,12 @@
 from ctypes import *
+import numpy
 
 class occupation_p :
 
     # _param = None
+    @classmethod
+    def load () :
+        pass
 
     def __init__ ( self ) :
         pass
@@ -11,6 +15,9 @@ class occupation_p :
         pass
 
     def Nsat ( self, *args, **kwargs ) :
+        pass
+
+    def save ( self, out_file ) :
         pass
 
 
@@ -35,6 +42,17 @@ lib.Nsat_H16_ocp.argtypes = [ c_double, c_void_p ]
 lib.Nsat_H16_ocp.restype = c_double
 
 class harikane16_p ( occupation_p ) :
+    
+    @classmethod
+    def load ( cls, in_file ) :
+
+        param = numpy.load( in_file )
+        if len( param ) != 6 :
+            raise RuntimeError( "The input parameter file passed ( " +
+                                in_file +
+                                " ) has the wrong number of parameters ( {:d}, should be 6 )".format( len( param ) ) )
+        
+        return cls( *param )
 
     def __init__ ( self,
                    DC = 0.5,
@@ -93,6 +111,17 @@ class harikane16_p ( occupation_p ) :
 
         return lib.Nsat_H16_ocp( c_double( Mh ), self.obj )
 
+    def save ( self, out_file ) :
+
+        numpy.save( out_file, numpy.array( [ self._DC.value,
+                                             self._M_min.value,
+                                             self._sigma_logM.value,
+                                             self._M0.value,
+                                             self._M1.value,
+                                             self._alpha.value ] ) )
+
+        return;
+
 #
 lib.create_T10_occupation.argtypes = [ c_double, c_double,
                                        c_double, c_double ]
@@ -116,6 +145,17 @@ class tinker10_p ( occupation_p ) :
     #            'siglogA' : _siglogA,
     #            'Asat' : _Asat,
     #            'alpsat' : _alpsat }
+    
+    @classmethod
+    def load ( cls, in_file ) :
+
+        param = numpy.load( in_file )
+        if len( param ) != 4 :
+            raise RuntimeError( "The input parameter file passed ( " +
+                                in_file +
+                                " ) has the wrong number of parameters ( {:d}, should be 4 )".format( len( param ) ) )
+        
+        return cls( *param )
     
     def __init__ ( self,
                    Amin = 1.e+11,
@@ -163,3 +203,12 @@ class tinker10_p ( occupation_p ) :
     def Nsat ( self, Mh ) :
 
         return lib.Nsat_T10_ocp( c_double( Mh ), self.obj )
+
+    def save ( self, out_file ) :
+
+        numpy.save( out_file, numpy.array( [ self._Amin.value,
+                                             self._siglogA.value,
+                                             self._Asat.value,
+                                             self._alpsat.value ] ) )
+
+        return;
