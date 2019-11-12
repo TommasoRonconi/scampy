@@ -34,16 +34,6 @@ sico::cross_halo_model::cross_halo_model ( const std::shared_ptr< sico::occupati
 						_mass_integ_lim.inf,
 						_mass_integ_lim.sup,
 						_thinness };
-  // auto f_Ncen1 = [ & ] ( double Mh ) { return _pop1->Ncen( Mh ); };
-  // Ncen1_f = sico::cross_halo_model::interp_func { f_Ncen1,
-  // 						  _mass_integ_lim.inf,
-  // 						  _mass_integ_lim.sup,
-  // 						  _thinness };
-  // auto f_Nsat1 = [ & ] ( double Mh ) { return _pop1->Nsat( Mh ); };
-  // Nsat1_f = sico::cross_halo_model::interp_func { f_Nsat1,
-  // 						  _mass_integ_lim.inf,
-  // 						  _mass_integ_lim.sup,
-  // 						  _thinness };
 
   // Population 2
   auto f_Ng2 = [ & ] ( double Mh ) { return _pop2->Ncen( Mh ) + _pop2->Nsat( Mh ); };
@@ -51,16 +41,6 @@ sico::cross_halo_model::cross_halo_model ( const std::shared_ptr< sico::occupati
 						_mass_integ_lim.inf,
 						_mass_integ_lim.sup,
 						_thinness };
-  // auto f_Ncen2 = [ & ] ( double Mh ) { return _pop2->Ncen( Mh ); };
-  // Ncen2_f = sico::cross_halo_model::interp_func { f_Ncen2,
-  // 						  _mass_integ_lim.inf,
-  // 						  _mass_integ_lim.sup,
-  // 						  _thinness };
-  // auto f_Nsat2 = [ & ] ( double Mh ) { return _pop2->Nsat( Mh ); };
-  // Nsat2_f = sico::cross_halo_model::interp_func { f_Nsat2,
-  // 						  _mass_integ_lim.inf,
-  // 						  _mass_integ_lim.sup,
-  // 						  _thinness };
   
   _Mv = Ng1_f.get_xv();
 
@@ -104,17 +84,6 @@ void sico::cross_halo_model::set_parameters_pop1 ( const std::shared_ptr< sico::
 						_mass_integ_lim.sup,
 						_thinness };
   
-  // auto f_Ncen = [ & ] ( double Mh ) { return _pop1->Ncen( Mh ); };
-  // Ncen1_f = sico::cross_halo_model::interp_func { f_Ncen,
-  // 						  _mass_integ_lim.inf,
-  // 						  _mass_integ_lim.sup,
-  // 						  _thinness };
-  // auto f_Nsat = [ & ] ( double Mh ) { return _pop1->Nsat( Mh ); };
-  // Nsat1_f = sico::cross_halo_model::interp_func { f_Nsat,
-  // 						  _mass_integ_lim.inf,
-  // 						  _mass_integ_lim.sup,
-  // 						  _thinness };
-  
   return;
   
 }
@@ -130,17 +99,6 @@ void sico::cross_halo_model::set_parameters_pop2 ( const std::shared_ptr< sico::
 						_mass_integ_lim.inf,
 						_mass_integ_lim.sup,
 						_thinness };
-  
-  // auto f_Ncen = [ & ] ( double Mh ) { return _pop2->Ncen( Mh ); };
-  // Ncen2_f = sico::cross_halo_model::interp_func { f_Ncen,
-  // 						  _mass_integ_lim.inf,
-  // 						  _mass_integ_lim.sup,
-  // 						  _thinness };
-  // auto f_Nsat = [ & ] ( double Mh ) { return _pop2->Nsat( Mh ); };
-  // Nsat2_f = sico::cross_halo_model::interp_func { f_Nsat,
-  // 						  _mass_integ_lim.inf,
-  // 						  _mass_integ_lim.sup,
-  // 						  _thinness };
   
   return;
   
@@ -173,11 +131,6 @@ double sico::cross_halo_model::ng2 () {
 // ============================================================================================
 
 double sico::cross_halo_model::Pk_1halo ( const size_t ii, const double fact ) {
-
-  // // density profile -> it depends on cosmology
-  // const double uk = _cosmo->density_profile_FS( kk, Mh );
-  // const double ukp_cs = ( Nc * Ns > 1 ) ? uk * uk : uk;
-  // const double ukp_ss = ( Ns * Ns > 1 ) ? uk * uk : uk;
 
   auto integrand =						\
     Ng1_f * Ng2_f * dndM_f					\

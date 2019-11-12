@@ -73,7 +73,9 @@ lib_headers += [ root + '/halo_model/' + inc_dir + '/occupation_c_interface.h' ]
 # Halo-Model Lib C Interface
 
 hm_c_lib = library( 'hm_c_wrap',
-                    [ 'src/halo_model_c_interface.cpp' ],
+                    [ 'src/halo_model_c_interface.cpp'# ,
+                      # 'src/cross_halo_model_c_interface.cpp'
+                    ],
                     include_directories : [ inc_hm,
                                             inc_cosmo,
                                             inc_intrp,
@@ -97,6 +99,8 @@ hm_c_path = '/'.join( [ get_option( 'prefix' ),
                         get_option( 'libdir' ),
                         hm_c_lib_name ] )
 
-lib_headers += [ root + '/halo_model/' + inc_dir + '/halo_model_c_interface.h' ]
+lib_headers += [ root + '/halo_model/' + inc_dir + '/halo_model_c_interface.h'# ,
+                 # root + '/halo_model/' + inc_dir + '/cross_halo_model_c_interface.h'
+]
 
 #######################################################################

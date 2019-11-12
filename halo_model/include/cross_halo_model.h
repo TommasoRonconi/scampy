@@ -46,8 +46,7 @@ namespace sico {
     using interp_func = class sico::utl::interpolator< sico::utl::gsl_log_interp >;
 
     interp_func dndM_f {}, hbias_f {};
-    interp_func Ng1_f {}, Ng2_f{}; //Ncen1_f {}, Nsat1_f {}, Ncen2_f {}, Nsat2_f {};
-    interp_func const2_f {};
+    interp_func Ng1_f {}, Ng2_f{};
 
     std::vector< interp_func > density_profile_FS;
 
