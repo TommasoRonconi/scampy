@@ -92,11 +92,11 @@ class harikane16_p ( occupation_p ) :
                          alpha = None ) :
 
         self._DC = c_double( DC ) if DC is not None else self._DC
-        self._M_min = c_double( M_min ) if DC is not None else self._M_min
-        self._sigma_logM = c_double( sigma_logM ) if DC is not None else self._sigma_logM
-        self._M0 = c_double( M0 ) if DC is not None else self._M0
-        self._M1 = c_double( M1 ) if DC is not None else self._M1
-        self._alpha = c_double( alpha ) if DC is not None else self._alpha
+        self._M_min = c_double( M_min ) if M_min is not None else self._M_min
+        self._sigma_logM = c_double( sigma_logM ) if sigma_logM is not None else self._sigma_logM
+        self._M0 = c_double( M0 ) if M0 is not None else self._M0
+        self._M1 = c_double( M1 ) if M1 is not None else self._M1
+        self._alpha = c_double( alpha ) if alpha is not None else self._alpha
         
         self.obj = lib.create_H16_occupation( self._DC, self._M_min,
                                               self._sigma_logM, self._M0,
@@ -187,10 +187,10 @@ class tinker10_p ( occupation_p ) :
                          Asat = None,
                          alpsat = None ) :
 
-        self._Amin = c_double( Amin ) if DC is not None else self._Amin
-        self._siglogA = c_double( siglogA ) if DC is not None else self._siglogA
-        self._Asat = c_double( Asat ) if DC is not None else self._Asat
-        self._alpsat = c_double( alpsat ) if DC is not None else self._alpsat
+        self._Amin = c_double( Amin ) if Amin is not None else self._Amin
+        self._siglogA = c_double( siglogA ) if siglogA is not None else self._siglogA
+        self._Asat = c_double( Asat ) if Asat is not None else self._Asat
+        self._alpsat = c_double( alpsat ) if alpsat is not None else self._alpsat
         
         self.obj = lib.create_T10_occupation( self._Amin, self._siglogA,
                                               self._Asat, self._alpsat )
