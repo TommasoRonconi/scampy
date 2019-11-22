@@ -5,13 +5,13 @@
 #include <interpolation.h>
 
 /**
- *  @addtogroup sico
+ *  @addtogroup scam
  *
  *  @{
  */
 
 /// General namespace of the library 
-namespace sico {
+namespace scam {
 
   struct cosmo_p {
 
@@ -125,8 +125,8 @@ namespace sico {
      * @{ 
      */
 
-    using interp_lin = class sico::utl::interpolator< sico::utl::gsl_lin_interp >;
-    using interp_log = class sico::utl::interpolator< sico::utl::gsl_log_interp >;
+    using interp_lin = class scam::utl::interpolator< scam::utl::gsl_lin_interp >;
+    using interp_log = class scam::utl::interpolator< scam::utl::gsl_log_interp >;
 
     interp_log Ez_f {}, zE_f {};
     interp_log P0_f {};
@@ -142,7 +142,7 @@ namespace sico {
     cosmo_model () {
 
       param = std::unique_ptr< cosmo_p > { new cosmo_p };
-      std::vector< double > kh0 = sico::utl::log_vector( 200, 1.e-4, 1.e+4 );
+      std::vector< double > kh0 = scam::utl::log_vector( 200, 1.e-4, 1.e+4 );
       P0_f = interp_log { kh0, kh0 };
       set_internal();
 
@@ -211,7 +211,7 @@ namespace sico {
      * @brief Function that returns the Hubble-distance \f$H_0\ [ pc ]\f$ at given redshift \f$z\f$
      *
      */
-    double d_H ( const double zz ) { return 1.e-3 * sico::cc / H_z( zz ); }
+    double d_H ( const double zz ) { return 1.e-3 * scam::cc / H_z( zz ); }
     
     double d_C ( const double zz ) { return d_H0 * zE_f.integrate( 1.e-7, zz ); }
     double dd_C ( const double zz ) { return d_H0 * zE_f( zz ); }
@@ -289,7 +289,7 @@ namespace sico {
      */
     double DD ( const double & zz ) noexcept;
 
-    /// growth factor (see function sico::cosmo_model::DD)
+    /// growth factor (see function scam::cosmo_model::DD)
     double gz ( const double & zz ) noexcept { return ( 1 + zz ) * DD( zz ); }
 
     /// @} End of matter density related functions
@@ -345,7 +345,7 @@ namespace sico {
 
   }; //endstruct cosmo_model
 
-} //endnamespace sico
+} //endnamespace scam
 
 /** 
  * @} End of Doxygen Groups

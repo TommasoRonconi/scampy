@@ -14,7 +14,7 @@
 #include <abel_transform.h>
 #include <occupation_p.h>
 
-namespace sico {
+namespace scam {
 
   class halo_model {
 
@@ -43,7 +43,7 @@ namespace sico {
      *  @{
      */
 
-    using interp_func = class sico::utl::interpolator< sico::utl::gsl_log_interp >;
+    using interp_func = class scam::utl::interpolator< scam::utl::gsl_log_interp >;
 
     interp_func dndM_f {}, hbias_f {}, Ncen_f {}, Nsat_f {}, const2_f {};
 
@@ -121,6 +121,6 @@ namespace sico {
 
   }; //endclass halo_model
 
-} //endnamespace sico
+} //endnamespace scam
 
 #endif //__HALO_MODEL__

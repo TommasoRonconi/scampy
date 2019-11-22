@@ -1,6 +1,6 @@
 #include <bit_manipulator.h>
 
-void sico::utl::showbits ( const long int & KK ) {
+void scam::utl::showbits ( const long int & KK ) {
   
   std::bitset< bitset_size > manip_this { size_t( KK ) };
   
@@ -10,7 +10,7 @@ void sico::utl::showbits ( const long int & KK ) {
 
 }  
 
-bool sico::utl::bittest ( const long int & KK, const int pos ) {
+bool scam::utl::bittest ( const long int & KK, const int pos ) {
 
   std::bitset< bitset_size > manip_this { size_t( KK ) };
   
@@ -18,7 +18,7 @@ bool sico::utl::bittest ( const long int & KK, const int pos ) {
 
 }
 
-long int sico::utl::bitset ( const long int & KK, const int pos ) {
+long int scam::utl::bitset ( const long int & KK, const int pos ) {
 
   std::bitset< bitset_size > manip_this { size_t( KK ) };
 
@@ -28,7 +28,7 @@ long int sico::utl::bitset ( const long int & KK, const int pos ) {
 
 }
 
-long int sico::utl::bitclr ( const long int & KK, const int pos ) {
+long int scam::utl::bitclr ( const long int & KK, const int pos ) {
 
   std::bitset< bitset_size > manip_this { size_t( KK ) };
 
@@ -38,7 +38,7 @@ long int sico::utl::bitclr ( const long int & KK, const int pos ) {
 
 }
 
-long int sico::utl::bits ( const long int & KK, const int pos, const int lenght ) {
+long int scam::utl::bits ( const long int & KK, const int pos, const int lenght ) {
 
   std::bitset< bitset_size > manip_this { size_t( KK ) }, ret_set;
 
@@ -49,7 +49,7 @@ long int sico::utl::bits ( const long int & KK, const int pos, const int lenght 
 
 }
 
-long int sico::utl::bitshift ( const long int & KK, const int pos ) {
+long int scam::utl::bitshift ( const long int & KK, const int pos ) {
 
   if ( pos > 0 )
     return ( KK << pos );

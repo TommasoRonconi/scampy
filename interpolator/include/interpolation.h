@@ -11,7 +11,7 @@
 #include <interpolation_interface.h>
 #include <gsl_interpolation_interface.h>
 
-namespace sico {
+namespace scam {
 
   namespace utl {
 
@@ -100,6 +100,6 @@ namespace sico {
 
   } //endnamespace utl
 
-} //endnamespace sico
+} //endnamespace scam
 
 #endif //__INTERPOLATOR__

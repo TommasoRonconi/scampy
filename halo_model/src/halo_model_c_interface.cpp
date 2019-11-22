@@ -16,9 +16,9 @@ extern "C" {
 				       const double redshift,
 				       const size_t thinness ) {
 
-    return new sico::halo_model {
-      std::make_shared< sico::harikane16_p >( ( *static_cast< sico::harikane16_p * >( ocp_h16 ) ) ),
-	std::make_shared< sico::cosmology >( ( *static_cast< sico::cosmology * >( cosmo ) ) ),
+    return new scam::halo_model {
+      std::make_shared< scam::harikane16_p >( ( *static_cast< scam::harikane16_p * >( ocp_h16 ) ) ),
+	std::make_shared< scam::cosmology >( ( *static_cast< scam::cosmology * >( cosmo ) ) ),
 	redshift, thinness }; 
 
   }
@@ -28,9 +28,9 @@ extern "C" {
 				       const double redshift,
 				       const size_t thinness ) {
 
-    return new sico::halo_model {
-      std::make_shared< sico::tinker10_p >( ( *static_cast< sico::tinker10_p * >( ocp_t10 ) ) ),
-	std::make_shared< sico::cosmology >( ( *static_cast< sico::cosmology * >( cosmo ) ) ),
+    return new scam::halo_model {
+      std::make_shared< scam::tinker10_p >( ( *static_cast< scam::tinker10_p * >( ocp_t10 ) ) ),
+	std::make_shared< scam::cosmology >( ( *static_cast< scam::cosmology * >( cosmo ) ) ),
 	redshift, thinness };
 
   }
@@ -39,7 +39,7 @@ extern "C" {
 
   void free_halo_model ( halo_model_t hm ) {
 
-    delete static_cast< sico::halo_model * >( hm );
+    delete static_cast< scam::halo_model * >( hm );
 
     return;
 
@@ -55,12 +55,12 @@ extern "C" {
 			       double alpha,
 			       halo_model_t hm ) {
 
-    static_cast< sico::halo_model * >( hm )->
-      set_parameters( std::make_shared< sico::harikane16_p >( DC, Mmin,
+    static_cast< scam::halo_model * >( hm )->
+      set_parameters( std::make_shared< scam::harikane16_p >( DC, Mmin,
 							      sigma_logM,
 							      M0, M1,
 							      alpha  ) );
-    // static_cast< sico::halo_model * >( hm )->set_parameters( new sico::harikane16_p {
+    // static_cast< scam::halo_model * >( hm )->set_parameters( new scam::harikane16_p {
     // 	DC, Mmin, sigma_logM, M0, M1, alpha } );
     
   }
@@ -71,10 +71,10 @@ extern "C" {
 			       double alpsat,
 			       halo_model_t hm ) {
 
-    static_cast< sico::halo_model * >( hm )->
-      set_parameters( std::make_shared< sico::tinker10_p >( Amin, siglogA,
+    static_cast< scam::halo_model * >( hm )->
+      set_parameters( std::make_shared< scam::tinker10_p >( Amin, siglogA,
 							    Asat, alpsat ) );
-    // static_cast< sico::halo_model * >( hm )->set_parameters( new sico::tinker10_p {
+    // static_cast< scam::halo_model * >( hm )->set_parameters( new scam::tinker10_p {
     //     Amin, siglogA, Asat, alpsat } );
     
   }
@@ -83,7 +83,7 @@ extern "C" {
 
   size_t get_thinness_hm ( halo_model_t hm ) {
 
-    return static_cast< sico::halo_model * >( hm )->get_thinness();
+    return static_cast< scam::halo_model * >( hm )->get_thinness();
 
   }
   
@@ -91,7 +91,7 @@ extern "C" {
 
   double Ncen_hm ( double Mh, halo_model_t hm ) {
 
-    return static_cast< sico::halo_model * >( hm )->Ncen( Mh );
+    return static_cast< scam::halo_model * >( hm )->Ncen( Mh );
 
   }
   
@@ -99,7 +99,7 @@ extern "C" {
 
   double Nsat_hm ( double Mh, halo_model_t hm ) {
 
-    return static_cast< sico::halo_model * >( hm )->Nsat( Mh );
+    return static_cast< scam::halo_model * >( hm )->Nsat( Mh );
 
   }
   
@@ -107,7 +107,7 @@ extern "C" {
 
   double ng_hm ( halo_model_t hm ) {
 
-    return static_cast< sico::halo_model * >( hm )->ng();
+    return static_cast< scam::halo_model * >( hm )->ng();
 
   }
   
@@ -115,7 +115,7 @@ extern "C" {
 
   double bias_hm ( halo_model_t hm ) {
 
-    return static_cast< sico::halo_model * >( hm )->bias();
+    return static_cast< scam::halo_model * >( hm )->bias();
 
   }
   
@@ -123,7 +123,7 @@ extern "C" {
 
   double Mhalo_hm ( halo_model_t hm ) {
 
-    return static_cast< sico::halo_model * >( hm )->Mhalo();
+    return static_cast< scam::halo_model * >( hm )->Mhalo();
 
   }
   
@@ -131,7 +131,7 @@ extern "C" {
 
   double dngdM_hm ( double Mh, halo_model_t hm ) {
 
-    return static_cast< sico::halo_model * >( hm )->dngdM( Mh );
+    return static_cast< scam::halo_model * >( hm )->dngdM( Mh );
 
   }
   
@@ -139,8 +139,8 @@ extern "C" {
 
   void model_Pk_hm ( double * kv, double * Pk, halo_model_t hm ) {
 
-    std::vector< double > kv_v = static_cast< sico::halo_model * >( hm )->get_kv();
-    std::vector< double > Pk_v = static_cast< sico::halo_model * >( hm )->model_Pk();
+    std::vector< double > kv_v = static_cast< scam::halo_model * >( hm )->get_kv();
+    std::vector< double > Pk_v = static_cast< scam::halo_model * >( hm )->model_Pk();
 
     for ( size_t ii = 0; ii < Pk_v.size(); ++ii ) {
       kv[ ii ] = kv_v[ ii ];
@@ -155,8 +155,8 @@ extern "C" {
 
   void model_Pk_1halo_hm ( double * kv, double * Pk, halo_model_t hm ) {
 
-    std::vector< double > kv_v = static_cast< sico::halo_model * >( hm )->get_kv();
-    std::vector< double > Pk_v = static_cast< sico::halo_model * >( hm )->model_Pk_1halo();
+    std::vector< double > kv_v = static_cast< scam::halo_model * >( hm )->get_kv();
+    std::vector< double > Pk_v = static_cast< scam::halo_model * >( hm )->model_Pk_1halo();
 
     for ( size_t ii = 0; ii < Pk_v.size(); ++ii ) {
       kv[ ii ] = kv_v[ ii ];
@@ -169,8 +169,8 @@ extern "C" {
 
   void model_Pk_cs_hm ( double * kv, double * Pk, halo_model_t hm ) {
 
-    std::vector< double > kv_v = static_cast< sico::halo_model * >( hm )->get_kv();
-    std::vector< double > Pk_v = static_cast< sico::halo_model * >( hm )->model_Pk_cs();
+    std::vector< double > kv_v = static_cast< scam::halo_model * >( hm )->get_kv();
+    std::vector< double > Pk_v = static_cast< scam::halo_model * >( hm )->model_Pk_cs();
 
     for ( size_t ii = 0; ii < Pk_v.size(); ++ii ) {
       kv[ ii ] = kv_v[ ii ];
@@ -183,8 +183,8 @@ extern "C" {
 
   void model_Pk_ss_hm ( double * kv, double * Pk, halo_model_t hm ) {
 
-    std::vector< double > kv_v = static_cast< sico::halo_model * >( hm )->get_kv();
-    std::vector< double > Pk_v = static_cast< sico::halo_model * >( hm )->model_Pk_ss();
+    std::vector< double > kv_v = static_cast< scam::halo_model * >( hm )->get_kv();
+    std::vector< double > Pk_v = static_cast< scam::halo_model * >( hm )->model_Pk_ss();
 
     for ( size_t ii = 0; ii < Pk_v.size(); ++ii ) {
       kv[ ii ] = kv_v[ ii ];
@@ -199,8 +199,8 @@ extern "C" {
 
   void model_Pk_2halo_hm ( double * kv, double * Pk, halo_model_t hm ) {
 
-    std::vector< double > kv_v = static_cast< sico::halo_model * >( hm )->get_kv();
-    std::vector< double > Pk_v = static_cast< sico::halo_model * >( hm )->model_Pk_2halo();
+    std::vector< double > kv_v = static_cast< scam::halo_model * >( hm )->get_kv();
+    std::vector< double > Pk_v = static_cast< scam::halo_model * >( hm )->model_Pk_2halo();
 
     for ( size_t ii = 0; ii < Pk_v.size(); ++ii ) {
       kv[ ii ] = kv_v[ ii ];
@@ -216,7 +216,7 @@ extern "C" {
   void model_Xi_hm ( double * rr, double * Xi, unsigned int size, halo_model_t hm ) {
 
     std::vector< double > rr_v { rr, rr + size };
-    std::vector< double > Xi_v = static_cast< sico::halo_model * >( hm )->model_Xi( rr_v );
+    std::vector< double > Xi_v = static_cast< scam::halo_model * >( hm )->model_Xi( rr_v );
 
     for ( size_t ii = 0; ii < size; ++ii ) Xi[ ii ] = Xi_v[ ii ];
 
@@ -229,7 +229,7 @@ extern "C" {
   void model_Xi_1halo_hm ( double * rr, double * Xi, unsigned int size, halo_model_t hm ) {
 
     std::vector< double > rr_v { rr, rr + size };
-    std::vector< double > Xi_v = static_cast< sico::halo_model * >( hm )->model_Xi_1halo( rr_v );
+    std::vector< double > Xi_v = static_cast< scam::halo_model * >( hm )->model_Xi_1halo( rr_v );
 
     for ( size_t ii = 0; ii < size; ++ii ) Xi[ ii ] = Xi_v[ ii ];
 
@@ -242,7 +242,7 @@ extern "C" {
   void model_Xi_2halo_hm ( double * rr, double * Xi, unsigned int size, halo_model_t hm ) {
 
     std::vector< double > rr_v { rr, rr + size };
-    std::vector< double > Xi_v = static_cast< sico::halo_model * >( hm )->model_Xi_2halo( rr_v );
+    std::vector< double > Xi_v = static_cast< scam::halo_model * >( hm )->model_Xi_2halo( rr_v );
 
     for ( size_t ii = 0; ii < size; ++ii ) Xi[ ii ] = Xi_v[ ii ];
 
@@ -255,7 +255,7 @@ extern "C" {
   void model_Wr_hm ( double * rp, double * Wr, unsigned int size, halo_model_t hm ) {
 
     std::vector< double > rp_v { rp, rp + size };
-    std::vector< double > Wr_v = static_cast< sico::halo_model * >( hm )->model_Wr( rp_v );
+    std::vector< double > Wr_v = static_cast< scam::halo_model * >( hm )->model_Wr( rp_v );
 
     for ( size_t ii = 0; ii < size; ++ii ) Wr[ ii ] = Wr_v[ ii ];
 
@@ -268,7 +268,7 @@ extern "C" {
   void model_Wr_1halo_hm ( double * rp, double * Wr, unsigned int size, halo_model_t hm ) {
 
     std::vector< double > rp_v { rp, rp + size };
-    std::vector< double > Wr_v = static_cast< sico::halo_model * >( hm )->model_Wr_1halo( rp_v );
+    std::vector< double > Wr_v = static_cast< scam::halo_model * >( hm )->model_Wr_1halo( rp_v );
 
     for ( size_t ii = 0; ii < size; ++ii ) Wr[ ii ] = Wr_v[ ii ];
 
@@ -281,7 +281,7 @@ extern "C" {
   void model_Wr_2halo_hm ( double * rp, double * Wr, unsigned int size, halo_model_t hm ) {
 
     std::vector< double > rp_v { rp, rp + size };
-    std::vector< double > Wr_v = static_cast< sico::halo_model * >( hm )->model_Wr_2halo( rp_v );
+    std::vector< double > Wr_v = static_cast< scam::halo_model * >( hm )->model_Wr_2halo( rp_v );
 
     for ( size_t ii = 0; ii < size; ++ii ) Wr[ ii ] = Wr_v[ ii ];
 
@@ -294,7 +294,7 @@ extern "C" {
   void model_Wt_hm ( double * tt, double * Wt, unsigned int size, halo_model_t hm ) {
 
     std::vector< double > tt_v { tt, tt + size };
-    std::vector< double > Wt_v = static_cast< sico::halo_model * >( hm )->model_Wt( tt_v );
+    std::vector< double > Wt_v = static_cast< scam::halo_model * >( hm )->model_Wt( tt_v );
 
     for ( size_t ii = 0; ii < size; ++ii ) Wt[ ii ] = Wt_v[ ii ];
 
@@ -307,7 +307,7 @@ extern "C" {
   void model_Wt_1halo_hm ( double * tt, double * Wt, unsigned int size, halo_model_t hm ) {
 
     std::vector< double > tt_v { tt, tt + size };
-    std::vector< double > Wt_v = static_cast< sico::halo_model * >( hm )->model_Wt_1halo( tt_v );
+    std::vector< double > Wt_v = static_cast< scam::halo_model * >( hm )->model_Wt_1halo( tt_v );
 
     for ( size_t ii = 0; ii < size; ++ii ) Wt[ ii ] = Wt_v[ ii ];
 
@@ -318,7 +318,7 @@ extern "C" {
   void model_Wt_cs_hm ( double * tt, double * Wt, unsigned int size, halo_model_t hm ) {
 
     std::vector< double > tt_v { tt, tt + size };
-    std::vector< double > Wt_v = static_cast< sico::halo_model * >( hm )->model_Wt_cs( tt_v );
+    std::vector< double > Wt_v = static_cast< scam::halo_model * >( hm )->model_Wt_cs( tt_v );
 
     for ( size_t ii = 0; ii < size; ++ii ) Wt[ ii ] = Wt_v[ ii ];
 
@@ -329,7 +329,7 @@ extern "C" {
   void model_Wt_ss_hm ( double * tt, double * Wt, unsigned int size, halo_model_t hm ) {
 
     std::vector< double > tt_v { tt, tt + size };
-    std::vector< double > Wt_v = static_cast< sico::halo_model * >( hm )->model_Wt_ss( tt_v );
+    std::vector< double > Wt_v = static_cast< scam::halo_model * >( hm )->model_Wt_ss( tt_v );
 
     for ( size_t ii = 0; ii < size; ++ii ) Wt[ ii ] = Wt_v[ ii ];
 
@@ -342,7 +342,7 @@ extern "C" {
   void model_Wt_2halo_hm ( double * tt, double * Wt, unsigned int size, halo_model_t hm ) {
 
     std::vector< double > tt_v { tt, tt + size };
-    std::vector< double > Wt_v = static_cast< sico::halo_model * >( hm )->model_Wt_2halo( tt_v );
+    std::vector< double > Wt_v = static_cast< scam::halo_model * >( hm )->model_Wt_2halo( tt_v );
 
     for ( size_t ii = 0; ii < size; ++ii ) Wt[ ii ] = Wt_v[ ii ];
 
@@ -355,7 +355,7 @@ extern "C" {
   void model_Wt_large_scale_hm ( double * tt, double * Wt, unsigned int size, halo_model_t hm ) {
 
     std::vector< double > tt_v { tt, tt + size };
-    std::vector< double > Wt_v = static_cast< sico::halo_model * >( hm )->model_Wt_large_scale( tt_v );
+    std::vector< double > Wt_v = static_cast< scam::halo_model * >( hm )->model_Wt_large_scale( tt_v );
 
     for ( size_t ii = 0; ii < size; ++ii ) Wt[ ii ] = Wt_v[ ii ];
 
@@ -367,7 +367,7 @@ extern "C" {
 
   double * get_kv_hm ( halo_model_t hm ) {
 
-    std::vector< double > kv = static_cast< sico::halo_model * >( hm )->get_kv();
+    std::vector< double > kv = static_cast< scam::halo_model * >( hm )->get_kv();
     
     return kv.data();
 

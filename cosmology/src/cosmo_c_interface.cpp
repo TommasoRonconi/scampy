@@ -13,14 +13,14 @@ extern "C" {
 
     std::vector< double > kh0_v { kh0, kh0 + size_k };
     std::vector< double > Pk0_v { Pk0, Pk0 + size_k };
-    std::unique_ptr< sico::cosmo_p > params {
-      new sico::cosmo_p {
+    std::unique_ptr< scam::cosmo_p > params {
+      new scam::cosmo_p {
 	csmp->Om_M,
 	  csmp->Om_b, csmp->Om_L,
 	  csmp->Om_n, csmp->Om_r, csmp->Om_K,
 	  csmp->hh, csmp->sigma8 } };
 
-    return new sico::cosmology { params, kh0_v, Pk0_v, zmin, zmax, thin };
+    return new scam::cosmology { params, kh0_v, Pk0_v, zmin, zmax, thin };
     
   }    
   
@@ -28,7 +28,7 @@ extern "C" {
 
   void free_cosmology ( cosmology_t cosmo ) {
 
-    delete static_cast< sico::cosmology * >( cosmo );
+    delete static_cast< scam::cosmology * >( cosmo );
 
   }
   
@@ -36,7 +36,7 @@ extern "C" {
 
   double cosmo_Hz  ( const double zz, const cosmology_t cosmo ) {
 
-    return static_cast< sico::cosmology * >( cosmo )->H_z( zz );
+    return static_cast< scam::cosmology * >( cosmo )->H_z( zz );
 
   }
   
@@ -44,7 +44,7 @@ extern "C" {
 
   double cosmo_dC  ( const double zz, const cosmology_t cosmo ) {
 
-    return static_cast< sico::cosmology * >( cosmo )->d_C( zz );
+    return static_cast< scam::cosmology * >( cosmo )->d_C( zz );
 
   }
   
@@ -52,7 +52,7 @@ extern "C" {
 
   double cosmo_ddC  ( const double zz, const cosmology_t cosmo ) {
 
-    return static_cast< sico::cosmology * >( cosmo )->dd_C( zz );
+    return static_cast< scam::cosmology * >( cosmo )->dd_C( zz );
 
   }
   
@@ -60,7 +60,7 @@ extern "C" {
 
   double cosmo_comoving_volume_unit  ( const double zz, const cosmology_t cosmo ) {
 
-    return static_cast< sico::cosmology * >( cosmo )->comoving_volume_unit( zz );
+    return static_cast< scam::cosmology * >( cosmo )->comoving_volume_unit( zz );
 
   }
   
@@ -68,7 +68,7 @@ extern "C" {
 
   double cosmo_comoving_volume  ( const double zz, const cosmology_t cosmo ) {
 
-    return static_cast< sico::cosmology * >( cosmo )->comoving_volume( zz );
+    return static_cast< scam::cosmology * >( cosmo )->comoving_volume( zz );
 
   }
   
@@ -76,7 +76,7 @@ extern "C" {
 
   double cosmo_cosmic_time  ( const double zz, const cosmology_t cosmo ) {
 
-    return static_cast< sico::cosmology * >( cosmo )->cosmic_time( zz );
+    return static_cast< scam::cosmology * >( cosmo )->cosmic_time( zz );
 
   }
   
@@ -84,7 +84,7 @@ extern "C" {
 
   double cosmo_rho_crit ( const double zz, const cosmology_t cosmo ) {
 
-    return static_cast< sico::cosmology * >( cosmo )->rho_crit( zz );
+    return static_cast< scam::cosmology * >( cosmo )->rho_crit( zz );
 
   }
   
@@ -92,7 +92,7 @@ extern "C" {
 
   double cosmo_rho_crit_comoving ( const double zz, const cosmology_t cosmo ) {
 
-    return static_cast< sico::cosmology * >( cosmo )->rho_crit_comoving( zz );
+    return static_cast< scam::cosmology * >( cosmo )->rho_crit_comoving( zz );
 
   }
   
@@ -100,7 +100,7 @@ extern "C" {
 
   double cosmo_OmegaM  ( const double zz, const cosmology_t cosmo ) {
 
-    return static_cast< sico::cosmology * >( cosmo )->OmegaM( zz );
+    return static_cast< scam::cosmology * >( cosmo )->OmegaM( zz );
 
   }
   
@@ -108,7 +108,7 @@ extern "C" {
 
   double cosmo_Omegab  ( const double zz, const cosmology_t cosmo ) {
 
-    return static_cast< sico::cosmology * >( cosmo )->Omegab( zz );
+    return static_cast< scam::cosmology * >( cosmo )->Omegab( zz );
 
   }
   
@@ -116,7 +116,7 @@ extern "C" {
 
   double cosmo_deltac  ( const double zz, const cosmology_t cosmo ) {
 
-    return static_cast< sico::cosmology * >( cosmo )->deltac( zz );
+    return static_cast< scam::cosmology * >( cosmo )->deltac( zz );
 
   }
   
@@ -124,7 +124,7 @@ extern "C" {
 
   double cosmo_Deltac_BN98  ( const double zz, const cosmology_t cosmo ) {
 
-    return static_cast< sico::cosmology * >( cosmo )->Delta_c_BryanNorman98( zz );
+    return static_cast< scam::cosmology * >( cosmo )->Delta_c_BryanNorman98( zz );
 
   }
   
@@ -132,7 +132,7 @@ extern "C" {
 
   double cosmo_Deltac_NS98  ( const double zz, const cosmology_t cosmo ) {
 
-    return static_cast< sico::cosmology * >( cosmo )->Delta_c_NakamuraSuto98( zz );
+    return static_cast< scam::cosmology * >( cosmo )->Delta_c_NakamuraSuto98( zz );
 
   }
   
@@ -140,7 +140,7 @@ extern "C" {
 
   double cosmo_DD  ( const double zz, const cosmology_t cosmo ) {
 
-    return static_cast< sico::cosmology * >( cosmo )->DD( zz );
+    return static_cast< scam::cosmology * >( cosmo )->DD( zz );
 
   }
   
@@ -148,7 +148,7 @@ extern "C" {
 
   double cosmo_gz  ( const double zz, const cosmology_t cosmo ) {
 
-    return static_cast< sico::cosmology * >( cosmo )->gz( zz );
+    return static_cast< scam::cosmology * >( cosmo )->gz( zz );
 
   }
   
@@ -156,7 +156,7 @@ extern "C" {
 
   double cosmo_Pk  ( const double kk, const double zz, const cosmology_t cosmo ) {
 
-    return static_cast< sico::cosmology * >( cosmo )->Pk( kk, zz );
+    return static_cast< scam::cosmology * >( cosmo )->Pk( kk, zz );
 
   }
   
@@ -164,7 +164,7 @@ extern "C" {
 
   double cosmo_sigma2M  ( const double mm, const double zz, const cosmology_t cosmo ) {
 
-    return static_cast< sico::cosmology * >( cosmo )->sigma2M( mm, zz );
+    return static_cast< scam::cosmology * >( cosmo )->sigma2M( mm, zz );
 
   }
   
@@ -172,7 +172,7 @@ extern "C" {
 
   double cosmo_dndM  ( const double mm, const double zz, const cosmology_t cosmo ) {
 
-    return static_cast< sico::cosmology * >( cosmo )->dndM( mm, zz );
+    return static_cast< scam::cosmology * >( cosmo )->dndM( mm, zz );
 
   }
   
@@ -180,7 +180,7 @@ extern "C" {
 
   double cosmo_hbias  ( const double mm, const double zz, const cosmology_t cosmo ) {
 
-    return static_cast< sico::cosmology * >( cosmo )->hbias( mm, zz );
+    return static_cast< scam::cosmology * >( cosmo )->hbias( mm, zz );
 
   }
   
@@ -191,7 +191,7 @@ extern "C" {
 				     const double zz,
 				     const cosmology_t cosmo ) {
 
-    return static_cast< sico::cosmology * >( cosmo )->density_profile_FS( kk, mm, zz );
+    return static_cast< scam::cosmology * >( cosmo )->density_profile_FS( kk, mm, zz );
 
   }
   
@@ -199,7 +199,7 @@ extern "C" {
 
   double cosmo_dphidL  ( const double ll, const double zz, const cosmology_t cosmo ) {
 
-    return static_cast< sico::cosmology * >( cosmo )->phi_Bouwens15( ll, zz );
+    return static_cast< scam::cosmology * >( cosmo )->phi_Bouwens15( ll, zz );
 
   }
   
@@ -207,7 +207,7 @@ extern "C" {
 
   double cosmo_dphidL_Bouwens15  ( const double ll, const double zz, const cosmology_t cosmo ) {
 
-    return static_cast< sico::cosmology * >( cosmo )->phi_Bouwens15( ll, zz );
+    return static_cast< scam::cosmology * >( cosmo )->phi_Bouwens15( ll, zz );
 
   }
   
@@ -215,7 +215,7 @@ extern "C" {
 
   double cosmo_dphidL_Bouwens16  ( const double ll, const double zz, const cosmology_t cosmo ) {
 
-    return static_cast< sico::cosmology * >( cosmo )->phi_Bouwens16( ll, zz );
+    return static_cast< scam::cosmology * >( cosmo )->phi_Bouwens16( ll, zz );
 
   }
   
@@ -223,7 +223,7 @@ extern "C" {
 
   double cosmo_dphidL_Lapi17_uv  ( const double ll, const double zz, const cosmology_t cosmo ) {
 
-    return static_cast< sico::cosmology * >( cosmo )->phi_Lapi17_uv( ll, zz );
+    return static_cast< scam::cosmology * >( cosmo )->phi_Lapi17_uv( ll, zz );
 
   }
   
@@ -231,7 +231,7 @@ extern "C" {
 
   double cosmo_dphidL_Lapi17_uvir  ( const double ll, const double zz, const cosmology_t cosmo ) {
 
-    return static_cast< sico::cosmology * >( cosmo )->phi_Lapi17_uvir( ll, zz );
+    return static_cast< scam::cosmology * >( cosmo )->phi_Lapi17_uvir( ll, zz );
 
   }
   
@@ -241,7 +241,7 @@ extern "C" {
 				const double * param, const cosmology_t cosmo ) {
 
     std::vector< double > param_v { param, param + 12 };
-    return static_cast< sico::cosmology * >( cosmo )->phi_Lapi17( ll, zz, param_v );
+    return static_cast< scam::cosmology * >( cosmo )->phi_Lapi17( ll, zz, param_v );
 
   }
   

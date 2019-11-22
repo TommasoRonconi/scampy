@@ -1,10 +1,10 @@
 #include <utilities.h>
 
-using namespace sico;
+using namespace scam;
 
 //==============================================================================================
 
-size_t sico::utl::lines_in_file ( std::ifstream & fin ) {
+size_t scam::utl::lines_in_file ( std::ifstream & fin ) {
 
   return std::count( std::istreambuf_iterator< char >( fin ),
 		     std::istreambuf_iterator< char >(), '\n' );
@@ -13,7 +13,7 @@ size_t sico::utl::lines_in_file ( std::ifstream & fin ) {
 
 //==============================================================================================
 
-size_t sico::utl::lines_in_file ( const std::string & input_file ) {
+size_t scam::utl::lines_in_file ( const std::string & input_file ) {
 
   std::ifstream fin ( input_file.c_str() );
   size_t counter = utl::lines_in_file( fin );
@@ -25,7 +25,7 @@ size_t sico::utl::lines_in_file ( const std::string & input_file ) {
 
 //==============================================================================================
 
-double sico::utl::gen_func ( const double xx, void * prm ) {
+double scam::utl::gen_func ( const double xx, void * prm ) {
   
   utl::STR_generic_func_GSL * pp = ( utl::STR_generic_func_GSL * ) prm;
   return pp->f( xx );
@@ -34,7 +34,7 @@ double sico::utl::gen_func ( const double xx, void * prm ) {
 
 //==============================================================================================
 
-double sico::utl::integrate_qng ( std::function< double( double ) > func,
+double scam::utl::integrate_qng ( std::function< double( double ) > func,
 				  const double aa, const double bb, const double prec ) {
 
   // build gsl_function
@@ -66,7 +66,7 @@ double sico::utl::integrate_qng ( std::function< double( double ) > func,
 
 //==============================================================================================
 
-double sico::utl::integrate_qag ( std::function< double( double ) > func,
+double scam::utl::integrate_qag ( std::function< double( double ) > func,
 				  const double aa, const double bb,
 				  const double prec, const int limit_size, const int rule ) {
 
@@ -99,7 +99,7 @@ double sico::utl::integrate_qag ( std::function< double( double ) > func,
 
 //==============================================================================================
 
-double sico::utl::integrate_trap ( std::function< double( double ) > func,
+double scam::utl::integrate_trap ( std::function< double( double ) > func,
 				   const double aa, const double bb, const size_t size ) {
  
   double integral = 0.;
@@ -113,7 +113,7 @@ double sico::utl::integrate_trap ( std::function< double( double ) > func,
 
 //==============================================================================================
 
-double sico::utl::gen_root ( const double xx, void * prm ) {
+double scam::utl::gen_root ( const double xx, void * prm ) {
   
   utl::STR_generic_func_GSL * pp = ( utl::STR_generic_func_GSL * ) prm;
   return pp->f( xx ) - pp->xx0;
@@ -122,7 +122,7 @@ double sico::utl::gen_root ( const double xx, void * prm ) {
 
 //==============================================================================================
 
-double sico::utl::root_brent (  std::function< double( double ) > func, const double xx0,
+double scam::utl::root_brent (  std::function< double( double ) > func, const double xx0,
 				const double low_guess, const double up_guess,
 				const double rel_err, const double abs_err ) {
 
@@ -157,8 +157,8 @@ double sico::utl::root_brent (  std::function< double( double ) > func, const do
     status = gsl_root_fsolver_iterate( s );
 
     if ( (status != GSL_SUCCESS ) && ( status != GSL_CONTINUE ) )
-      throw sico_err::gsl_fail {
-	"Error in gsl routine gsl_root_fsolver_iterate() used in sico::utl::root_brent()."
+      throw scam_err::gsl_fail {
+	"Error in gsl routine gsl_root_fsolver_iterate() used in scam::utl::root_brent()."
 	  };
     
     r = gsl_root_fsolver_root( s );
@@ -168,8 +168,8 @@ double sico::utl::root_brent (  std::function< double( double ) > func, const do
     status = gsl_root_test_interval( x_lo, x_hi, abs_err, rel_err );
 
     if ( ( status != GSL_SUCCESS ) && ( status != GSL_CONTINUE ) )
-      throw sico_err::gsl_fail {
-	"Error in gsl routine gsl_root_test_interval() used in sico::utl::root_brent()."
+      throw scam_err::gsl_fail {
+	"Error in gsl routine gsl_root_test_interval() used in scam::utl::root_brent()."
 	  };
     
   } while ( status == GSL_CONTINUE && iter < max_iter );
@@ -177,8 +177,8 @@ double sico::utl::root_brent (  std::function< double( double ) > func, const do
   gsl_root_fsolver_free( s );
 
   if ( status != GSL_SUCCESS )
-    throw sico_err::gsl_fail {
-      "Error in sico::utl::root_brent(): routine was not able to find root."
+    throw scam_err::gsl_fail {
+      "Error in scam::utl::root_brent(): routine was not able to find root."
 	};
   
   return r;
@@ -187,7 +187,7 @@ double sico::utl::root_brent (  std::function< double( double ) > func, const do
 
 //==============================================================================================
 
-std::vector<double> sico::utl::lin_vector ( const size_t nbin, const double min, const double max ) {
+std::vector<double> scam::utl::lin_vector ( const size_t nbin, const double min, const double max ) {
 
   double bin = ( max - min ) / ( nbin - 1 );
   std::vector< double > vec;
@@ -200,7 +200,7 @@ std::vector<double> sico::utl::lin_vector ( const size_t nbin, const double min,
 
 //==============================================================================================
 
-std::vector<double> sico::utl::log_vector ( const size_t nbin, const double min, const double max ) {
+std::vector<double> scam::utl::log_vector ( const size_t nbin, const double min, const double max ) {
 
   double bin = ( log( max ) - log( min ) )/( nbin - 1 );
   std::vector< double > vec;

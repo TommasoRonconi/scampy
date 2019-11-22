@@ -2,7 +2,7 @@
 
 // ============================================================================
 
-sico::utl::fftlog_handler::fftlog_handler ( const std::vector< double> & xx,
+scam::utl::fftlog_handler::fftlog_handler ( const std::vector< double> & xx,
 					    const std::vector< double> & fx,
 					    const double kr , const int dir,
 					    const double qq, const double mu
@@ -15,7 +15,7 @@ sico::utl::fftlog_handler::fftlog_handler ( const std::vector< double> & xx,
   // 	    << "\n\t- mu =\t" << _mu
   // 	    << std::endl;
     
-  sico::utl::interpolator< sico::utl::gsl_log_interp > interp { xx, fx };
+  scam::utl::interpolator< scam::utl::gsl_log_interp > interp { xx, fx };
   _size = interp.size();
   _dlnx = std::log( xx.back() / xx.front() ) / ( _size + 1 );
   
@@ -35,7 +35,7 @@ sico::utl::fftlog_handler::fftlog_handler ( const std::vector< double> & xx,
   const int NMAX = 4096;
   _wsave = new double[ 2 * NMAX + 3 * ( NMAX / 2 ) + 19 ];
 
-  sico::fhti_ ( &_size, &_mu, &_q, &_dlnx, &_kr, &_kropt, _wsave, &_ok );
+  scam::fhti_ ( &_size, &_mu, &_q, &_dlnx, &_kr, &_kropt, _wsave, &_ok );
   
   _ap = new double[ _size ];
   
@@ -43,7 +43,7 @@ sico::utl::fftlog_handler::fftlog_handler ( const std::vector< double> & xx,
 
 // ============================================================================
 
-sico::utl::fftlog_3Dspace::fftlog_3Dspace (  const std::vector< double> & xx,
+scam::utl::fftlog_3Dspace::fftlog_3Dspace (  const std::vector< double> & xx,
 					     const std::vector< double> & fx,
 					     const double kr )
   : fftlog_handler{ xx, fx, kr, 1, 0., 0.5 }
@@ -56,12 +56,12 @@ sico::utl::fftlog_3Dspace::fftlog_3Dspace (  const std::vector< double> & xx,
 
 // ============================================================================
 
-void sico::utl::fftlog_3Dspace::transform () {
+void scam::utl::fftlog_3Dspace::transform () {
 
   _transform();
   for ( size_t ii = 0; ii < _kk.size(); ++ii )
     _fk[ ii ] = _ap[ ii ] / ( std::sqrt( _kk[ ii ] ) * _kk[ ii ] );
-  fk = sico::utl::interpolator< sico::utl::gsl_log_interp > { _kk, _fk };
+  fk = scam::utl::interpolator< scam::utl::gsl_log_interp > { _kk, _fk };
   
   return;
 
@@ -69,7 +69,7 @@ void sico::utl::fftlog_3Dspace::transform () {
 
 // ============================================================================
 
-std::vector< double > sico::utl::fftlog_3Dspace::transform ( const std::vector< double > & kk ) {
+std::vector< double > scam::utl::fftlog_3Dspace::transform ( const std::vector< double > & kk ) {
 
   transform();
   std::vector< double > ret_vec;
@@ -83,7 +83,7 @@ std::vector< double > sico::utl::fftlog_3Dspace::transform ( const std::vector< 
 
 // ============================================================================
 
-sico::utl::fftlog_projected::fftlog_projected ( const std::vector< double> & xx,
+scam::utl::fftlog_projected::fftlog_projected ( const std::vector< double> & xx,
 						const std::vector< double> & fx,
 						const double kr  )
   : fftlog_handler{ xx, fx, kr, 1, 0., 0. }
@@ -96,12 +96,12 @@ sico::utl::fftlog_projected::fftlog_projected ( const std::vector< double> & xx,
 
 // ============================================================================
 
-void sico::utl::fftlog_projected::transform () {
+void scam::utl::fftlog_projected::transform () {
 
   _transform();
   for ( size_t ii = 0; ii < _kk.size(); ++ii )
     _fk[ ii ] = _ap[ ii ] / _kk[ ii ];
-  fk = sico::utl::interpolator< sico::utl::gsl_log_interp > { _kk, _fk };
+  fk = scam::utl::interpolator< scam::utl::gsl_log_interp > { _kk, _fk };
   
   return;
 
@@ -109,7 +109,7 @@ void sico::utl::fftlog_projected::transform () {
 
 // ============================================================================
 
-std::vector< double > sico::utl::fftlog_projected::transform ( const std::vector< double > & kk ) {
+std::vector< double > scam::utl::fftlog_projected::transform ( const std::vector< double > & kk ) {
 
   transform();
   std::vector< double > ret_vec;

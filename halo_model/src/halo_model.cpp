@@ -4,8 +4,8 @@
 
 //==============================================================================================
 
-sico::halo_model::halo_model ( const std::shared_ptr< sico::occupation_p > & ocp,
-			       const std::shared_ptr< sico::cosmology > & cosmo,
+scam::halo_model::halo_model ( const std::shared_ptr< scam::occupation_p > & ocp,
+			       const std::shared_ptr< scam::cosmology > & cosmo,
 			       const double redshift,
 			       const size_t thinness ) : _handler{ ocp },
 							 _cosmo{ cosmo },
@@ -14,22 +14,22 @@ sico::halo_model::halo_model ( const std::shared_ptr< sico::occupation_p > & ocp
 							     
   std::cout << "Computing interpolated functions ...";
   auto f_dndM = [ & ] ( double Mh ) { return _cosmo->dndM( Mh, _redshift ); };
-  dndM_f = sico::halo_model::interp_func { f_dndM,
+  dndM_f = scam::halo_model::interp_func { f_dndM,
 					   _mass_integ_lim.inf,
 					   _mass_integ_lim.sup,
 					   _thinness };
   auto f_hbias = [ & ] ( double Mh ) { return _cosmo->hbias( Mh, _redshift ); };
-  hbias_f = sico::halo_model::interp_func { f_hbias,
+  hbias_f = scam::halo_model::interp_func { f_hbias,
 					    _mass_integ_lim.inf,
 					    _mass_integ_lim.sup,
 					    _thinness };
   auto f_Ncen = [ & ] ( double Mh ) { return _handler->Ncen( Mh ); };
-  Ncen_f = sico::halo_model::interp_func { f_Ncen,
+  Ncen_f = scam::halo_model::interp_func { f_Ncen,
 					   _mass_integ_lim.inf,
 					   _mass_integ_lim.sup,
 					   _thinness };
   auto f_Nsat = [ & ] ( double Mh ) { return _handler->Nsat( Mh ); };
-  Nsat_f = sico::halo_model::interp_func { f_Nsat,
+  Nsat_f = scam::halo_model::interp_func { f_Nsat,
 					   _mass_integ_lim.inf,
 					   _mass_integ_lim.sup,
 					   _thinness };
@@ -37,9 +37,9 @@ sico::halo_model::halo_model ( const std::shared_ptr< sico::occupation_p > & ocp
   _Mv = Ncen_f.get_xv();
 
   std::vector< double > f_const2 ( _thinness, 2 );
-  const2_f = sico::halo_model::interp_func { _Mv, f_const2 };
+  const2_f = scam::halo_model::interp_func { _Mv, f_const2 };
 
-  _kv = sico::utl::log_vector( _thinness,
+  _kv = scam::utl::log_vector( _thinness,
   			       _wavk_integ_lim.inf,
   			       _wavk_integ_lim.sup );
 
@@ -53,7 +53,7 @@ sico::halo_model::halo_model ( const std::shared_ptr< sico::occupation_p > & ocp
     };
     
     density_profile_FS[ _k ] =
-      sico::halo_model::interp_func {
+      scam::halo_model::interp_func {
       f_denFS,
       _mass_integ_lim.inf,
       _mass_integ_lim.sup,
@@ -68,18 +68,18 @@ sico::halo_model::halo_model ( const std::shared_ptr< sico::occupation_p > & ocp
 
 //==============================================================================================
 
-void sico::halo_model::set_parameters ( const std::shared_ptr< sico::occupation_p > & ocp ) {
+void scam::halo_model::set_parameters ( const std::shared_ptr< scam::occupation_p > & ocp ) {
 
   _handler = ocp;
-  // _handler = std::unique_ptr< sico::occupation_p >{ ocp };
+  // _handler = std::unique_ptr< scam::occupation_p >{ ocp };
   
   auto f_Ncen = [ & ] ( double Mh ) { return _handler->Ncen( Mh ); };
-  Ncen_f = sico::halo_model::interp_func { f_Ncen,
+  Ncen_f = scam::halo_model::interp_func { f_Ncen,
 					   _mass_integ_lim.inf,
 					   _mass_integ_lim.sup,
 					   _thinness };
   auto f_Nsat = [ & ] ( double Mh ) { return _handler->Nsat( Mh ); };
-  Nsat_f = sico::halo_model::interp_func { f_Nsat,
+  Nsat_f = scam::halo_model::interp_func { f_Nsat,
 					   _mass_integ_lim.inf,
 					   _mass_integ_lim.sup,
 					   _thinness };
@@ -90,7 +90,7 @@ void sico::halo_model::set_parameters ( const std::shared_ptr< sico::occupation_
 
 //==============================================================================================
 
-double sico::halo_model::ng () {
+double scam::halo_model::ng () {
   
   auto integrand = ( Ncen_f + Nsat_f ) * dndM_f;
     
@@ -102,7 +102,7 @@ double sico::halo_model::ng () {
 
 // ============================================================================================
 
-double sico::halo_model::bias () {
+double scam::halo_model::bias () {
 
   auto integrand = ( Ncen_f + Nsat_f ) * dndM_f * hbias_f;
 
@@ -112,9 +112,9 @@ double sico::halo_model::bias () {
 
 // ============================================================================================
 
-double sico::halo_model::Mhalo () {
+double scam::halo_model::Mhalo () {
 
-  sico::halo_model::interp_func Mh_f { _Mv, _Mv };
+  scam::halo_model::interp_func Mh_f { _Mv, _Mv };
   auto integrand = ( Ncen_f + Nsat_f ) * dndM_f * Mh_f;
 
   return 1 / ng() * integrand.integrate( _mass_integ_lim.inf, _mass_integ_lim.sup );
@@ -123,7 +123,7 @@ double sico::halo_model::Mhalo () {
 
 // ============================================================================================
 
-double sico::halo_model::dngdM ( const double Mhalo ) {
+double scam::halo_model::dngdM ( const double Mhalo ) {
 
   return ( Ncen_f( Mhalo ) + Nsat_f( Mhalo ) ) * _cosmo->dndM( Mhalo );
 
@@ -131,7 +131,7 @@ double sico::halo_model::dngdM ( const double Mhalo ) {
 
 // ============================================================================================
 
-double sico::halo_model::Pk_cc_integrand ( const double Mh, const double kk ) {
+double scam::halo_model::Pk_cc_integrand ( const double Mh, const double kk ) {
   
   // mean number of central-satellite galaxy pairs -> it depends
   // on galaxy evolution
@@ -150,7 +150,7 @@ double sico::halo_model::Pk_cc_integrand ( const double Mh, const double kk ) {
 
 // ============================================================================================
 
-double sico::halo_model::Pk_cs_integrand ( const double Mh, const double kk ) {
+double scam::halo_model::Pk_cs_integrand ( const double Mh, const double kk ) {
   
   // mean number of central-satellite galaxy pairs -> it depends
   // on galaxy evolution
@@ -169,7 +169,7 @@ double sico::halo_model::Pk_cs_integrand ( const double Mh, const double kk ) {
 
 // ============================================================================================
 
-double sico::halo_model::Pk_ss_integrand (const double Mh, const double kk)
+double scam::halo_model::Pk_ss_integrand (const double Mh, const double kk)
 {
   
   // mean number of satellite-satellite galaxy pairs -> it depends
@@ -189,7 +189,7 @@ double sico::halo_model::Pk_ss_integrand (const double Mh, const double kk)
 
 // ============================================================================================
 
-double sico::halo_model::Pk_1halo ( const size_t ii, const double fact_ng2 ) {
+double scam::halo_model::Pk_1halo ( const size_t ii, const double fact_ng2 ) {
 
   // // density profile -> it depends on cosmology
   // const double uk = _cosmo->density_profile_FS( kk, Mh );
@@ -207,7 +207,7 @@ double sico::halo_model::Pk_1halo ( const size_t ii, const double fact_ng2 ) {
 
 }
 
-double sico::halo_model::Pk_cs ( const size_t ii, const double fact_ng2 ) {
+double scam::halo_model::Pk_cs ( const size_t ii, const double fact_ng2 ) {
 
   // // density profile -> it depends on cosmology
   // const double uk = _cosmo->density_profile_FS( kk, Mh );
@@ -225,7 +225,7 @@ double sico::halo_model::Pk_cs ( const size_t ii, const double fact_ng2 ) {
 
 }
 
-double sico::halo_model::Pk_ss ( const size_t ii, const double fact_ng2 ) {
+double scam::halo_model::Pk_ss ( const size_t ii, const double fact_ng2 ) {
 
   // // density profile -> it depends on cosmology
   // const double uk = _cosmo->density_profile_FS( kk, Mh );
@@ -244,7 +244,7 @@ double sico::halo_model::Pk_ss ( const size_t ii, const double fact_ng2 ) {
   
 // ============================================================================================
 
-double sico::halo_model::Pk_2halo ( const size_t ii, const double fact_ng2 ) {
+double scam::halo_model::Pk_2halo ( const size_t ii, const double fact_ng2 ) {
 
   auto integrand = ( Ncen_f + Nsat_f ) * dndM_f * hbias_f * density_profile_FS[ ii ];
 
@@ -257,7 +257,7 @@ double sico::halo_model::Pk_2halo ( const size_t ii, const double fact_ng2 ) {
 
 //==============================================================================================
 
-std::vector< double > sico::halo_model::model_Pk_1halo () {
+std::vector< double > scam::halo_model::model_Pk_1halo () {
 
   // multiplicative factor
   const double fact_ng = 1 / ng();
@@ -273,7 +273,7 @@ std::vector< double > sico::halo_model::model_Pk_1halo () {
   
 }
 
-std::vector< double > sico::halo_model::model_Pk_cs () {
+std::vector< double > scam::halo_model::model_Pk_cs () {
 
   // multiplicative factor
   const double fact_ng = 1 / ng();
@@ -289,7 +289,7 @@ std::vector< double > sico::halo_model::model_Pk_cs () {
   
 }
 
-std::vector< double > sico::halo_model::model_Pk_ss () {
+std::vector< double > scam::halo_model::model_Pk_ss () {
 
   // multiplicative factor
   const double fact_ng = 1 / ng();
@@ -307,7 +307,7 @@ std::vector< double > sico::halo_model::model_Pk_ss () {
 
 //==============================================================================================
 
-std::vector< double > sico::halo_model::model_Pk_2halo () {
+std::vector< double > scam::halo_model::model_Pk_2halo () {
 
   // multiplicative factor
   const double fact_ng = 1 / ng();
@@ -325,7 +325,7 @@ std::vector< double > sico::halo_model::model_Pk_2halo () {
 
 //==============================================================================================
 
-std::vector< double > sico::halo_model::model_Pk () {
+std::vector< double > scam::halo_model::model_Pk () {
 
   // multiplicative factor
   const double fact_ng = 1 / ng();
@@ -343,21 +343,10 @@ std::vector< double > sico::halo_model::model_Pk () {
 
 //==============================================================================================
 
-std::vector< double > sico::halo_model::model_Xi_1halo ( const std::vector< double > & rad ) {
+std::vector< double > scam::halo_model::model_Xi_1halo ( const std::vector< double > & rad ) {
 
-  std::vector< double > Pk = sico::halo_model::model_Pk_1halo();
-  sico::utl::fftlog_3Dspace fft { _kv, Pk };
-
-  return fft.transform( rad );
-
-}
-
-//==============================================================================================
-
-std::vector< double > sico::halo_model::model_Xi_2halo ( const std::vector< double > & rad ) {
-
-  std::vector< double > Pk = sico::halo_model::model_Pk_2halo();
-  sico::utl::fftlog_3Dspace fft { _kv, Pk };
+  std::vector< double > Pk = scam::halo_model::model_Pk_1halo();
+  scam::utl::fftlog_3Dspace fft { _kv, Pk };
 
   return fft.transform( rad );
 
@@ -365,12 +354,23 @@ std::vector< double > sico::halo_model::model_Xi_2halo ( const std::vector< doub
 
 //==============================================================================================
 
-std::vector< double > sico::halo_model::model_Xi ( const std::vector< double > & rad ) {
+std::vector< double > scam::halo_model::model_Xi_2halo ( const std::vector< double > & rad ) {
 
-  std::vector< double > Pk = sico::halo_model::model_Pk();
+  std::vector< double > Pk = scam::halo_model::model_Pk_2halo();
+  scam::utl::fftlog_3Dspace fft { _kv, Pk };
+
+  return fft.transform( rad );
+
+}
+
+//==============================================================================================
+
+std::vector< double > scam::halo_model::model_Xi ( const std::vector< double > & rad ) {
+
+  std::vector< double > Pk = scam::halo_model::model_Pk();
   double rM = std::exp( 0.5 * ( std::log( rad.back() ) + std::log( rad.front() ) ) );
   double kM = std::exp( 0.5 * ( std::log( _kv.back() ) + std::log( _kv.front() ) ) );
-  sico::utl::fftlog_3Dspace fft { _kv, Pk, rM * kM };
+  scam::utl::fftlog_3Dspace fft { _kv, Pk, rM * kM };
   
   return fft.transform( rad );
 
@@ -378,39 +378,28 @@ std::vector< double > sico::halo_model::model_Xi ( const std::vector< double > &
 
 //==============================================================================================
     
-std::vector< double > sico::halo_model::model_Wr_1halo ( const std::vector< double > & radp ) {
+std::vector< double > scam::halo_model::model_Wr_1halo ( const std::vector< double > & radp ) {
 
-  std::vector< double > Pk = sico::halo_model::model_Pk_1halo();
-  sico::utl::fftlog_projected fft { _kv, Pk };
-
-  return fft.transform( radp );
-
-}
-    
-std::vector< double > sico::halo_model::model_Wr_cs ( const std::vector< double > & radp ) {
-
-  std::vector< double > Pk = sico::halo_model::model_Pk_cs();
-  sico::utl::fftlog_projected fft { _kv, Pk };
+  std::vector< double > Pk = scam::halo_model::model_Pk_1halo();
+  scam::utl::fftlog_projected fft { _kv, Pk };
 
   return fft.transform( radp );
 
 }
     
-std::vector< double > sico::halo_model::model_Wr_ss ( const std::vector< double > & radp ) {
+std::vector< double > scam::halo_model::model_Wr_cs ( const std::vector< double > & radp ) {
 
-  std::vector< double > Pk = sico::halo_model::model_Pk_ss();
-  sico::utl::fftlog_projected fft { _kv, Pk };
+  std::vector< double > Pk = scam::halo_model::model_Pk_cs();
+  scam::utl::fftlog_projected fft { _kv, Pk };
 
   return fft.transform( radp );
 
 }
-
-//==============================================================================================
     
-std::vector< double > sico::halo_model::model_Wr_2halo ( const std::vector< double > & radp ) {
+std::vector< double > scam::halo_model::model_Wr_ss ( const std::vector< double > & radp ) {
 
-  std::vector< double > Pk = sico::halo_model::model_Pk_2halo();
-  sico::utl::fftlog_projected fft { _kv, Pk };
+  std::vector< double > Pk = scam::halo_model::model_Pk_ss();
+  scam::utl::fftlog_projected fft { _kv, Pk };
 
   return fft.transform( radp );
 
@@ -418,73 +407,84 @@ std::vector< double > sico::halo_model::model_Wr_2halo ( const std::vector< doub
 
 //==============================================================================================
     
-std::vector< double > sico::halo_model::model_Wr ( const std::vector< double > & radp ) {
+std::vector< double > scam::halo_model::model_Wr_2halo ( const std::vector< double > & radp ) {
 
-  std::vector< double > Pk = sico::halo_model::model_Pk();
-  sico::utl::fftlog_projected fft { _kv, Pk };
+  std::vector< double > Pk = scam::halo_model::model_Pk_2halo();
+  scam::utl::fftlog_projected fft { _kv, Pk };
+
+  return fft.transform( radp );
+
+}
+
+//==============================================================================================
+    
+std::vector< double > scam::halo_model::model_Wr ( const std::vector< double > & radp ) {
+
+  std::vector< double > Pk = scam::halo_model::model_Pk();
+  scam::utl::fftlog_projected fft { _kv, Pk };
   return fft.transform( radp );
 
 }
 
 //==============================================================================================
 
-std::vector< double > sico::halo_model::model_Wt_1halo ( const std::vector< double > & theta ) {
+std::vector< double > scam::halo_model::model_Wt_1halo ( const std::vector< double > & theta ) {
 
   const double r_z = _cosmo->d_C( _redshift );
   std::vector< double > radp ( theta.size() );
   for ( size_t ii = 0; ii < radp.size(); ++ii ) radp[ ii ] = theta[ ii ] * r_z;
 
-  return sico::halo_model::model_Wr_1halo( radp );
+  return scam::halo_model::model_Wr_1halo( radp );
 
 }
 
-std::vector< double > sico::halo_model::model_Wt_cs ( const std::vector< double > & theta ) {
+std::vector< double > scam::halo_model::model_Wt_cs ( const std::vector< double > & theta ) {
 
   const double r_z = _cosmo->d_C( _redshift );
   std::vector< double > radp ( theta.size() );
   for ( size_t ii = 0; ii < radp.size(); ++ii ) radp[ ii ] = theta[ ii ] * r_z;
 
-  return sico::halo_model::model_Wr_cs( radp );
+  return scam::halo_model::model_Wr_cs( radp );
 
 }
 
-std::vector< double > sico::halo_model::model_Wt_ss ( const std::vector< double > & theta ) {
+std::vector< double > scam::halo_model::model_Wt_ss ( const std::vector< double > & theta ) {
 
   const double r_z = _cosmo->d_C( _redshift );
   std::vector< double > radp ( theta.size() );
   for ( size_t ii = 0; ii < radp.size(); ++ii ) radp[ ii ] = theta[ ii ] * r_z;
 
-  return sico::halo_model::model_Wr_ss( radp );
-
-}
-
-//==============================================================================================
-
-std::vector< double > sico::halo_model::model_Wt_2halo ( const std::vector< double > & theta ) {
-
-  const double r_z = _cosmo->d_C( _redshift );
-  std::vector< double > radp ( theta.size() );
-  for ( size_t ii = 0; ii < radp.size(); ++ii ) radp[ ii ] = theta[ ii ] * r_z;
-
-  return sico::halo_model::model_Wr_2halo( radp );
+  return scam::halo_model::model_Wr_ss( radp );
 
 }
 
 //==============================================================================================
 
-std::vector< double > sico::halo_model::model_Wt ( const std::vector< double > & theta ) {
+std::vector< double > scam::halo_model::model_Wt_2halo ( const std::vector< double > & theta ) {
 
   const double r_z = _cosmo->d_C( _redshift );
   std::vector< double > radp ( theta.size() );
   for ( size_t ii = 0; ii < radp.size(); ++ii ) radp[ ii ] = theta[ ii ] * r_z;
 
-  return sico::halo_model::model_Wr( radp );
+  return scam::halo_model::model_Wr_2halo( radp );
 
 }
 
 //==============================================================================================
 
-std::vector< double > sico::halo_model::model_Pk_large_scale () {
+std::vector< double > scam::halo_model::model_Wt ( const std::vector< double > & theta ) {
+
+  const double r_z = _cosmo->d_C( _redshift );
+  std::vector< double > radp ( theta.size() );
+  for ( size_t ii = 0; ii < radp.size(); ++ii ) radp[ ii ] = theta[ ii ] * r_z;
+
+  return scam::halo_model::model_Wr( radp );
+
+}
+
+//==============================================================================================
+
+std::vector< double > scam::halo_model::model_Pk_large_scale () {
 
   const double b_gal = bias();
   const double b2 = b_gal * b_gal;
@@ -500,15 +500,15 @@ std::vector< double > sico::halo_model::model_Pk_large_scale () {
 
 //==============================================================================================
     
-std::vector< double > sico::halo_model::model_Wt_large_scale ( const std::vector< double > & theta ) {
+std::vector< double > scam::halo_model::model_Wt_large_scale ( const std::vector< double > & theta ) {
 
   const double r_z = _cosmo->d_C( _redshift );
   std::vector< double > radp ( theta.size() );
   for ( size_t ii = 0; ii < radp.size(); ++ii ) radp[ ii ] = theta[ ii ] * r_z;
 
-  std::vector< double > Pk = sico::halo_model::model_Pk_large_scale();
+  std::vector< double > Pk = scam::halo_model::model_Pk_large_scale();
     
-  sico::utl::fftlog_projected fft { _kv, Pk };
+  scam::utl::fftlog_projected fft { _kv, Pk };
 
   return fft.transform( radp );
 
