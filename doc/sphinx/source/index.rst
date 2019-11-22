@@ -22,14 +22,23 @@ Indices and tables
 Docs
 ====
 
-.. doxygenstruct:: cosmology
+.. doxygengroup:: scam
+   :members:
+   :protected-members:
+   :private-members:
+..   :undoc-members:
+
+.. doxygenstruct:: scam::cosmo_model
+   :members:
+
+.. doxygenclass:: scam::cosmology
    :members:
       
-.. doxygenstruct:: interpolator
+.. doxygenclass:: scam::utl::interpolator
    :members:
       
-.. doxygenstruct:: halo_model
+.. doxygenclass:: scam::halo_model
    :members:
       
-.. doxygenstruct:: cross_halo_model
+.. doxygenclass:: scam::cross_halo_model
    :members:
