@@ -10,7 +10,7 @@ Welcome to ScamPy's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-
+   cpp_index
 
 Indices and tables
 ==================
@@ -18,27 +18,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
-Docs
-====
-
-.. doxygengroup:: scam
-   :members:
-   :protected-members:
-   :private-members:
-..   :undoc-members:
-
-.. doxygenstruct:: scam::cosmo_model
-   :members:
-
-.. doxygenclass:: scam::cosmology
-   :members:
-      
-.. doxygenclass:: scam::utl::interpolator
-   :members:
-      
-.. doxygenclass:: scam::halo_model
-   :members:
-      
-.. doxygenclass:: scam::cross_halo_model
-   :members:
