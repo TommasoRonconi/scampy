@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace sico_err {
+namespace scam_err {
 
   struct size_invalid {
 
@@ -40,6 +40,6 @@ namespace sico_err {
     
   };
 
-} //endnamespace sico_err
+} //endnamespace scam_err
 
 #endif //__ERROR_HANDLING__

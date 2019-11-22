@@ -13,7 +13,7 @@ extern "C" {
     std::vector< double > xv_v { xv, xv + thinness };
     std::vector< double > fv_v { fv, fv + thinness };
 
-    return new sico::utl::interpolator< sico::utl::gsl_lin_interp > { xv_v, fv_v };
+    return new scam::utl::interpolator< scam::utl::gsl_lin_interp > { xv_v, fv_v };
 
   }
 
@@ -21,7 +21,7 @@ extern "C" {
   
   void free_lin_interpolator ( lin_interpolator_t intrp ) {
 
-    delete static_cast< sico::utl::interpolator< sico::utl::gsl_lin_interp > * >( intrp );
+    delete static_cast< scam::utl::interpolator< scam::utl::gsl_lin_interp > * >( intrp );
     
   }
 
@@ -31,7 +31,7 @@ extern "C" {
 
     return
       ( * static_cast<
-	sico::utl::interpolator< sico::utl::gsl_lin_interp > *
+	scam::utl::interpolator< scam::utl::gsl_lin_interp > *
 	>( intrp ) )( xx );
 
   }
@@ -43,7 +43,7 @@ extern "C" {
 
     return
       static_cast<
-      sico::utl::interpolator< sico::utl::gsl_lin_interp > *
+      scam::utl::interpolator< scam::utl::gsl_lin_interp > *
       >( intrp )->integrate( aa, bb );
 
   }
@@ -58,7 +58,7 @@ extern "C" {
     std::vector< double > xv_v { xv, xv + thinness };
     std::vector< double > fv_v { fv, fv + thinness };
 
-    return new sico::utl::interpolator< sico::utl::gsl_log_interp > { xv_v, fv_v };
+    return new scam::utl::interpolator< scam::utl::gsl_log_interp > { xv_v, fv_v };
 
   }
 
@@ -66,7 +66,7 @@ extern "C" {
   
   void free_log_interpolator ( log_interpolator_t intrp ) {
 
-    delete static_cast< sico::utl::interpolator< sico::utl::gsl_log_interp > * >( intrp );
+    delete static_cast< scam::utl::interpolator< scam::utl::gsl_log_interp > * >( intrp );
     
   }
 
@@ -76,7 +76,7 @@ extern "C" {
 
     return
       ( * static_cast<
-	sico::utl::interpolator< sico::utl::gsl_log_interp > *
+	scam::utl::interpolator< scam::utl::gsl_log_interp > *
 	>( intrp ) )( xx );
 
   }
@@ -88,7 +88,7 @@ extern "C" {
 
     return
       static_cast<
-      sico::utl::interpolator< sico::utl::gsl_log_interp > *
+      scam::utl::interpolator< scam::utl::gsl_log_interp > *
       >( intrp )->integrate( aa, bb );
 
   }

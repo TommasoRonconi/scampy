@@ -4,7 +4,7 @@
 #include <bitset>
 #include <utilities.h>
 
-namespace sico {
+namespace scam {
 
   namespace utl {
 
@@ -30,7 +30,7 @@ namespace sico {
 
   } // end namespace utl
 
-} // end namespace sico
+} // end namespace scam
 
 
 #endif //__BITMANIP__

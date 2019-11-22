@@ -2,7 +2,7 @@
 
 //==============================================================================================
 
-double sico::tinker10_p::Ncen ( const double Mhalo ) {
+double scam::tinker10_p::Ncen ( const double Mhalo ) {
   
   double Nc = PP( Mhalo, A_min, sigma_logA );
   
@@ -12,7 +12,7 @@ double sico::tinker10_p::Ncen ( const double Mhalo ) {
 
 //==============================================================================================
 
-double sico::tinker10_p::Nsat ( const double Mhalo ) {
+double scam::tinker10_p::Nsat ( const double Mhalo ) {
 
   const double Pc = PP( Mhalo, 2. * A_min, sigma_logA );
   const double Ns = Pc * std::pow( ( Mhalo / A_sat ), alpha_sat );

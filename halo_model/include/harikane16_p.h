@@ -4,7 +4,7 @@
 /// internal includes
 #include <occupation_p.h>
 
-namespace sico {
+namespace scam {
 
   struct harikane16_p : public occupation_p {
 
@@ -35,6 +35,6 @@ namespace sico {
 
   }; // endclass harikane16_p
 
-} // endnamespace sico
+} // endnamespace scam
 
 #endif //__HARIKANE16_P__

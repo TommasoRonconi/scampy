@@ -2,7 +2,7 @@
 
 //==============================================================================================
 
-sico::cosmo_model::cosmo_model ( const std::unique_ptr< cosmo_p > & parameters,
+scam::cosmo_model::cosmo_model ( const std::unique_ptr< cosmo_p > & parameters,
 				 const std::vector< double > & kh0,
 				 const std::vector< double > & Pk0,
 				 const double zmin, const double zmax,
@@ -17,14 +17,14 @@ sico::cosmo_model::cosmo_model ( const std::unique_ptr< cosmo_p > & parameters,
   h_1 /= param->hh;
   h_2 *= h_1 * h_1;
   h_3 *= h_2 * h_1;
-  sico::cosmo_model::set_internal();
-  sico::cosmo_model::compute_ss8_P0();
+  scam::cosmo_model::set_internal();
+  scam::cosmo_model::compute_ss8_P0();
 
 }
 
 //==============================================================================================
 
-void sico::cosmo_model::set_internal () {
+void scam::cosmo_model::set_internal () {
 
   // when z_min = 0. resets it to a small value greater than 0.
   // ( necessary for logarithmic interpolation )
@@ -43,10 +43,10 @@ void sico::cosmo_model::set_internal () {
   zE_f = interp_log { xv, fv };
 
   // computes the Hubble time in yr/h
-  t_H0 = 1.e+3 * sico::pc / ( sico::yr * H0 );
+  t_H0 = 1.e+3 * scam::pc / ( scam::yr * H0 );
   
   // computes the Hubble-orizon distance in Mpc/h
-  d_H0 = 1.e-3 * sico::cc / H0;
+  d_H0 = 1.e-3 * scam::cc / H0;
 
   return;
 
@@ -54,27 +54,27 @@ void sico::cosmo_model::set_internal () {
 
 //==============================================================================================
 
-void sico::cosmo_model::compute_ss8_P0 () {
+void scam::cosmo_model::compute_ss8_P0 () {
 
   if ( ss8_P0 < 0. ) {
 
     auto f_integrand = [ & ] ( double kk ) {
 
-      double WF = sico::utl::TopHat_WF( 8 * kk );
+      double WF = scam::utl::TopHat_WF( 8 * kk );
       return kk * kk * P0_f( kk ) * WF * WF;
 
     };
 
-    // sico::cosmo_model::interp_log int_f ( f_integrand,
+    // scam::cosmo_model::interp_log int_f ( f_integrand,
     // 					  P0_f.get_xmin(),
     // 					  P0_f.get_xmax(),
     // 					  thinness );
-    sico::cosmo_model::interp_log int_f ( f_integrand,
+    scam::cosmo_model::interp_log int_f ( f_integrand,
     					  1.e-4,
     					  100.,
     					  thinness );
 
-    ss8_P0 = 0.5 * sico::ip * sico::ip * int_f.integrate( int_f.get_xmin(), int_f.get_xmax() );
+    ss8_P0 = 0.5 * scam::ip * scam::ip * int_f.integrate( int_f.get_xmin(), int_f.get_xmax() );
 
   }
 
@@ -84,7 +84,7 @@ void sico::cosmo_model::compute_ss8_P0 () {
 
 //==============================================================================================
 
-double sico::cosmo_model::Ea2 ( const double zz ) {
+double scam::cosmo_model::Ea2 ( const double zz ) {
 
   const double aa = 1 / ( 1 + zz );
 
@@ -100,7 +100,7 @@ double sico::cosmo_model::Ea2 ( const double zz ) {
 
 //==============================================================================================
 
-double sico::cosmo_model::Ez2 ( const double zz ) {
+double scam::cosmo_model::Ez2 ( const double zz ) {
 
   const double red = 1 + zz;
   double sum =				  \
@@ -114,7 +114,7 @@ double sico::cosmo_model::Ez2 ( const double zz ) {
 
 //==============================================================================================
 
-double sico::cosmo_model::comoving_volume_unit ( const double zz ) {
+double scam::cosmo_model::comoving_volume_unit ( const double zz ) {
 
   const double zE = zE_f.integrate( 1.e-7, zz );
 
@@ -124,24 +124,24 @@ double sico::cosmo_model::comoving_volume_unit ( const double zz ) {
 
 //==============================================================================================
 
-double sico::cosmo_model::comoving_volume ( const double zz ) {
+double scam::cosmo_model::comoving_volume ( const double zz ) {
 
-  const double DC = sico::cosmo_model::d_C( zz );
+  const double DC = scam::cosmo_model::d_C( zz );
   
-  return 1.33333333333 * sico::pi * DC * DC * DC;
+  return 1.33333333333 * scam::pi * DC * DC * DC;
   
 }
 
 //==============================================================================================
 
-double sico::cosmo_model::cosmic_time ( const double zz ) {
+double scam::cosmo_model::cosmic_time ( const double zz ) {
 
   std::vector< double > zv = zE_f.get_xv();
   std::vector< double > fv = zE_f.get_fv();
 
   for ( size_t ii = 0; ii < zE_f.get_thinness(); ++ii ) fv[ ii ] /= ( 1 + zv[ ii ] );
 
-  sico::cosmo_model::interp_log func { zv, fv };
+  scam::cosmo_model::interp_log func { zv, fv };
 
   return 1.e-9 * t_H0 * func.integrate( zz, 1.e+7 );
 
@@ -149,15 +149,15 @@ double sico::cosmo_model::cosmic_time ( const double zz ) {
 
 //==============================================================================================
 
-double sico::cosmo_model::rho_crit_comoving ( const double zz ) {
+double scam::cosmo_model::rho_crit_comoving ( const double zz ) {
 
-  return 3.75e+18 * sico::ip * sico::nG * sico::solM * sico::pc * Ez2( zz );
+  return 3.75e+18 * scam::ip * scam::nG * scam::solM * scam::pc * Ez2( zz );
 
 }
 
 //==============================================================================================
 
-double sico::cosmo_model::deltac ( const double & zz ) {
+double scam::cosmo_model::deltac ( const double & zz ) {
 
   const double Om_Mz = OmegaM( zz );
   
@@ -167,34 +167,34 @@ double sico::cosmo_model::deltac ( const double & zz ) {
 
 //==============================================================================================
 
-double sico::cosmo_model::Delta_c_BryanNorman98 ( const double & zz ) {
+double scam::cosmo_model::Delta_c_BryanNorman98 ( const double & zz ) {
 
   const double xx = OmegaM( zz ) - 1;
     
-  return ( -39 * xx + 82 ) * xx + 18 * sico::pi * sico::pi;
+  return ( -39 * xx + 82 ) * xx + 18 * scam::pi * scam::pi;
   
 }
 
 //==============================================================================================
 
-double sico::cosmo_model::Delta_c_NakamuraSuto98 ( const double & zz ) {
+double scam::cosmo_model::Delta_c_NakamuraSuto98 ( const double & zz ) {
 
   const double xx = std::pow( 1 - param->Om_M, 0.33333333333333 ) / ( 1 + zz );
 
-  return 18 * sico::pi * ( 1 + 0.4093 * std::pow( xx, 2.7152 ) ) * OmegaM( zz );
+  return 18 * scam::pi * ( 1 + 0.4093 * std::pow( xx, 2.7152 ) ) * OmegaM( zz );
   
 }
 
 //==============================================================================================
 
-double sico::cosmo_model::DD ( const double & zz ) noexcept {
+double scam::cosmo_model::DD ( const double & zz ) noexcept {
   
   std::vector< double > zv = zE_f.get_xv();
   std::vector< double > fv ( zE_f.get_thinness() );
 
   for ( size_t ii = 0; ii < zE_f.get_thinness(); ++ii ) fv[ ii ] = 1 + zv[ ii ];
   
-  sico::cosmo_model::interp_log func { zv, fv };
+  scam::cosmo_model::interp_log func { zv, fv };
   func *= zE_f * zE_f * zE_f;
 
   return 2.5 * param->Om_M * Ez_f( zz ) * func.integrate( zz, 1.e+7 );
@@ -203,7 +203,7 @@ double sico::cosmo_model::DD ( const double & zz ) noexcept {
 
 //==============================================================================================
 
-double sico::cosmo_model::Pk_comoving ( const double & kk, const double & zz ) {
+double scam::cosmo_model::Pk_comoving ( const double & kk, const double & zz ) {
 
   const double Dz = DD( zz );
   const double D0 = DD( 1.e-7 );
@@ -212,7 +212,7 @@ double sico::cosmo_model::Pk_comoving ( const double & kk, const double & zz ) {
 
 }
 
-double sico::cosmo_model::Pk ( const double & kk, const double & zz ) {
+double scam::cosmo_model::Pk ( const double & kk, const double & zz ) {
 
   const double Dz = DD( zz );
   const double D0 = DD( 1.e-7 );
@@ -223,141 +223,141 @@ double sico::cosmo_model::Pk ( const double & kk, const double & zz ) {
 
 //==============================================================================================
 
-double sico::cosmo_model::sigma2R_comoving ( const double & rr, const double & zz ) {
+double scam::cosmo_model::sigma2R_comoving ( const double & rr, const double & zz ) {
 
   auto f_integrand = [ & ] ( double kk ) {
 
-    double WF = sico::utl::TopHat_WF( rr * kk );
+    double WF = scam::utl::TopHat_WF( rr * kk );
     return  kk * kk * Pk_comoving( kk, zz ) * WF * WF;
 
   };
   
-  // sico::cosmo_model::interp_log int_f ( f_integrand,
+  // scam::cosmo_model::interp_log int_f ( f_integrand,
   // 					P0_f.get_xmin(),
   // 					0.1 * P0_f.get_xmax(),
   // 					thinness );  
-  sico::cosmo_model::interp_log int_f ( f_integrand,
+  scam::cosmo_model::interp_log int_f ( f_integrand,
 					1.e-4,
 				        100.,
 					thinness );
   
   // return int_f.integrate( int_f.get_xmin(), int_f.get_xmax() );
-  return 0.5 * sico::ip * sico::ip * int_f.integrate( int_f.get_xmin(), int_f.get_xmax() );
+  return 0.5 * scam::ip * scam::ip * int_f.integrate( int_f.get_xmin(), int_f.get_xmax() );
 
 }
 
 
-double sico::cosmo_model::sigma2R ( const double & rr, const double & zz ) {
+double scam::cosmo_model::sigma2R ( const double & rr, const double & zz ) {
 
   auto f_integrand = [ & ] ( double kk ) {
 
-    double WF = sico::utl::TopHat_WF( rr * kk );
+    double WF = scam::utl::TopHat_WF( rr * kk );
     return  kk * kk * Pk( kk, zz ) * WF * WF;
 
   };
   
-  // sico::cosmo_model::interp_log int_f ( f_integrand,
+  // scam::cosmo_model::interp_log int_f ( f_integrand,
   // 					P0_f.get_xmin(),
   // 					0.1 * P0_f.get_xmax(),
   // 					thinness );  
-  sico::cosmo_model::interp_log int_f ( f_integrand,
+  scam::cosmo_model::interp_log int_f ( f_integrand,
 					1.e-4,
 				        100.,
 					thinness );
   
   // return int_f.integrate( int_f.get_xmin(), int_f.get_xmax() );
-  return 0.5 * sico::ip * sico::ip * int_f.integrate( int_f.get_xmin(), int_f.get_xmax() );
+  return 0.5 * scam::ip * scam::ip * int_f.integrate( int_f.get_xmin(), int_f.get_xmax() );
 
 }
 
 //==============================================================================================
 
-double sico::cosmo_model::dsigma2RdR_comoving ( const double & rr, const double & zz ) {
+double scam::cosmo_model::dsigma2RdR_comoving ( const double & rr, const double & zz ) {
 
   auto f_integrand = [ & ] ( double kk ) {
 
-    double WF = sico::utl::TopHat_WF( rr * kk );
-    double dWF = sico::utl::TopHat_WF_D1( rr * kk );
+    double WF = scam::utl::TopHat_WF( rr * kk );
+    double dWF = scam::utl::TopHat_WF_D1( rr * kk );
     // return 2 * kk * kk * kk * Pk_comoving( kk, zz ) * WF * dWF;
     return kk * kk * kk * Pk_comoving( kk, zz ) * WF * dWF;
 
   };
   
-  // sico::cosmo_model::interp_log int_f ( f_integrand,
+  // scam::cosmo_model::interp_log int_f ( f_integrand,
   // 					P0_f.get_xmin(),
   // 					0.1 * P0_f.get_xmax(),
   // 					thinness );  
-  sico::cosmo_model::interp_log int_f ( f_integrand,
+  scam::cosmo_model::interp_log int_f ( f_integrand,
 					1.e-4,
 				        100.,
 					thinness );
 
-  return sico::ip * sico::ip * int_f.integrate( int_f.get_xmin(), int_f.get_xmax() );
+  return scam::ip * scam::ip * int_f.integrate( int_f.get_xmin(), int_f.get_xmax() );
 
 }
 
-double sico::cosmo_model::dsigma2RdR ( const double & rr, const double & zz ) {
+double scam::cosmo_model::dsigma2RdR ( const double & rr, const double & zz ) {
 
   auto f_integrand = [ & ] ( double kk ) {
 
-    double WF = sico::utl::TopHat_WF( rr * kk );
-    double dWF = sico::utl::TopHat_WF_D1( rr * kk );
+    double WF = scam::utl::TopHat_WF( rr * kk );
+    double dWF = scam::utl::TopHat_WF_D1( rr * kk );
     return  kk * kk * kk * Pk( kk, zz ) * WF * dWF;
 
   };
   
-  // sico::cosmo_model::interp_log int_f ( f_integrand,
+  // scam::cosmo_model::interp_log int_f ( f_integrand,
   // 					P0_f.get_xmin(),
   // 					0.1 * P0_f.get_xmax(),
   // 					thinness );  
-  sico::cosmo_model::interp_log int_f ( f_integrand,
+  scam::cosmo_model::interp_log int_f ( f_integrand,
 					1.e-4,
 				        100.,
 					thinness );
 
   // return int_f.integrate( int_f.get_xmin(), int_f.get_xmax() );
-  return sico::ip * sico::ip * int_f.integrate( int_f.get_xmin(), int_f.get_xmax() );
+  return scam::ip * scam::ip * int_f.integrate( int_f.get_xmin(), int_f.get_xmax() );
 
 }
 
 //==============================================================================================
 
-double sico::cosmo_model::sigma2M ( const double & mm, const double & zz ) {
+double scam::cosmo_model::sigma2M ( const double & mm, const double & zz ) {
 
-  const double rho = sico::cosmo_model::OmegaM( 1.e-7 ) * rho_crit( 1.e-7 );
-  const double rad = std::pow( 0.75 * sico::ip * mm / rho, 0.33333333333333333 );
+  const double rho = scam::cosmo_model::OmegaM( 1.e-7 ) * rho_crit( 1.e-7 );
+  const double rad = std::pow( 0.75 * scam::ip * mm / rho, 0.33333333333333333 );
   
-  return sico::cosmo_model::sigma2R( rad, zz );
+  return scam::cosmo_model::sigma2R( rad, zz );
 
 }
 
 //==============================================================================================
 
-double sico::cosmo_model::dsigma2MdM ( const double & mm, const double & zz ) {
+double scam::cosmo_model::dsigma2MdM ( const double & mm, const double & zz ) {
 
-  const double rho = sico::cosmo_model::OmegaM( zz ) * rho_crit( zz );
-  const double rad = std::pow( 0.75 * sico::ip * mm / rho, 0.33333333333333333 );
+  const double rho = scam::cosmo_model::OmegaM( zz ) * rho_crit( zz );
+  const double rad = std::pow( 0.75 * scam::ip * mm / rho, 0.33333333333333333 );
   
-  return 0.33333333333333333 * rad * sico::cosmo_model::dsigma2RdR( rad, zz ) / mm;
+  return 0.33333333333333333 * rad * scam::cosmo_model::dsigma2RdR( rad, zz ) / mm;
 
 }
 
 //==============================================================================================
 
-double sico::cosmo_model::dndM_ST01 ( const double & mm, const double & zz ) {
+double scam::cosmo_model::dndM_ST01 ( const double & mm, const double & zz ) {
 
-  const double gfact = sico::cosmo_model::DD( 1.e-7 ) / sico::cosmo_model::DD( zz );
-  const double ss = std::sqrt( sico::cosmo_model::sigma2M( mm, 1.e-7 ) );
-  const double nu = gfact * sico::cosmo_model::deltac( zz ) / ss;
+  const double gfact = scam::cosmo_model::DD( 1.e-7 ) / scam::cosmo_model::DD( zz );
+  const double ss = std::sqrt( scam::cosmo_model::sigma2M( mm, 1.e-7 ) );
+  const double nu = gfact * scam::cosmo_model::deltac( zz ) / ss;
 
   const double fnu =					\
-    0.84083292 * std::sqrt( 2 * sico::ip ) * 0.3222 *	\
+    0.84083292 * std::sqrt( 2 * scam::ip ) * 0.3222 *	\
     ( 1 + std::pow( 0.84083292 * nu, - 0.6 ) ) * nu *	\
     std::exp( - 0.5 * 0.707 * nu * nu );
   
   const double dls =				\
-    - 0.5 * sico::cosmo_model::dsigma2MdM( mm ) \
-    / sico::cosmo_model::sigma2M( mm );
+    - 0.5 * scam::cosmo_model::dsigma2MdM( mm ) \
+    / scam::cosmo_model::sigma2M( mm );
   
   const double rho0 = param->Om_M * rho_crit( 1.e-7 );
 
@@ -365,17 +365,17 @@ double sico::cosmo_model::dndM_ST01 ( const double & mm, const double & zz ) {
 
 }
 
-double sico::cosmo_model::dndM_Tinker08 ( const double & mm, const double & zz ) {
+double scam::cosmo_model::dndM_Tinker08 ( const double & mm, const double & zz ) {
 
   const double mass = mm * h_1;
-  const double gfact = sico::cosmo_model::DD( zz ) / sico::cosmo_model::DD( 1.e-7 );
-  const double rho0 = param->Om_M * sico::cosmo_model::rho_crit_comoving( 1.e-7 );
-  const double rad = std::pow( 0.75 * sico::ip * mass / rho0, 0.33333333333333333 );
-  const double s2 = sico::cosmo_model::sigma2R_comoving( rad, 1.e-7 );
+  const double gfact = scam::cosmo_model::DD( zz ) / scam::cosmo_model::DD( 1.e-7 );
+  const double rho0 = param->Om_M * scam::cosmo_model::rho_crit_comoving( 1.e-7 );
+  const double rad = std::pow( 0.75 * scam::ip * mass / rho0, 0.33333333333333333 );
+  const double s2 = scam::cosmo_model::sigma2R_comoving( rad, 1.e-7 );
   const double ss = std::sqrt( s2 );
   const double dls =						\
     - 0.5 * 0.33333333333333333 * rad *				\
-    sico::cosmo_model::dsigma2RdR_comoving( rad, 1.e-7 )	\
+    scam::cosmo_model::dsigma2RdR_comoving( rad, 1.e-7 )	\
     / ( s2 * mass );
   
   const double nu = gfact * ss;
@@ -393,7 +393,7 @@ double sico::cosmo_model::dndM_Tinker08 ( const double & mm, const double & zz )
 
 }
 
-double sico::cosmo_model::dndM_Behroozi13 ( const double & mm, const double & zz ) {
+double scam::cosmo_model::dndM_Behroozi13 ( const double & mm, const double & zz ) {
 
   const double ascale = 1. / ( 1 + zz );
   const double logNorm = 0.144 / ( 1 + std::exp( 14.79 * ( ascale - 0.213 ) ) );
@@ -406,11 +406,11 @@ double sico::cosmo_model::dndM_Behroozi13 ( const double & mm, const double & zz
 
 //==============================================================================================
 
-double sico::cosmo_model::hbias_SMT01 ( const double & mm, const double & zz ) {
+double scam::cosmo_model::hbias_SMT01 ( const double & mm, const double & zz ) {
   
-  const double dd = sico::cosmo_model::deltac( zz );
-  const double gfact = sico::cosmo_model::DD( 1.e-7 ) / sico::cosmo_model::DD( zz );
-  const double nu2 = dd * dd / sico::cosmo_model::sigma2M( mm, 1.e-7 ) * gfact * gfact; 
+  const double dd = scam::cosmo_model::deltac( zz );
+  const double gfact = scam::cosmo_model::DD( 1.e-7 ) / scam::cosmo_model::DD( zz );
+  const double nu2 = dd * dd / scam::cosmo_model::sigma2M( mm, 1.e-7 ) * gfact * gfact; 
   const double an2 = 0.707 * nu2;
   const double an2p = std::pow( an2, 0.6 );
   
@@ -422,11 +422,11 @@ double sico::cosmo_model::hbias_SMT01 ( const double & mm, const double & zz ) {
 
 //==============================================================================================
 
-double sico::cosmo_model::hbias_Tinker10 ( const double & mm, const double & zz ) {
+double scam::cosmo_model::hbias_Tinker10 ( const double & mm, const double & zz ) {
   
-  const double dd = sico::cosmo_model::deltac( zz );
-  const double gfact = sico::cosmo_model::DD( 1.e-7 ) / sico::cosmo_model::DD( zz );
-  const double nu = dd / std::sqrt( sico::cosmo_model::sigma2M( mm, 1.e-7 ) ) * gfact;
+  const double dd = scam::cosmo_model::deltac( zz );
+  const double gfact = scam::cosmo_model::DD( 1.e-7 ) / scam::cosmo_model::DD( zz );
+  const double nu = dd / std::sqrt( scam::cosmo_model::sigma2M( mm, 1.e-7 ) ) * gfact;
   const double yy = 2.301; //<= std::log10( Delta = 200 )
   const double exy = std::exp( - 256 / ( yy * yy * yy * yy ) );
   const double AA = 1 + 0.24 * yy * exy;
@@ -444,7 +444,7 @@ double sico::cosmo_model::hbias_Tinker10 ( const double & mm, const double & zz 
 
 //==============================================================================================
   
-// double sico::cosmo_model::EzDE2 ( const double zz ) {
+// double scam::cosmo_model::EzDE2 ( const double zz ) {
 
 //   const double red = 1 + zz;
 //   double sum = ( ( Om_r + Om_n ) * red  * red + Om_M ) * red + Om_K;

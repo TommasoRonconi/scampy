@@ -1,7 +1,7 @@
 #######################################################################
 # Install python module
 
-install_subdir( 'mockpy', install_dir : 'python' )
+install_subdir( 'scampy', install_dir : 'python' )
 
 #######################################################################
 # Configure python module
@@ -16,25 +16,25 @@ configure_file( output : 'interpolator.py',
                 input : 'interpolator.py.in',
                 configuration : conf_data,
                 install : true,
-                install_dir : 'python/mockpy' )
+                install_dir : 'python/scampy' )
 
 configure_file( output : 'cosmology.py',
                 input : 'cosmology.py.in',
                 configuration : conf_data,
                 install : true,
-                install_dir : 'python/mockpy' )
+                install_dir : 'python/scampy' )
 
 configure_file( output : 'occupation_p.py',
                 input : 'occupation_p.py.in',
                 configuration : conf_data,
                 install : true,
-                install_dir : 'python/mockpy' )
+                install_dir : 'python/scampy' )
 
 configure_file( output : 'halo_model.py',
                 input : 'halo_model.py.in',
                 configuration : conf_data,
                 install : true,
-                install_dir : 'python/mockpy' )
+                install_dir : 'python/scampy' )
 
 #######################################################################
 

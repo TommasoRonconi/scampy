@@ -17,7 +17,7 @@ extern "C" {
 					   double M1,
 					   double alpha ) {
 
-    return new sico::harikane16_p { DC, Mmin, sigma_logM, M0, M1, alpha };
+    return new scam::harikane16_p { DC, Mmin, sigma_logM, M0, M1, alpha };
 
   }
 
@@ -28,7 +28,7 @@ extern "C" {
 					   double Asat,
 					   double alpsat ) {
 
-    return new sico::tinker10_p { Amin, siglogA, Asat, alpsat };
+    return new scam::tinker10_p { Amin, siglogA, Asat, alpsat };
 
   }
    
@@ -36,25 +36,25 @@ extern "C" {
 
   double Ncen_H16_ocp ( double Mh, H16_occupation_t ocp_h16 ) {
 
-    return static_cast< sico::harikane16_p * >( ocp_h16 )->Ncen( Mh );
+    return static_cast< scam::harikane16_p * >( ocp_h16 )->Ncen( Mh );
 
   }
   
   double Nsat_H16_ocp ( double Mh, H16_occupation_t ocp_h16 ) {
 
-    return static_cast< sico::harikane16_p * >( ocp_h16 )->Nsat( Mh );
+    return static_cast< scam::harikane16_p * >( ocp_h16 )->Nsat( Mh );
 
   }
 
   double Ncen_T10_ocp ( double Mh, T10_occupation_t ocp_t10 ) {
 
-    return static_cast< sico::tinker10_p * >( ocp_t10 )->Ncen( Mh );
+    return static_cast< scam::tinker10_p * >( ocp_t10 )->Ncen( Mh );
 
   }
   
   double Nsat_T10_ocp ( double Mh, T10_occupation_t ocp_t10 ) {
 
-    return static_cast< sico::tinker10_p * >( ocp_t10 )->Nsat( Mh );
+    return static_cast< scam::tinker10_p * >( ocp_t10 )->Nsat( Mh );
 
   }
   
@@ -62,7 +62,7 @@ extern "C" {
   
   void free_H16_occupation ( H16_occupation_t ocp_h16 ) {
 
-    delete static_cast< sico::harikane16_p * >( ocp_h16 );
+    delete static_cast< scam::harikane16_p * >( ocp_h16 );
 
     return;
 
@@ -70,7 +70,7 @@ extern "C" {
   
   void free_T10_occupation ( T10_occupation_t ocp_t10 ) {
 
-    delete static_cast< sico::tinker10_p * >( ocp_t10 );
+    delete static_cast< scam::tinker10_p * >( ocp_t10 );
 
     return;
 

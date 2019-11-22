@@ -3,7 +3,7 @@
 
 #include <utilities.h>
 
-namespace sico {
+namespace scam {
 
   namespace utl {
 
@@ -83,6 +83,6 @@ namespace sico {
 
   } // endnamespace utl
 
-} //endnamespace sico
+} //endnamespace scam
 
 #endif //__INTERPOLATOR_INTERFACE__

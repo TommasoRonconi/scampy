@@ -2,8 +2,8 @@
 
 //==============================================================================================
 
-template class sico::utl::interpolator< sico::utl::gsl_lin_interp >;
-template class sico::utl::interpolator< sico::utl::gsl_log_interp >;
+template class scam::utl::interpolator< scam::utl::gsl_lin_interp >;
+template class scam::utl::interpolator< scam::utl::gsl_log_interp >;
 
 //==============================================================================================
 

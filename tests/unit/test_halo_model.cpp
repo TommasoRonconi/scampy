@@ -17,14 +17,14 @@ int main () {
 
   }
   fin.clear(); fin.close();
-  std::unique_ptr< sico::cosmo_p > csmp { new sico::cosmo_p };
-  sico::cosmology * pcosmo = new sico::cosmology { csmp, kh0, Pk0 };
+  std::unique_ptr< scam::cosmo_p > csmp { new scam::cosmo_p };
+  scam::cosmology * pcosmo = new scam::cosmology { csmp, kh0, Pk0 };
 
-  sico::tinker10_p * pocp_tinkr = new sico::tinker10_p { 1.e+11, 1., 1.e+11, 1. };
-  sico::halo_model hm { std::make_shared< sico::tinker10_p >( ( *pocp_tinkr ) ),
-      std::make_shared< sico::cosmology >( ( *pcosmo ) ), 1.e-7, 20 };
+  scam::tinker10_p * pocp_tinkr = new scam::tinker10_p { 1.e+11, 1., 1.e+11, 1. };
+  scam::halo_model hm { std::make_shared< scam::tinker10_p >( ( *pocp_tinkr ) ),
+      std::make_shared< scam::cosmology >( ( *pcosmo ) ), 1.e-7, 20 };
 
-  hm.set_parameters( std::make_shared< sico::tinker10_p >( 1.e+10, 1., 1.e+11, 1. ) );
+  hm.set_parameters( std::make_shared< scam::tinker10_p >( 1.e+10, 1., 1.e+11, 1. ) );
 
   std::cout << hm.ng() << "\t" << hm.Mhalo() << "\t" << hm.bias() << std::endl;
 

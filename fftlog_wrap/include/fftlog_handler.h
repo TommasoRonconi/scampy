@@ -19,7 +19,7 @@
 #include <utilities.h>
 #include <interpolation.h>
 
-namespace sico {
+namespace scam {
 
   extern "C" {
 
@@ -113,7 +113,7 @@ namespace sico {
 
     private:
 
-      const double _fact = 0.5 * sico::ip * sico::ip * std::sqrt( 0.5 * sico::pi );
+      const double _fact = 0.5 * scam::ip * scam::ip * std::sqrt( 0.5 * scam::pi );
 
     public:
 
@@ -133,7 +133,7 @@ namespace sico {
 
     private:
 
-      const double _fact = 0.5 * sico::ip; 
+      const double _fact = 0.5 * scam::ip; 
 
     public:
 
@@ -151,6 +151,6 @@ namespace sico {
     
   } // endnamespace utl
 
-} // endnamespace sico
+} // endnamespace scam
 
 #endif //__FFTLOG_HANDLER__

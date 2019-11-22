@@ -4,7 +4,7 @@
 //==============================================================================================
 
 //former N_z
-double sico::cosmology::norm_z ( const double & zz,
+double scam::cosmology::norm_z ( const double & zz,
 				 const double & Lmin, const double & Lmax,
 				 const double & zmin, const double & zmax ) {
 
@@ -13,18 +13,18 @@ double sico::cosmology::norm_z ( const double & zz,
     auto inner_integrand = [ & ] ( double LL ) { return phi_Bouwens15( LL, _zz ); };
     
     //v- !!! check magnitude limits !!! -v
-    return dV_dZdOmega( _zz, true ) * sico::utl::integrate_qng( inner_integrand, Lmin, Lmax );
+    return dV_dZdOmega( _zz, true ) * scam::utl::integrate_qng( inner_integrand, Lmin, Lmax );
 
   };
 
-  return dnormdz( zz ) / sico::utl::integrate_qng( dnormdz, zmin, zmax );
+  return dnormdz( zz ) / scam::utl::integrate_qng( dnormdz, zmin, zmax );
 
 }
 
 //==============================================================================================
 
 // model from Giocoli et al., 2012
-double sico::cosmology::z_form ( const double & Mass, const double & ff,
+double scam::cosmology::z_form ( const double & Mass, const double & ff,
 				 const double & z_now, const double & z_max ) {
   
   double alpha_f = 0.815 * std::exp( -2. * ff * ff * ff ) * std::pow( ff, - 0.707 );
@@ -42,13 +42,13 @@ double sico::cosmology::z_form ( const double & Mass, const double & ff,
   };
   
   // find a zero (0.) of function (func) between lower and upper guess:
-  // return sico::utl::root_brent( func, 0., z_now, z_max );
+  // return scam::utl::root_brent( func, 0., z_now, z_max );
 
   try {
     // find a zero (0.) of function (func) between lower and upper guess:
-    return sico::utl::root_brent( func, 0., z_now, z_max );
+    return scam::utl::root_brent( func, 0., z_now, z_max );
   }
-  catch ( const sico_err::gsl_fail & exc ) {
+  catch ( const scam_err::gsl_fail & exc ) {
 
     std::cout << "At Mass " << Mass << " in interval [ " << z_now << "; " << z_max << " ]\n\t"
   	      << exc.message << "\n\t"
@@ -68,7 +68,7 @@ double sico::cosmology::z_form ( const double & Mass, const double & ff,
 //==============================================================================================
 
 // Eq. 13 from Zhao et al., 2009
-double sico::cosmology::concentration_zhao09 ( const double Mass, const double Redshift ) {
+double scam::cosmology::concentration_zhao09 ( const double Mass, const double Redshift ) {
   
   double t_now = cosmic_time( Redshift );
   double t_04 = cosmic_time( z_form( Mass, 0.04, Redshift, Redshift + 10 ) );
@@ -78,7 +78,7 @@ double sico::cosmology::concentration_zhao09 ( const double Mass, const double R
 }
 
 // Eq. 4 from Shimizu et al., 2003
-double sico::cosmology::concentration_shimizu03 ( const double Mass, const double Redshift ) {
+double scam::cosmology::concentration_shimizu03 ( const double Mass, const double Redshift ) {
 
   const double cnorm = 8.;
   return cnorm / ( 1 + Redshift ) * std::pow( 1.0204e-14 * Mass * param->hh, -0.13 );
@@ -87,7 +87,7 @@ double sico::cosmology::concentration_shimizu03 ( const double Mass, const doubl
 
 //==============================================================================================
 
-double sico::cosmology::density_profile_FS ( const double kk, const double Mass,
+double scam::cosmology::density_profile_FS ( const double kk, const double Mass,
 					     const double Redshift ) {
 
   double zz = Redshift;
@@ -99,7 +99,7 @@ double sico::cosmology::density_profile_FS ( const double kk, const double Mass,
 
   const double V_vir = Mass / ( Delta_c( zz ) * rho_crit( zz ) );
 
-  const double r_vir = pow( 0.75 * V_vir * sico::ip, 0.333333333333333333333 );
+  const double r_vir = pow( 0.75 * V_vir * scam::ip, 0.333333333333333333333 );
   
   const double r_s = r_vir / conc;
   

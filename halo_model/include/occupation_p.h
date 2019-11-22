@@ -7,7 +7,7 @@
 /// internal includes
 #include <utilities.h>
 
-namespace sico {
+namespace scam {
 
   struct occupation_p {
     
@@ -25,6 +25,6 @@ namespace sico {
 
   }; // endstruct occupation_p
     
-} // endnamespace sico
+} // endnamespace scam
 
 #endif //__OCCUPATION_P__

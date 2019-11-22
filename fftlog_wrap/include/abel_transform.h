@@ -4,7 +4,7 @@
 #include <utilities.h>
 #include <interpolation.h>
 
-namespace sico {
+namespace scam {
   namespace utl {
 
     template < class T = gsl_log_interp >
@@ -65,6 +65,6 @@ namespace sico {
     }
 
   } // end namespace utl
-} // end namespace sico
+} // end namespace scam
 
 #endif //__ABEL_TRANSFORM__

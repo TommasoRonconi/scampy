@@ -38,7 +38,7 @@
 /// internal includes:
 #include <error_handling.h>
 
-namespace sico {
+namespace scam {
     
   /**
    * @name some static constants
@@ -114,7 +114,7 @@ namespace sico {
 
     /**
      * @brief This function returns the result at position <code>xx</code> of the function
-     *        stored within an object of type <code>sico::utl::STR_generic_func_GSL</code>
+     *        stored within an object of type <code>scam::utl::STR_generic_func_GSL</code>
      *        that is casted in input to a pointer to void and casted back to its original
      *        pointer type within the function itself.
      *
@@ -183,7 +183,7 @@ namespace sico {
     /**
      * @brief This function returns the result at position <code>xx</code> of the function
      *        from which 
-     *        stored within an object of type <code>sico::utl::STR_generic_func_GSL</code>
+     *        stored within an object of type <code>scam::utl::STR_generic_func_GSL</code>
      *        that is casted in input to a pointer to void and casted back to its original
      *        pointer type within the function itself.
      *
@@ -216,7 +216,7 @@ namespace sico {
 
     /**
      * @brief Function to count lines in a file, 
-     *        it calls sico::utl::lines_in_file( std::ifstream & fin )
+     *        it calls scam::utl::lines_in_file( std::ifstream & fin )
      *
      * @param input_file reference to string "/path/to/filename.ext" 
      *
@@ -325,7 +325,7 @@ namespace sico {
     T poly_3 ( const T & xx, const std::vector< T > & coeff ) {
 
       if ( coeff.size() != 4 )
-	throw sico_err::size_invalid {
+	throw scam_err::size_invalid {
 	  "The coefficients vector must have size = 4. You gave me " +
 	    std::to_string( coeff.size() ) + "! :("
 	    };
@@ -390,6 +390,6 @@ namespace sico {
     }
     
   } //endnamespace utl
-} //endnamespace sico
+} //endnamespace scam
 
 #endif //__UTILITIES__

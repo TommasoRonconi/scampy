@@ -8,7 +8,7 @@
 /// internal includes
 #include <interpolation_interface.h>
 
-namespace sico {
+namespace scam {
 
   namespace utl {
 
@@ -94,7 +94,7 @@ namespace sico {
       virtual gsl_interpolator_interface & operator+= ( const gsl_interpolator_interface & rhs ) {
 	
       	if ( _thinness != rhs._thinness)
-      	  throw sico_err::size_invalid {
+      	  throw scam_err::size_invalid {
       	    "Error in multiplication: right hand side has different size from left hand side!"
       	      };
 
@@ -114,7 +114,7 @@ namespace sico {
       virtual gsl_interpolator_interface & operator*= ( const gsl_interpolator_interface & rhs ) {
 	
       	if ( _thinness != rhs._thinness)
-      	  throw sico_err::size_invalid {
+      	  throw scam_err::size_invalid {
       	    "Error in multiplication: right hand side has different size from left hand side!"
       	      };
 
@@ -239,7 +239,7 @@ namespace sico {
 
   } // endnamespace utl
 
-} //endnamespace sico
+} //endnamespace scam
 
 
 #endif //__GSL_INTERPOLATOR_INTERFACE__

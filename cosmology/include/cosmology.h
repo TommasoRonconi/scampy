@@ -2,19 +2,19 @@
 #define __COSMOLOGY_H__
 
 // internal includes
-#include <utilities.h> // sico::ln_10 sico::utl::integrate_qng
+#include <utilities.h> // scam::ln_10 scam::utl::integrate_qng
 
 #ifdef USE_CBL
 
 #include <cbl_cosmology_interface.h>
 
 /**
- *  @addtogroup sico
+ *  @addtogroup scam
  *
  *  @{
  */
 
-namespace sico { typedef struct cbl_cosmo_model cosmo_model; }
+namespace scam { typedef struct cbl_cosmo_model cosmo_model; }
 
 /** 
  * @} End of Doxygen Groups
@@ -25,12 +25,12 @@ namespace sico { typedef struct cbl_cosmo_model cosmo_model; }
 #include <cosmology_interface.h>
 
 /**
- *  @addtogroup sico
+ *  @addtogroup scam
  *
  *  @{
  */
 
-namespace sico { typedef struct cosmo_model cosmo_model; }
+namespace scam { typedef struct cosmo_model cosmo_model; }
 
 /** 
  * @} End of Doxygen Groups
@@ -39,15 +39,15 @@ namespace sico { typedef struct cosmo_model cosmo_model; }
 #endif //USE_CBL
 
 /**
- *  @addtogroup sico
+ *  @addtogroup scam
  *
  *  @{
  */
 
-namespace sico {
+namespace scam {
   
   /**
-   * @name cosmology class inheriting from sico::cosmo_model defined in file include/cosmology.h
+   * @name cosmology class inheriting from scam::cosmo_model defined in file include/cosmology.h
    */
   class cosmology : public cosmo_model {
 
@@ -193,7 +193,7 @@ namespace sico {
   
   }; // endclass cosmology
 
-} // endnamespace sico
+} // endnamespace scam
 
 /** 
  * @} End of Doxygen Groups
