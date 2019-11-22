@@ -389,6 +389,241 @@ class halo_model () :
         
         return list( Wt )
 
+#################################################################################
+#################################################################################
+#################################################################################
+#################################################################################
+
+# Cross Halo Model constructor:
+lib.create_cross_halo_model_H16.argtypes = [ c_void_p, c_void_p, c_void_p,
+                                             c_double, c_size_t ]
+lib.create_cross_halo_model_H16.restype = c_void_p
+lib.create_cross_halo_model_T10.argtypes = [ c_void_p, c_void_p, c_void_p,
+                                             c_double, c_size_t ]
+lib.create_cross_halo_model_T10.restype = c_void_p
+
+# Cross Halo Model denstructor:
+lib.free_cross_halo_model.argtypes = [ c_void_p ]
+lib.free_cross_halo_model.restype = c_void_p
+
+# Cross Halo Model function set_parameters():
+lib.set_parameters_pop1_chm_H16.argtypes = [ c_double, c_double,
+                                        c_double, c_double,
+                                        c_double, c_double,
+                                        c_void_p ]
+lib.set_parameters_pop1_chm_H16.restype = c_void_p
+lib.set_parameters_pop2_chm_H16.argtypes = [ c_double, c_double,
+                                        c_double, c_double,
+                                        c_double, c_double,
+                                        c_void_p ]
+lib.set_parameters_pop2_chm_H16.restype = c_void_p
+lib.set_parameters_pop1_chm_T10.argtypes = [ c_double, c_double,
+                                        c_double, c_double,
+                                        c_void_p ]
+lib.set_parameters_pop1_chm_T10.restype = c_void_p
+lib.set_parameters_pop2_chm_T10.argtypes = [ c_double, c_double,
+                                        c_double, c_double,
+                                        c_void_p ]
+lib.set_parameters_pop2_chm_T10.restype = c_void_p
+
+# Cross Halo Model function ng1():
+lib.ng1_chm.argtypes = [ c_void_p ]
+lib.ng1_chm.restype = c_double
+
+# Cross Halo Model function ng2():
+lib.ng2_chm.argtypes = [ c_void_p ]
+lib.ng2_chm.restype = c_double
+
+# Cross Halo Model function model_Pk():
+lib.model_Pk_chm.argtypes = [ POINTER( c_double ),
+                              POINTER( c_double ),
+                              c_void_p ]
+lib.model_Pk_chm.restype = c_void_p
+
+# Cross Halo Model function model_Pk_1halo():
+lib.model_Pk_1halo_chm.argtypes = [ POINTER( c_double ),
+                                    POINTER( c_double ),
+                                    c_void_p ]
+lib.model_Pk_1halo_chm.restype = c_void_p
+
+# Cross Halo Model function model_Pk_2halo():
+lib.model_Pk_2halo_chm.argtypes = [ POINTER( c_double ),
+                                    POINTER( c_double ),
+                                    c_void_p ]
+lib.model_Pk_2halo_chm.restype = c_void_p
+
+# Cross Halo Model function model_Xi():
+lib.model_Xi_chm.argtypes = [ POINTER( c_double ),
+                              POINTER( c_double ),
+                              c_uint, c_void_p ]
+lib.model_Xi_chm.restype = c_void_p
+
+# Cross Halo Model function model_Xi_1halo():
+lib.model_Xi_1halo_chm.argtypes = [ POINTER( c_double ),
+                                    POINTER( c_double ),
+                                    c_uint, c_void_p ]
+lib.model_Xi_1halo_chm.restype = c_void_p
+
+# Cross Halo Model function model_Xi_2halo():
+lib.model_Xi_2halo_chm.argtypes = [ POINTER( c_double ),
+                                    POINTER( c_double ),
+                                    c_uint, c_void_p ]
+lib.model_Xi_2halo_chm.restype = c_void_p
+
+# Wrap class cross_halo_model:
+class cross_halo_model () :
+
+    def __init__ ( self,
+                   occupation1 = None,
+                   occupation2 = None,
+                   cosmology = None,
+                   redshift = 1.e-7,
+                   thinness = 50 ) :
+
+        self.cosmology = cosmology
+        self.thinness = c_size_t( thinness )
+        self.redshift = c_double( redshift )
+        self.ocp1 = occupation1
+        self.ocp2 = occupation2
+        if isinstance( self.ocp1, harikane16_p ) and isinstance( self.ocp2, harikane16_p ) :
+            self.obj = lib.create_cross_halo_model_H16( self.ocp1.obj,
+                                                        self.ocp2.obj,
+                                                        self.cosmology.obj,
+                                                        self.redshift,
+                                                        self.thinness )
+            self.set_parameters_pop1 = self._set_parameters_pop1_H16
+            self.set_parameters_pop2 = self._set_parameters_pop2_H16
+            
+        elif isinstance( self.ocp1, tinker10_p ) and isinstance( self.ocp2, tinker10_p ) :
+            self.obj = lib.create_cross_halo_model_T10( self.ocp1.obj,
+                                                        self.ocp2.obj,
+                                                        self.cosmology.obj,
+                                                        self.redshift,
+                                                        self.thinness )
+            self.set_parameters_pop1 = self._set_parameters_pop1_T10
+            self.set_parameters_pop2 = self._set_parameters_pop2_T10
+            
+        else :
+            raise ValueError( 'Wrong value of occupation arguments' ) 
+        
+    def __del__ ( self ) :
+        
+        # Python call to cross_halo_model dtor:
+        lib.free_cross_halo_model( self.obj )
+
+    def _set_parameters_pop1_H16 ( self,
+                                   DC = 0.5,
+                                   M_min = 1.e+11,
+                                   sigma_logM = 1.,
+                                   M0 = 1.e+10,
+                                   M1 = 1.e+10,
+                                   alpha = 1. ) :
+
+        lib.set_parameters_pop1_chm_H16( DC, M_min, sigma_logM, M0, M1, alpha, self.obj )
+
+        return;
+
+    def _set_parameters_pop2_H16 ( self,
+                                   DC = 0.5,
+                                   M_min = 1.e+11,
+                                   sigma_logM = 1.,
+                                   M0 = 1.e+10,
+                                   M1 = 1.e+10,
+                                   alpha = 1. ) :
+
+        lib.set_parameters_pop2_chm_H16( DC, M_min, sigma_logM, M0, M1, alpha, self.obj )
+
+        return;
+
+    def _set_parameters_pop1_T10 ( self,
+                                   Amin = 1.e+11,
+                                   siglogA = 1.,
+                                   Asat = 1.e+10,
+                                   alpsat = 1. ) :
+
+        lib.set_parameters_pop1_chm_T10( Amin, siglogA, Asat, alpsat, self.obj )
+
+        return;
+
+    def _set_parameters_pop2_T10 ( self,
+                                   Amin = 1.e+11,
+                                   siglogA = 1.,
+                                   Asat = 1.e+10,
+                                   alpsat = 1. ) :
+
+        lib.set_parameters_pop2_chm_T10( Amin, siglogA, Asat, alpsat, self.obj )
+
+        return;
+
+    def ng1 ( self ) :
+
+        return lib.ng1_chm( self.obj )
+
+    def ng2 ( self ) :
+
+        return lib.ng2_chm( self.obj )
+
+    def Pk ( self ) :
+        
+        kv = ( c_double * self.thinness )()
+        Pk = ( c_double * self.thinness )()
+        lib.model_Pk_chm( kv, Pk, self.obj )
+        
+        return list( kv ), list( Pk )
+
+    def Pk_1halo ( self ) :
+        
+        kv = ( c_double * self.thinness )()
+        Pk_1h = ( c_double * self.thinness )()
+        lib.model_Pk_1halo_chm( kv, Pk_1h, self.obj )
+        
+        return list( kv ), list( Pk_1h )
+
+    def Pk_2halo ( self ) :
+        
+        kv = ( c_double * self.thinness )()
+        Pk_2h = ( c_double * self.thinness )()
+        lib.model_Pk_2halo_chm( kv, Pk_2h, self.obj )
+        
+        return list( kv ), list( Pk_2h )
+
+    def Xi ( self, rv ) :
+
+        import numpy as np
+        
+        rv = ( c_double * len( rv ) )( *[ np.float64( _r ) for _r in rv ] )
+        Xi = ( c_double * len( rv ) )()
+        size = c_uint( len( rv ) )
+        lib.model_Xi_chm( rv, Xi, size, self.obj )
+        
+        return list( Xi )
+
+    def Xi_1halo ( self, rv ) :
+
+        import numpy as np
+        
+        rv = ( c_double * len( rv ) )( *[ np.float64( _r ) for _r in rv ] )
+        Xi_1h = ( c_double * len( rv ) )()
+        size = c_uint( len( rv ) )
+        lib.model_Xi_1halo_chm( rv, Xi_1h, size, self.obj )
+        
+        return list( Xi_1h )
+
+    def Xi_2halo ( self, rv ) :
+
+        import numpy as np
+        
+        rv = ( c_double * len( rv ) )( *[ np.float64( _r ) for _r in rv ] )
+        Xi_2h = ( c_double * len( rv ) )()
+        size = c_uint( len( rv ) )
+        lib.model_Xi_2halo_chm( rv, Xi_2h, size, self.obj )
+        
+        return list( Xi_2h )
+
+#################################################################################
+#################################################################################
+#################################################################################
+#################################################################################
     
 if __name__ == '__main__' :
 

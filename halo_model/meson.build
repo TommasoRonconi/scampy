@@ -10,6 +10,7 @@ inc_hm = include_directories( inc_dir )
 
 hm_lib = library( 'halo_model',
                   [ 'src/halo_model.cpp',
+                    'src/cross_halo_model.cpp',
                     'src/occupation_p.cpp',
                     'src/harikane16_p.cpp',
                     'src/tinker10_p.cpp' ],
@@ -34,6 +35,7 @@ hm_dep = declare_dependency( link_with : hm_lib,
                                                      inc_utl] )
 
 lib_headers += [ root + '/halo_model/' + inc_dir + '/halo_model.h' ]
+lib_headers += [ root + '/halo_model/' + inc_dir + '/cross_halo_model.h' ]
 lib_headers += [ root + '/halo_model/' + inc_dir + '/occupation_p.h' ]
 lib_headers += [ root + '/halo_model/' + inc_dir + '/harikane16_p.h' ]
 lib_headers += [ root + '/halo_model/' + inc_dir + '/tinker10_p.h' ]
@@ -71,7 +73,9 @@ lib_headers += [ root + '/halo_model/' + inc_dir + '/occupation_c_interface.h' ]
 # Halo-Model Lib C Interface
 
 hm_c_lib = library( 'hm_c_wrap',
-                    [ 'src/halo_model_c_interface.cpp' ],
+                    [ 'src/halo_model_c_interface.cpp'# ,
+                      # 'src/cross_halo_model_c_interface.cpp'
+                    ],
                     include_directories : [ inc_hm,
                                             inc_cosmo,
                                             inc_intrp,
@@ -95,6 +99,8 @@ hm_c_path = '/'.join( [ get_option( 'prefix' ),
                         get_option( 'libdir' ),
                         hm_c_lib_name ] )
 
-lib_headers += [ root + '/halo_model/' + inc_dir + '/halo_model_c_interface.h' ]
+lib_headers += [ root + '/halo_model/' + inc_dir + '/halo_model_c_interface.h'# ,
+                 # root + '/halo_model/' + inc_dir + '/cross_halo_model_c_interface.h'
+]
 
 #######################################################################
