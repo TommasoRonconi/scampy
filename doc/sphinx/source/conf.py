@@ -12,13 +12,8 @@
 #
 import os
 import sys
-# sys.path.insert( 0,
-#                  os.path.abspath('.') )
-sys.path.insert( 0, os.path.abspath( '../../../install_doc/python' ) )
-# sys.path.insert( 0, os.path.abspath( '/'.join( [ '..', '..', '..',
-#                                                  'install_doc',
-#                                                  'python',
-#                                                  'scampy' ] ) ) )
+# sys.path.insert( 0, os.path.abspath('.') )
+# sys.path.insert( 0, os.path.abspath( '../../../install_doc/python' ) )
 
 # -- Configuration for ReadTheDocs setup -------------------------------------
 
@@ -51,7 +46,6 @@ breathe_projects = {}
 project = 'ScamPy'
 copyright = '2019, Tommaso Ronconi'
 author = 'Tommaso Ronconi'
-
 
 # -- General configuration ---------------------------------------------------
 
