@@ -10,7 +10,8 @@ Welcome to ScamPy's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   cpp_index
+   python_doc
+   cpp_doc
 
 Indices and tables
 ==================

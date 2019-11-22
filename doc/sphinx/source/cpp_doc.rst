@@ -1,5 +1,5 @@
-C++ Docs
-========
+C++ Documentation
+=================
 
 .. doxygengroup:: scam
    :members:
