@@ -4,9 +4,9 @@
 
 //==============================================================================================
 
-sico::cross_halo_model::cross_halo_model ( const std::shared_ptr< sico::occupation_p > & ocp1,
-					   const std::shared_ptr< sico::occupation_p > & ocp2,
-					   const std::shared_ptr< sico::cosmology > & cosmo,
+scam::cross_halo_model::cross_halo_model ( const std::shared_ptr< scam::occupation_p > & ocp1,
+					   const std::shared_ptr< scam::occupation_p > & ocp2,
+					   const std::shared_ptr< scam::cosmology > & cosmo,
 					   const double redshift,
 					   const size_t thinness ) : _pop1{ ocp1 },
 								     _pop2{ ocp2 },
@@ -18,26 +18,26 @@ sico::cross_halo_model::cross_halo_model ( const std::shared_ptr< sico::occupati
 
   // cosmological
   auto f_dndM = [ & ] ( double Mh ) { return _cosmo->dndM( Mh, _redshift ); };
-  dndM_f = sico::cross_halo_model::interp_func { f_dndM,
+  dndM_f = scam::cross_halo_model::interp_func { f_dndM,
 						 _mass_integ_lim.inf,
 						 _mass_integ_lim.sup,
 						 _thinness };
   auto f_hbias = [ & ] ( double Mh ) { return _cosmo->hbias( Mh, _redshift ); };
-  hbias_f = sico::cross_halo_model::interp_func { f_hbias,
+  hbias_f = scam::cross_halo_model::interp_func { f_hbias,
 						  _mass_integ_lim.inf,
 						  _mass_integ_lim.sup,
 						  _thinness };
 
   // Population 1
   auto f_Ng1 = [ & ] ( double Mh ) { return _pop1->Ncen( Mh ) + _pop1->Nsat( Mh ); };
-  Ng1_f = sico::cross_halo_model::interp_func { f_Ng1,
+  Ng1_f = scam::cross_halo_model::interp_func { f_Ng1,
 						_mass_integ_lim.inf,
 						_mass_integ_lim.sup,
 						_thinness };
 
   // Population 2
   auto f_Ng2 = [ & ] ( double Mh ) { return _pop2->Ncen( Mh ) + _pop2->Nsat( Mh ); };
-  Ng2_f = sico::cross_halo_model::interp_func { f_Ng2,
+  Ng2_f = scam::cross_halo_model::interp_func { f_Ng2,
 						_mass_integ_lim.inf,
 						_mass_integ_lim.sup,
 						_thinness };
@@ -45,7 +45,7 @@ sico::cross_halo_model::cross_halo_model ( const std::shared_ptr< sico::occupati
   _Mv = Ng1_f.get_xv();
 
   // computing density profile vector
-  _kv = sico::utl::log_vector( _thinness,
+  _kv = scam::utl::log_vector( _thinness,
   			       _wavk_integ_lim.inf,
   			       _wavk_integ_lim.sup );
 
@@ -59,7 +59,7 @@ sico::cross_halo_model::cross_halo_model ( const std::shared_ptr< sico::occupati
     };
     
     density_profile_FS[ _k ] =
-      sico::cross_halo_model::interp_func {
+      scam::cross_halo_model::interp_func {
       f_denFS,
       _mass_integ_lim.inf,
       _mass_integ_lim.sup,
@@ -74,12 +74,12 @@ sico::cross_halo_model::cross_halo_model ( const std::shared_ptr< sico::occupati
 
 //==============================================================================================
 
-void sico::cross_halo_model::set_parameters_pop1 ( const std::shared_ptr< sico::occupation_p > & ocp1 ) {
+void scam::cross_halo_model::set_parameters_pop1 ( const std::shared_ptr< scam::occupation_p > & ocp1 ) {
 
   _pop1 = ocp1;
 
   auto f_Ng1 = [ & ] ( double Mh ) { return _pop1->Ncen( Mh ) + _pop1->Nsat( Mh ); };
-  Ng1_f = sico::cross_halo_model::interp_func { f_Ng1,
+  Ng1_f = scam::cross_halo_model::interp_func { f_Ng1,
 						_mass_integ_lim.inf,
 						_mass_integ_lim.sup,
 						_thinness };
@@ -90,12 +90,12 @@ void sico::cross_halo_model::set_parameters_pop1 ( const std::shared_ptr< sico::
 
 //==============================================================================================
 
-void sico::cross_halo_model::set_parameters_pop2 ( const std::shared_ptr< sico::occupation_p > & ocp2 ) {
+void scam::cross_halo_model::set_parameters_pop2 ( const std::shared_ptr< scam::occupation_p > & ocp2 ) {
 
   _pop2 = ocp2;
   
   auto f_Ng2 = [ & ] ( double Mh ) { return _pop2->Ncen( Mh ) + _pop2->Nsat( Mh ); };
-  Ng2_f = sico::cross_halo_model::interp_func { f_Ng2,
+  Ng2_f = scam::cross_halo_model::interp_func { f_Ng2,
 						_mass_integ_lim.inf,
 						_mass_integ_lim.sup,
 						_thinness };
@@ -106,7 +106,7 @@ void sico::cross_halo_model::set_parameters_pop2 ( const std::shared_ptr< sico::
 
 //==============================================================================================
 
-double sico::cross_halo_model::ng1 () {
+double scam::cross_halo_model::ng1 () {
   
   auto integrand = Ng1_f * dndM_f;
     
@@ -118,7 +118,7 @@ double sico::cross_halo_model::ng1 () {
 
 //==============================================================================================
 
-double sico::cross_halo_model::ng2 () {
+double scam::cross_halo_model::ng2 () {
   
   auto integrand = Ng2_f * dndM_f;
     
@@ -130,7 +130,7 @@ double sico::cross_halo_model::ng2 () {
 
 // ============================================================================================
 
-double sico::cross_halo_model::Pk_1halo ( const size_t ii, const double fact ) {
+double scam::cross_halo_model::Pk_1halo ( const size_t ii, const double fact ) {
 
   auto integrand =						\
     Ng1_f * Ng2_f * dndM_f					\
@@ -144,7 +144,7 @@ double sico::cross_halo_model::Pk_1halo ( const size_t ii, const double fact ) {
   
 // ============================================================================================
 
-double sico::cross_halo_model::Pk_2halo ( const size_t ii, const double fact ) {
+double scam::cross_halo_model::Pk_2halo ( const size_t ii, const double fact ) {
 
   auto integrand1 = Ng1_f * dndM_f * hbias_f * density_profile_FS[ ii ];
 
@@ -162,7 +162,7 @@ double sico::cross_halo_model::Pk_2halo ( const size_t ii, const double fact ) {
 
 //==============================================================================================
 
-std::vector< double > sico::cross_halo_model::model_Pk_1halo () {
+std::vector< double > scam::cross_halo_model::model_Pk_1halo () {
 
   // multiplicative factor
   const double fact = 1 / ( ng1() * ng2() );
@@ -179,7 +179,7 @@ std::vector< double > sico::cross_halo_model::model_Pk_1halo () {
 
 //==============================================================================================
 
-std::vector< double > sico::cross_halo_model::model_Pk_2halo () {
+std::vector< double > scam::cross_halo_model::model_Pk_2halo () {
 
   // multiplicative factor
   const double fact = 1 / ( ng1() * ng2() );
@@ -196,7 +196,7 @@ std::vector< double > sico::cross_halo_model::model_Pk_2halo () {
 
 //==============================================================================================
 
-std::vector< double > sico::cross_halo_model::model_Pk () {
+std::vector< double > scam::cross_halo_model::model_Pk () {
 
   // multiplicative factor
   const double fact = 1 / ( ng1() * ng2() );
@@ -213,21 +213,10 @@ std::vector< double > sico::cross_halo_model::model_Pk () {
 
 //==============================================================================================
 
-std::vector< double > sico::cross_halo_model::model_Xi_1halo ( const std::vector< double > & rad ) {
+std::vector< double > scam::cross_halo_model::model_Xi_1halo ( const std::vector< double > & rad ) {
 
-  std::vector< double > Pk = sico::cross_halo_model::model_Pk_1halo();
-  sico::utl::fftlog_3Dspace fft { _kv, Pk };
-
-  return fft.transform( rad );
-
-}
-
-//==============================================================================================
-
-std::vector< double > sico::cross_halo_model::model_Xi_2halo ( const std::vector< double > & rad ) {
-
-  std::vector< double > Pk = sico::cross_halo_model::model_Pk_2halo();
-  sico::utl::fftlog_3Dspace fft { _kv, Pk };
+  std::vector< double > Pk = scam::cross_halo_model::model_Pk_1halo();
+  scam::utl::fftlog_3Dspace fft { _kv, Pk };
 
   return fft.transform( rad );
 
@@ -235,12 +224,23 @@ std::vector< double > sico::cross_halo_model::model_Xi_2halo ( const std::vector
 
 //==============================================================================================
 
-std::vector< double > sico::cross_halo_model::model_Xi ( const std::vector< double > & rad ) {
+std::vector< double > scam::cross_halo_model::model_Xi_2halo ( const std::vector< double > & rad ) {
 
-  std::vector< double > Pk = sico::cross_halo_model::model_Pk();
+  std::vector< double > Pk = scam::cross_halo_model::model_Pk_2halo();
+  scam::utl::fftlog_3Dspace fft { _kv, Pk };
+
+  return fft.transform( rad );
+
+}
+
+//==============================================================================================
+
+std::vector< double > scam::cross_halo_model::model_Xi ( const std::vector< double > & rad ) {
+
+  std::vector< double > Pk = scam::cross_halo_model::model_Pk();
   double rM = std::exp( 0.5 * ( std::log( rad.back() ) + std::log( rad.front() ) ) );
   double kM = std::exp( 0.5 * ( std::log( _kv.back() ) + std::log( _kv.front() ) ) );
-  sico::utl::fftlog_3Dspace fft { _kv, Pk, rM * kM };
+  scam::utl::fftlog_3Dspace fft { _kv, Pk, rM * kM };
   
   return fft.transform( rad );
 
