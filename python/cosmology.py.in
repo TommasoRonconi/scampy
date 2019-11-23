@@ -240,9 +240,11 @@ class cosmology () :
         """
         Parameters
         ----------
+        zz : redshift
 
         Returns
         -------
+        Value of the Hubble parameter at given redshift
         """
 
         return lib.cosmo_Hz( c_double( zz ), self.obj )
@@ -251,6 +253,7 @@ class cosmology () :
         """
         Parameters
         ----------
+        zz : redshift
 
         Returns
         -------
@@ -262,6 +265,7 @@ class cosmology () :
         """
         Parameters
         ----------
+        zz : redshift
 
         Returns
         -------
@@ -273,6 +277,7 @@ class cosmology () :
         """
         Parameters
         ----------
+        zz : redshift
 
         Returns
         -------
@@ -284,6 +289,7 @@ class cosmology () :
         """
         Parameters
         ----------
+        zz : redshift
 
         Returns
         -------
@@ -295,6 +301,7 @@ class cosmology () :
         """
         Parameters
         ----------
+        zz : redshift
 
         Returns
         -------
@@ -306,6 +313,7 @@ class cosmology () :
         """
         Parameters
         ----------
+        zz : redshift
 
         Returns
         -------
@@ -317,6 +325,7 @@ class cosmology () :
         """
         Parameters
         ----------
+        zz : redshift
 
         Returns
         -------
@@ -328,6 +337,7 @@ class cosmology () :
         """
         Parameters
         ----------
+        zz : redshift
 
         Returns
         -------
@@ -339,6 +349,7 @@ class cosmology () :
         """
         Parameters
         ----------
+        zz : redshift
 
         Returns
         -------
@@ -350,6 +361,7 @@ class cosmology () :
         """
         Parameters
         ----------
+        zz : redshift
 
         Returns
         -------
@@ -361,6 +373,7 @@ class cosmology () :
         """
         Parameters
         ----------
+        zz : redshift
 
         Returns
         -------
@@ -372,6 +385,7 @@ class cosmology () :
         """
         Parameters
         ----------
+        zz : redshift
 
         Returns
         -------
@@ -383,6 +397,7 @@ class cosmology () :
         """
         Parameters
         ----------
+        zz : redshift
 
         Returns
         -------
@@ -394,6 +409,7 @@ class cosmology () :
         """
         Parameters
         ----------
+        zz : redshift
 
         Returns
         -------
@@ -405,6 +421,8 @@ class cosmology () :
         """
         Parameters
         ----------
+        kk : scale 
+        zz : redshift
 
         Returns
         -------
@@ -416,6 +434,8 @@ class cosmology () :
         """
         Parameters
         ----------
+        mm : mass
+        zz : redshift
 
         Returns
         -------
@@ -427,6 +447,8 @@ class cosmology () :
         """
         Parameters
         ----------
+        mm : mass
+        zz : redshift
 
         Returns
         -------
@@ -438,6 +460,8 @@ class cosmology () :
         """
         Parameters
         ----------
+        mm : mass
+        zz : redshift
 
         Returns
         -------
@@ -449,6 +473,9 @@ class cosmology () :
         """
         Parameters
         ----------
+        kk : scale
+        mm : mass
+        zz : redshift
 
         Returns
         -------
@@ -460,6 +487,8 @@ class cosmology () :
         """
         Parameters
         ----------
+        ll : luminosity [ mag ]
+        zz : redshift
 
         Returns
         -------
@@ -471,6 +500,8 @@ class cosmology () :
         """
         Parameters
         ----------
+        ll : luminosity [ mag ]
+        zz : redshift
 
         Returns
         -------
@@ -482,6 +513,8 @@ class cosmology () :
         """
         Parameters
         ----------
+        ll : luminosity [ mag ]
+        zz : redshift
 
         Returns
         -------
@@ -493,6 +526,8 @@ class cosmology () :
         """
         Parameters
         ----------
+        ll : luminosity [ mag ]
+        zz : redshift
 
         Returns
         -------
@@ -504,6 +539,8 @@ class cosmology () :
         """
         Parameters
         ----------
+        ll : luminosity [ mag ]
+        zz : redshift
 
         Returns
         -------

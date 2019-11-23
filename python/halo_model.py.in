@@ -146,6 +146,10 @@ lib.model_Wt_large_scale_hm.restype = c_void_p
 
 # Wrap class halo_model:
 class halo_model () :
+    """
+    Class to handle the halo-model functions, 
+    it depends on the classes occupation_p and cosmology
+    """
 
     def __init__ ( self,
                    occupation = None,
@@ -202,6 +206,19 @@ class halo_model () :
         return;
 
     def ng ( self ) :
+        """
+        Average number of galaxies per unit volume.
+        Parameters
+        ----------
+        Returns
+        -------
+        The halo-model estimate of the number density of galaxies at the
+        redshift the model is computed.
+        .. math: n_g(z) = \int_{M_{min}}^{M_{max}} N_g(M_h) n(M_h) dM_h
+        where :math:`N_g(M_h) = N_{cen}(M_h) + N_{sat}(M_h)`.
+        .. note:: The values of :math:`z`, :math:`M_{min}` and :math:`M_{max}` 
+                  are set by the constructor of the class halo_model
+        """
 
         return lib.ng_hm( self.obj )
 
