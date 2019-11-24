@@ -85,13 +85,21 @@ class cosmology () :
         Parameters
         ----------
         Om_M : float
+          :math:`\\Omega_M` matter density parameter
         Om_b : float
+          :math:`\\Omega_b` baryonic matter density parameter
         Om_L : float
+          :math:`\\Omega_\\Lambda` dark-energy density parameter
         Om_n : float
+          :math:`\\Omega_\\nu` neutrinos density parameter
         Om_r : float
+          :math:`\\Omega_r` radiation density parameter
         Om_K : float
+          :math:`\\Omega_K` curvature density parameter
         hh : float
+          :math:`h` Hubble parameter :math:`H/(100\; [km \cdot s^{-1} \cdot Mpc^{-1}])` at :math:`z = 0`
         sigma8 : float
+          :math:`\\sigma_8` normalization at :math:`z = 0`
 
         Returns 
         -------
