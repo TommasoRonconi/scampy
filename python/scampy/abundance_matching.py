@@ -1,7 +1,7 @@
 import numpy
 from scipy.integrate import quad
 
-from mockpy.interpolator import lin_interpolator
+from scampy.interpolator import lin_interpolator
 
 def differential_counts ( var, binning, fact ) :
     

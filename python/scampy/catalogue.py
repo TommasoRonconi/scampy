@@ -4,8 +4,8 @@ import copy
 from sklearn.neighbors import BallTree, KDTree
 
 # internal:
-from mockpy import gadget_file
-from mockpy.objects import *
+from scampy import gadget_file
+from scampy.objects import *
 
 class catalogue () :
     

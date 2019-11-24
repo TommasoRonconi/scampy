@@ -1,6 +1,9 @@
 import numpy as np
 
 class gadget_file () :
+    """
+    A class for reading GaDGET SUBFIND subgroup tables
+    """
     
     local_elements = ( 'groups', 'ids', 'subs' )
     global_elements =  ( 'tot_groups', 'tot_ids', 'task', 'tot_subs' )
@@ -43,6 +46,17 @@ class gadget_file () :
         return ( Ngroups, Nids, Nsubs) , ( totNgroups, totNids, Ntask, totNsubs )
         
     def read_header ( self, num = 0 ) :
+        """
+        Reads only the Header of the `num`^th file in `base`
+        Parameters
+        ----------
+        num : the file number to read
+        
+        Returns
+        -------
+        loc : dictionary with meta-data local to file `num`
+        glob : dictionary with meta-data global to all files in `base`
+        """
         
         current = self.filebase + ".{:d}".format( num )
         with open( current, "rb" ) as f:
