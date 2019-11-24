@@ -1,29 +1,9 @@
-from ctypes import *
 import numpy
-
-lib = CDLL( "@INTRP_WRAP_PATH@" )
+from .cwrap.cwrap import *
 
 # ========================================================================================
 # ========================================= LIN ==========================================
 # ========================================================================================
-
-# Interpolator constructors
-lib.create_lin_interpolator.argtypes = [ POINTER( c_double ),
-                                         POINTER( c_double ),
-                                         c_size_t ]
-lib.create_lin_interpolator.restype = c_void_p
-
-# Interpolator destructors
-lib.free_lin_interpolator.argtypes = [ c_void_p ]
-lib.free_lin_interpolator.restype = c_void_p
-
-# Evaluate function in point x
-lib.lin_interpolator_eval.argtypes = [ c_double, c_void_p ]
-lib.lin_interpolator_eval.restype = c_double
-
-# Integrate function in an inteval
-lib.lin_interpolator_integrate.argtypes = [ c_double, c_double, c_void_p ]
-lib.lin_interpolator_integrate.restype = c_double
 
 # Wrap class interpolator< gsl_lin_interp >:
 class lin_interpolator () :
@@ -44,21 +24,21 @@ class lin_interpolator () :
             self._thinness = len( xv )
         else :
             raise ValueError( "List xv and list fv must have the same length" )
-            
+        
         self._xv = ( c_double * len( xv ) )( *[ _x for _x in xv ] )
         self._fv = ( c_double * len( fv ) )( *[ _f for _f in fv ] )
 
-        self.obj = lib.create_lin_interpolator( self._xv, self._fv,
-                                                c_size_t( self._thinness ) )
+        self.obj = lib_intrp.create_lin_interpolator( self._xv, self._fv,
+                                                      c_size_t( self._thinness ) )
 
     def __del__ ( self ) :
 
         # Python call to lin_interpolator dtor:
-        lib.free_lin_interpolator( self.obj )
+        lib_intrp.free_lin_interpolator( self.obj )
 
     def __call__ ( self, xx ) :
 
-        return lib.lin_interpolator_eval( c_double( xx ), self.obj )
+        return lib_intrp.lin_interpolator_eval( c_double( xx ), self.obj )
 
     def get_xmin ( self ) :
         return self._xmin
@@ -68,31 +48,13 @@ class lin_interpolator () :
 
     def integrate ( self, aa, bb ) :
 
-        return lib.lin_interpolator_integrate( c_double( aa ),
-                                               c_double( bb ),
-                                               self.obj )
+        return lib_intrp.lin_interpolator_integrate( c_double( aa ),
+                                                     c_double( bb ),
+                                                     self.obj )
 
 # ========================================================================================
 # ========================================= LOG ==========================================
 # ========================================================================================
-
-# Interpolator constructors
-lib.create_log_interpolator.argtypes = [ POINTER( c_double ),
-                                         POINTER( c_double ),
-                                         c_size_t ]
-lib.create_log_interpolator.restype = c_void_p
-
-# Interpolator destructors
-lib.free_log_interpolator.argtypes = [ c_void_p ]
-lib.free_log_interpolator.restype = c_void_p
-
-# Evaluate function in point x
-lib.log_interpolator_eval.argtypes = [ c_double, c_void_p ]
-lib.log_interpolator_eval.restype = c_double
-
-# Integrate function in an inteval
-lib.log_interpolator_integrate.argtypes = [ c_double, c_double, c_void_p ]
-lib.log_interpolator_integrate.restype = c_double
 
 # Wrap class interpolator< gsl_log_interp >:
 class log_interpolator () :
@@ -115,21 +77,21 @@ class log_interpolator () :
             self._thinness = len( xv )
         else :
             raise ValueError( "List xv and list fv must have the same length" )
-            
+        
         self._xv = ( c_double * len( xv ) )( *[ _x for _x in xv ] )
         self._fv = ( c_double * len( fv ) )( *[ _f for _f in fv ] )
 
-        self.obj = lib.create_log_interpolator( self._xv, self._fv,
-                                                c_size_t( self._thinness ) )
+        self.obj = lib_intrp.create_log_interpolator( self._xv, self._fv,
+                                                      c_size_t( self._thinness ) )
 
     def __del__ ( self ) :
 
         # Python call to log_interpolator dtor:
-        lib.free_log_interpolator( self.obj )
+        lib_intrp.free_log_interpolator( self.obj )
 
     def __call__ ( self, xx ) :
 
-        return lib.log_interpolator_eval( c_double( xx ), self.obj )
+        return lib_intrp.log_interpolator_eval( c_double( xx ), self.obj )
 
     def get_xmin ( self ) :
         return self._xmin
@@ -139,9 +101,9 @@ class log_interpolator () :
 
     def integrate ( self, aa, bb ) :
 
-        return lib.log_interpolator_integrate( c_double( aa ),
-                                               c_double( bb ),
-                                               self.obj )
+        return lib_intrp.log_interpolator_integrate( c_double( aa ),
+                                                     c_double( bb ),
+                                                     self.obj )
 
 
 if __name__ == '__main__' :

@@ -1,129 +1,5 @@
-from ctypes import *
-import numpy 
-
-lib = CDLL( "@COSMO_WRAP_PATH@" )
-
-# Cosmology constructor
-lib.create_cosmology.argtypes = [ POINTER( c_cosmo_params_t ),
-                                  POINTER( c_double ),
-                                  POINTER( c_double ),
-                                  c_size_t,
-                                  c_double, c_double,
-                                  c_size_t ]
-lib.create_cosmology.restype = c_void_p
-
-# Cosmology destructor
-lib.free_cosmology.argtypes = [ c_void_p ]
-lib.free_cosmology.restype = c_void_p
-
-# H( z )
-lib.cosmo_Hz.argtypes = [ c_double, c_void_p ]
-lib.cosmo_Hz.restype = c_double
-
-# d_C
-lib.cosmo_dC.argtypes = [ c_double, c_void_p ]
-lib.cosmo_dC.restype = c_double
-
-# derivative of d_C
-lib.cosmo_ddC.argtypes = [ c_double, c_void_p ]
-lib.cosmo_ddC.restype = c_double
-
-# dV/dzdOmega
-lib.cosmo_comoving_volume_unit.argtypes = [ c_double, c_void_p ]
-lib.cosmo_comoving_volume_unit.restype = c_double
-
-# V( z )
-lib.cosmo_comoving_volume.argtypes = [ c_double, c_void_p ]
-lib.cosmo_comoving_volume.restype = c_double
-
-# t_age( z )
-lib.cosmo_cosmic_time.argtypes = [ c_double, c_void_p ]
-lib.cosmo_cosmic_time.restype = c_double
-
-# rho_crit( z )
-lib.cosmo_rho_crit.argtypes = [ c_double, c_void_p ]
-lib.cosmo_rho_crit.restype = c_double
-
-# rho_crit( z ) comoving
-lib.cosmo_rho_crit_comoving.argtypes = [ c_double, c_void_p ]
-lib.cosmo_rho_crit_comoving.restype = c_double
-
-# matter density parameter
-lib.cosmo_OmegaM.argtypes = [ c_double, c_void_p ]
-lib.cosmo_OmegaM.restype = c_double
-
-# linear critical overdensity at given redshift
-lib.cosmo_deltac.argtypes = [ c_double, c_void_p ]
-lib.cosmo_deltac.restype = c_double
-
-# overdensity parameter ( Bryan & Norman '98 )
-lib.cosmo_Deltac_BN98.argtypes = [ c_double, c_void_p ]
-lib.cosmo_Deltac_BN98.restype = c_double
-
-# overdensity parameter ( Nakamura & Suto '98 )
-lib.cosmo_Deltac_NS98.argtypes = [ c_double, c_void_p ]
-lib.cosmo_Deltac_NS98.restype = c_double
-
-# growth factor at given redshift
-lib.cosmo_DD.argtypes = [ c_double, c_void_p ]
-lib.cosmo_DD.restype = c_double
-
-# growth factor at given redshift
-lib.cosmo_gz.argtypes = [ c_double, c_void_p ]
-lib.cosmo_gz.restype = c_double
-
-# linear power spectrum at given redshift
-lib.cosmo_Pk.argtypes = [ c_double, c_double, c_void_p ]
-lib.cosmo_Pk.restype = c_double
-
-# cosmic mass-variance
-lib.cosmo_sigma2M.argtypes = [ c_double, c_double, c_void_p ]
-lib.cosmo_sigma2M.restype = c_double
-
-# halo-mass function
-lib.cosmo_dndM.argtypes = [ c_double, c_double, c_void_p ]
-lib.cosmo_dndM.restype = c_double
-
-# halo bias
-lib.cosmo_hbias.argtypes = [ c_double, c_double, c_void_p ]
-lib.cosmo_hbias.restype = c_double
-
-# density profile of DM haloes in fourier space
-lib.cosmo_density_profile_FS.argtypes = [ c_double, c_double, c_double, c_void_p ]
-lib.cosmo_density_profile_FS.restype = c_double
-
-# luminosity function ( default )
-lib.cosmo_dphidL.argtypes = [ c_double, c_double, c_void_p ]
-lib.cosmo_dphidL.restype = c_double
-
-# luminosity function ( Bouwens et al., 2015 )
-lib.cosmo_dphidL_Bouwens15.argtypes = [ c_double, c_double, c_void_p ]
-lib.cosmo_dphidL_Bouwens15.restype = c_double
-
-# luminosity function ( Bouwens et al., 2016 )
-lib.cosmo_dphidL_Bouwens16.argtypes = [ c_double, c_double, c_void_p ]
-lib.cosmo_dphidL_Bouwens16.restype = c_double
-
-# UV luminosity function ( Lapi et al., 2017 )
-lib.cosmo_dphidL_Lapi17_uv.argtypes = [ c_double, c_double, c_void_p ]
-lib.cosmo_dphidL_Lapi17_uv.restype = c_double
-
-# UV+IR-corrected luminosity function ( Lapi et al., 2017 )
-lib.cosmo_dphidL_Lapi17_uvir.argtypes = [ c_double, c_double, c_void_p ]
-lib.cosmo_dphidL_Lapi17_uvir.restype = c_double
-        
-
-class c_cosmo_params_t ( Structure ) :
-    _fields_ = [
-        ( "Om_M", c_double ),
-        ( "Om_b", c_double ),
-        ( "Om_L", c_double ),
-        ( "Om_n", c_double ),
-        ( "Om_r", c_double ),
-        ( "Om_K", c_double ),
-        ( "hh", c_double ),
-        ( "sigma8", c_double )
-    ]
+import numpy
+from .cwrap.cwrap import *
 
 #Wrap class cosmology:
 class cosmology () :
@@ -171,17 +47,17 @@ class cosmology () :
             self._size_k = len( kh0 )
         else :
             raise ValueError( "list kh0 and list pk0 must have the same length" )
-            
+        
         self._kh0 = ( c_double * len( kh0 ) )( *[ _k for _k in kh0 ] )
         self._pk0 = ( c_double * len( pk0 ) )( *[ _p for _p in pk0 ] )
         self._zmin = zmin
         self._zmax = zmax
         self._thinness = thinness
-        self.obj = lib.create_cosmology( self._c_par,
-                                         self._kh0, self._pk0,
-                                         c_size_t( self._size_k ),
-                                         c_double( self._zmin ), c_double( self._zmax ),
-                                         c_size_t( self._thinness ) )
+        self.obj = lib_cosmo.create_cosmology( self._c_par,
+                                               self._kh0, self._pk0,
+                                               c_size_t( self._size_k ),
+                                               c_double( self._zmin ), c_double( self._zmax ),
+                                               c_size_t( self._thinness ) )
 
 
     def __del__ ( self ) :
@@ -191,7 +67,7 @@ class cosmology () :
         """
 
         # Python call to cosmology dtor:
-        lib.free_cosmology( self.obj )
+        lib_cosmo.free_cosmology( self.obj )
 
     def set_parameters ( self,
                          Om_M = 0.3,
@@ -229,11 +105,11 @@ class cosmology () :
                        'Om_K' : Om_K,
                        'hh' : hh,
                        'sigma8' : sigma8 }
-        self.obj = lib.create_cosmology( self._c_par,
-                                         self._kh0, self._pk0,
-                                         c_size_t( self._size_k ),
-                                         c_double( self._zmin ), c_double( self._zmax ),
-                                         c_size_t( self._thinness ) )
+        self.obj = lib_cosmo.create_cosmology( self._c_par,
+                                               self._kh0, self._pk0,
+                                               c_size_t( self._size_k ),
+                                               c_double( self._zmin ), c_double( self._zmax ),
+                                               c_size_t( self._thinness ) )
         return
 
     def Hz ( self, zz ) :
@@ -247,7 +123,7 @@ class cosmology () :
         Value of the Hubble parameter at given redshift
         """
 
-        return lib.cosmo_Hz( c_double( zz ), self.obj )
+        return lib_cosmo.cosmo_Hz( c_double( zz ), self.obj )
 
     def dC ( self, zz ) :
         """
@@ -259,7 +135,7 @@ class cosmology () :
         -------
         """
 
-        return lib.cosmo_dC( c_double( zz ), self.obj )
+        return lib_cosmo.cosmo_dC( c_double( zz ), self.obj )
 
     def ddCdz ( self, zz ) :
         """
@@ -271,7 +147,7 @@ class cosmology () :
         -------
         """
 
-        return lib.cosmo_ddC( c_double( zz ), self.obj )
+        return lib_cosmo.cosmo_ddC( c_double( zz ), self.obj )
 
     def comoving_volume_unit ( self, zz ) :
         """
@@ -283,7 +159,7 @@ class cosmology () :
         -------
         """
 
-        return lib.cosmo_comoving_volume_unit( c_double( zz ), self.obj )
+        return lib_cosmo.cosmo_comoving_volume_unit( c_double( zz ), self.obj )
 
     def comoving_volume ( self, zz ) :
         """
@@ -295,7 +171,7 @@ class cosmology () :
         -------
         """
 
-        return lib.cosmo_comoving_volume( c_double( zz ), self.obj )
+        return lib_cosmo.cosmo_comoving_volume( c_double( zz ), self.obj )
 
     def cosmic_time ( self, zz ) :
         """
@@ -307,7 +183,7 @@ class cosmology () :
         -------
         """
 
-        return lib.cosmo_cosmic_time( c_double( zz ), self.obj )
+        return lib_cosmo.cosmo_cosmic_time( c_double( zz ), self.obj )
 
     def rho_crit ( self, zz ) :
         """
@@ -319,7 +195,7 @@ class cosmology () :
         -------
         """
 
-        return lib.cosmo_rho_crit( c_double( zz ), self.obj )
+        return lib_cosmo.cosmo_rho_crit( c_double( zz ), self.obj )
 
     def rho_crit_comoving ( self, zz ) :
         """
@@ -331,7 +207,7 @@ class cosmology () :
         -------
         """
 
-        return lib.cosmo_rho_crit_comoving( c_double( zz ), self.obj )
+        return lib_cosmo.cosmo_rho_crit_comoving( c_double( zz ), self.obj )
 
     def OmegaM ( self, zz ) :
         """
@@ -343,7 +219,7 @@ class cosmology () :
         -------
         """
 
-        return lib.cosmo_OmegaM( c_double( zz ), self.obj )
+        return lib_cosmo.cosmo_OmegaM( c_double( zz ), self.obj )
 
     def Omegab ( self, zz ) :
         """
@@ -355,7 +231,7 @@ class cosmology () :
         -------
         """
 
-        return lib.cosmo_Omegab( c_double( zz ), self.obj )
+        return lib_cosmo.cosmo_Omegab( c_double( zz ), self.obj )
 
     def deltac ( self, zz ) :
         """
@@ -367,7 +243,7 @@ class cosmology () :
         -------
         """
 
-        return lib.cosmo_deltac( c_double( zz ), self.obj )
+        return lib_cosmo.cosmo_deltac( c_double( zz ), self.obj )
 
     def Deltac_BN98 ( self, zz ) :
         """
@@ -379,7 +255,7 @@ class cosmology () :
         -------
         """
 
-        return lib.cosmo_Deltac_BN98( c_double( zz ), self.obj )
+        return lib_cosmo.cosmo_Deltac_BN98( c_double( zz ), self.obj )
 
     def Deltac_NS98 ( self, zz ) :
         """
@@ -391,7 +267,7 @@ class cosmology () :
         -------
         """
 
-        return lib.cosmo_Deltac_NS98( c_double( zz ), self.obj )
+        return lib_cosmo.cosmo_Deltac_NS98( c_double( zz ), self.obj )
 
     def DD ( self, zz ) :
         """
@@ -403,7 +279,7 @@ class cosmology () :
         -------
         """
 
-        return lib.cosmo_DD( c_double( zz ), self.obj )
+        return lib_cosmo.cosmo_DD( c_double( zz ), self.obj )
 
     def gz ( self, zz ) :
         """
@@ -415,7 +291,7 @@ class cosmology () :
         -------
         """
 
-        return lib.cosmo_gz( c_double( zz ), self.obj )
+        return lib_cosmo.cosmo_gz( c_double( zz ), self.obj )
 
     def Pk ( self, kk, zz ) :
         """
@@ -428,7 +304,7 @@ class cosmology () :
         -------
         """
 
-        return lib.cosmo_Pk( c_double( kk ), c_double( zz ), self.obj )
+        return lib_cosmo.cosmo_Pk( c_double( kk ), c_double( zz ), self.obj )
 
     def sigma2M ( self, mm, zz ) :
         """
@@ -441,7 +317,7 @@ class cosmology () :
         -------
         """
 
-        return lib.cosmo_sigma2M( c_double( mm ), c_double( zz ), self.obj )
+        return lib_cosmo.cosmo_sigma2M( c_double( mm ), c_double( zz ), self.obj )
 
     def dndM ( self, mm, zz ) :
         """
@@ -454,7 +330,7 @@ class cosmology () :
         -------
         """
 
-        return lib.cosmo_dndM( c_double( mm ), c_double( zz ), self.obj )
+        return lib_cosmo.cosmo_dndM( c_double( mm ), c_double( zz ), self.obj )
 
     def hbias ( self, mm, zz ) :
         """
@@ -467,7 +343,7 @@ class cosmology () :
         -------
         """
 
-        return lib.cosmo_hbias( c_double( mm ), c_double( zz ), self.obj )
+        return lib_cosmo.cosmo_hbias( c_double( mm ), c_double( zz ), self.obj )
 
     def density_profile_FS ( self, kk, mm, zz ) :
         """
@@ -481,7 +357,7 @@ class cosmology () :
         -------
         """
 
-        return lib.cosmo_density_profile_FS( c_double( kk ), c_double( mm ), c_double( zz ), self.obj )
+        return lib_cosmo.cosmo_density_profile_FS( c_double( kk ), c_double( mm ), c_double( zz ), self.obj )
 
     def dphidL ( self, ll, zz ) :
         """
@@ -494,7 +370,7 @@ class cosmology () :
         -------
         """
 
-        return lib.cosmo_dphidL( c_double( ll ), c_double( zz ), self.obj )
+        return lib_cosmo.cosmo_dphidL( c_double( ll ), c_double( zz ), self.obj )
 
     def dphidL_B15 ( self, ll, zz ) :
         """
@@ -507,7 +383,7 @@ class cosmology () :
         -------
         """
 
-        return lib.cosmo_dphidL_Bouwens15( c_double( ll ), c_double( zz ), self.obj )
+        return lib_cosmo.cosmo_dphidL_Bouwens15( c_double( ll ), c_double( zz ), self.obj )
 
     def dphidL_B16 ( self, ll, zz ) :
         """
@@ -520,7 +396,7 @@ class cosmology () :
         -------
         """
 
-        return lib.cosmo_dphidL_Bouwens16( c_double( ll ), c_double( zz ), self.obj )
+        return lib_cosmo.cosmo_dphidL_Bouwens16( c_double( ll ), c_double( zz ), self.obj )
 
     def dphidL_L17_uv ( self, ll, zz ) :
         """
@@ -533,7 +409,7 @@ class cosmology () :
         -------
         """
 
-        return lib.cosmo_dphidL_Lapi17_uv( c_double( ll ), c_double( zz ), self.obj )
+        return lib_cosmo.cosmo_dphidL_Lapi17_uv( c_double( ll ), c_double( zz ), self.obj )
 
     def dphidL_L17_uvir ( self, ll, zz ) :
         """
@@ -546,7 +422,7 @@ class cosmology () :
         -------
         """
 
-        return lib.cosmo_dphidL_Lapi17_uvir( c_double( ll ), c_double( zz ), self.obj )
+        return lib_cosmo.cosmo_dphidL_Lapi17_uvir( c_double( ll ), c_double( zz ), self.obj )
 
     def logsfr_from_Muv ( self, Muv ) :
         """
