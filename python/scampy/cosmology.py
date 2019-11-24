@@ -122,11 +122,15 @@ class cosmology () :
         return
 
     def Hz ( self, zz ) :
-        """ Computes the Hubble-parameter ad a given redshift.
-        Namely it computes
-          .. math:: H(z) = H_0 \\cdot E(z)
+        """ Computes the Hubble-parameter ad a given redshift.\n
+        
+        It computes
+        
+        .. math:: H(z) = H_0 \\cdot E(z)
+        
         with
-          .. math:: E^2(z) = ( 1 + z )^2 \\bigl[ \sum_i \Omega_i ( 1 + z )^{ 1 + 3 w_i } \\bigr]
+        
+        .. math:: E^2(z) = ( 1 + z )^2 \\bigl[ \sum_i \Omega_i ( 1 + z )^{ 1 + 3 w_i } \\bigr]
         and with :math:`w_M = 0`, :math:`w_r = w_\\nu = 1/3`, :math:`w_K = -1/3`
 
         Parameters
@@ -148,7 +152,13 @@ class cosmology () :
         return lib_cosmo.cosmo_Hz( c_double( zz ), self.obj )
 
     def dC ( self, zz ) :
-        """ Comoving distance at given redshift
+        """ Comoving distance at given redshift.\n
+        
+        It computes the integral
+        
+        .. math:: d_C(z) = d_{H, 0} \\int_0^{z} \\dfrac{d z}{E(z)}
+        
+        where :math:`d_{H, 0} = c/H_0` is the Hubble distance at :math:`z = 0`
 
         Parameters
         ----------
@@ -158,41 +168,95 @@ class cosmology () :
         Returns
         -------
         float
+          the comoving distance at redshift `zz` in units of :math:`[\\text{Mpc}]`
+        
+        Note
+        ----
+        If the `hh` parameter has been set to `1` then the output units 
+        are equivalent to :math:`[\\text{Mpc}/h]`
+        
+        Warning
+        -------
+        Internally it uses an interpolated method on a logarithmic bin in redshift
+        (i.e. do not try to compute it with :math:`z = 0`, use a value :math:`\\ge 10^{-7}`)
         """
 
         return lib_cosmo.cosmo_dC( c_double( zz ), self.obj )
 
     def ddCdz ( self, zz ) :
-        """
+        """ Derivative of the comoving distance at given redshift.\n
+        
+        It computes
+        
+        .. math:: d_C(z) = d_{H, 0} \\dfrac{d z}{E(z)}
+        
+        where :math:`d_{H, 0} = c/H_0` is the Hubble distance at :math:`z = 0`
+
         Parameters
         ----------
-        zz : redshift
+        zz : float
+           redshift
 
         Returns
         -------
         float
+          the comoving distance at redshift `zz` in units of :math:`[\\text{Mpc}]`
+        
+        Note
+        ----
+        If the `hh` parameter has been set to `1` then the output units 
+        are equivalent to :math:`[\\text{Mpc}/h]`
+        
+        Warning
+        -------
+        Internally it uses an interpolated method on a logarithmic bin in redshift
+        (i.e. do not try to compute it with :math:`z = 0`, use a value :math:`\\ge 10^{-7}`)
         """
 
         return lib_cosmo.cosmo_ddC( c_double( zz ), self.obj )
 
     def comoving_volume_unit ( self, zz ) :
-        """
+        """ Comoving volume in unit of redshift and solid angle :math:`d\\Omega`.\n
+        
+        It computes
+        
+        .. math:: \\dfrac{dV(z)}{dz d\\Omega} = \\dfrac{d_C^2(z)}{d_{H, 0}} \\int_0^{z} \\dfrac{d z}{E(z)}
+        
+        where :math:`d_{H, 0} = c/H_0` and `d_C(z)` are the Hubble distance at :math:`z = 0` and
+        the comoving distance at redshift :math:`z`, respectively.
+
         Parameters
         ----------
-        zz : redshift
+        zz : float
+           redshift
 
         Returns
         -------
         float
+          the comoving distance at redshift `zz` in units of :math:`[\\text{Mpc}^3]`
+        
+        Note
+        ----
+        If the `hh` parameter has been set to `1` then the output units 
+        are equivalent to :math:`[(\\text{Mpc}/h)^3]`
+        
+        Warning
+        -------
+        Internally it uses an interpolated method on a logarithmic bin in redshift
+        (i.e. do not try to compute it with :math:`z = 0`, use a value :math:`\\ge 10^{-7}`)
         """
 
         return lib_cosmo.cosmo_comoving_volume_unit( c_double( zz ), self.obj )
 
     def comoving_volume ( self, zz ) :
-        """
+        """ Comoving volume at given redshift.\n
+        
+        It computes
+        
         Parameters
         ----------
-        zz : redshift
+        zz : float
+          redshift
 
         Returns
         -------
