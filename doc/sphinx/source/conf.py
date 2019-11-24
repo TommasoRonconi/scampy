@@ -12,7 +12,6 @@
 #
 import os
 import sys
-# sys.path.insert( 0, os.path.abspath('.') )
 sys.path.insert( 0, os.path.abspath( '../../../python' ) )
 
 # -- Configuration for ReadTheDocs setup -------------------------------------
@@ -71,7 +70,7 @@ exclude_patterns = []
 
 # -- Autodoc configuration ---------------------------------------------------
 
-autodoc_mock_imports = [ 'numpy', 'scampy.cwrap' ]
+autodoc_mock_imports = [ 'numpy', 'scipy', 'sklearn', 'scampy.cwrap' ]
 # autodoc_default_options = {
 #     'members': True
 #     }
