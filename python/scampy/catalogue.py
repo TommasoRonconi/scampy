@@ -8,6 +8,9 @@ from scampy import gadget_file
 from scampy.objects import *
 
 class catalogue () :
+    """
+    Class to handle catalogues of objects of type halo, host_halo, galaxy
+    """
     
     def __init__ ( self, X = None, scale_lenght = 1.e-3, scale_mass = 1.e+10 ) :
         if X is None : 
@@ -255,6 +258,18 @@ class catalogue () :
             return catalogue( ll ), Ngxy
 
 def extract_galaxies ( hhaloes, ngxy ) :
+    """
+    Extracts objects of type galaxy from an host halo catalogue
+    Parameters
+    ----------
+    hhaloes : the input host-halo catalogue
+    ngxy : the number of galaxies hosted by all the host haloes
+           in the input catalogue
+    
+    Return
+    ------
+    numpy array containing ngxy galaxies
+    """
     
     galaxies = numpy.empty( ngxy, dtype = galaxy )
     idx = 0
