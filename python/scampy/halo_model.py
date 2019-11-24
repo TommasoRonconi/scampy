@@ -63,18 +63,19 @@ class halo_model () :
         return;
 
     def ng ( self ) :
-        """
-        Average number of galaxies per unit volume.
-        Parameters
-        ----------
+        """ Average number of galaxies per unit volume.
+        This is the halo-model estimate of the number density of galaxies at the redshift the model is computed:
+          .. math:: n_g(z) = \int_{M_{min}}^{M_{max}} N_g(M_h) n(M_h) dM_h
+        where :math:`N_g(M_h) = N_{cen}(M_h) + N_{sat}(M_h)`.
+
         Returns
         -------
-        The halo-model estimate of the number density of galaxies at the
-        redshift the model is computed.
-        .. math: n_g(z) = \int_{M_{min}}^{M_{max}} N_g(M_h) n(M_h) dM_h
-        where :math:`N_g(M_h) = N_{cen}(M_h) + N_{sat}(M_h)`.
-        .. note:: The values of :math:`z`, :math:`M_{min}` and :math:`M_{max}` 
-                  are set by the constructor of the class halo_model
+        float
+          :math:`n_g(z)`
+
+        Note
+        ----
+        The values of :math:`z`, :math:`M_{min}` and :math:`M_{max}` are set by the constructor of the class halo_model
         """
 
         return lib_hm.ng_hm( self.obj )

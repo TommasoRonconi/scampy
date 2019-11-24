@@ -3,8 +3,24 @@ from .cwrap.cwrap import *
 
 #Wrap class cosmology:
 class cosmology () :
-    """ 
-    Class to handle cosmology parameterisation and functions
+    """ Class to handle cosmology parameterisation and functions
+
+    Parameters
+    ----------
+    kh0 : array-like object, same dimension of pk0
+      binned scale parameter :math:`k/h` (logarithmically equispaced)
+    pk0 : array-like object, same dimension of kh0
+      input power spectrum computed in the positions of `kh0` at redshift z = 0
+      ( the :math:`P(k)` will be authomatically re-normalized at the required value of :math:`\\sigma_8` )
+
+    zmin : float
+      minimum value of redshift for interpolation (note: must be :math:`> 0`)
+
+    zmax : float
+      maximum value of redshift for interpolation
+
+    thinness : int
+      number of bins of the interpolation in redshift-space
     """
 
     params = { 'Om_M' : 0.3,
@@ -15,34 +31,11 @@ class cosmology () :
                'Om_K' : 0.00,
                'hh' : 0.7,
                'sigma8' : 0.8 }
-
-    # _c_par = params
-    # _c_par = cosmo_params_t( params[ 'Om_M' ],
-    #                          params[ 'Om_b' ],
-    #                          params[ 'Om_L' ],
-    #                          params[ 'Om_n' ],
-    #                          params[ 'Om_r' ],
-    #                          params[ 'Om_K' ],
-    #                          params[ 'hh' ],
-    #                          params[ 'sigma8' ] )
     
     def __init__ ( self, kh0, pk0,
                    zmin = 1.e-7, zmax = 1.e+7,
                    thinness = 200 ) :
-        """
-        Constructor of the class cosmology
-
-        Parameters
-        ----------
-        kh0, pk0 : input power spectrum binned at logarithmically equispaced values of k/h at redshift z = 0
-                   the P(k) will be authomatically re-normalized at the required value of sigma_8
-        zmin : minimum value of redshift for interpolation (note: must be > 0.)
-        zmax : maximum value of redshift for interpolation
-        thinness : number of bins of the interpolation in redshift-space
-
-        Returns
-        -------
-        Object of class cosmology        
+        """ Constructor of the class cosmology
         """
         if len( kh0 ) == len( pk0 ) :
             self._size_k = len( kh0 )
@@ -71,8 +64,7 @@ class cosmology () :
 
 
     def __del__ ( self ) :
-        """
-        Destructor of the class cosmology
+        """ Destructor of the class cosmology
         It calls the corresponding destructor wrapped from C
         """
 
@@ -88,23 +80,22 @@ class cosmology () :
                          Om_K = 0.,
                          hh = 0.7,
                          sigma8 = 0.8 ) :
-        """
-        Function to set cosmological parameters
+        """ Function to set cosmological parameters
 
         Parameters
         ----------
-        Om_M :
-        Om_b :
-        Om_L :
-        Om_n :
-        Om_r :
-        Om_K :
-        hh :
-        sigma8 :
+        Om_M : float
+        Om_b : float
+        Om_L : float
+        Om_n : float
+        Om_r : float
+        Om_K : float
+        hh : float
+        sigma8 : float
 
         Returns 
         -------
-        nothing
+        None
         """
         self._c_par = c_cosmo_params_t( Om_M, Om_b, Om_L, Om_n, Om_r, Om_K, hh, sigma8 )
         self.params= { 'Om_M' : Om_M,
@@ -123,26 +114,42 @@ class cosmology () :
         return
 
     def Hz ( self, zz ) :
-        """
+        """ Computes the Hubble-parameter ad a given redshift.
+        Namely it computes
+          .. math:: H(z) = H_0 \\cdot E(z)
+        with
+          .. math:: E^2(z) = ( 1 + z )^2 \\bigl[ \sum_i \Omega_i ( 1 + z )^{ 1 + 3 w_i } \\bigr]
+        and with :math:`w_M = 0`, :math:`w_r = w_\\nu = 1/3`, :math:`w_K = -1/3`
+
         Parameters
         ----------
-        zz : redshift
+        zz : float
+           redshift
 
         Returns
         -------
-        Value of the Hubble parameter at given redshift
+        float
+           Value of the Hubble parameter at given redshift
+
+        Warning
+        -------
+        Internally it uses an interpolated method on a logarithmic bin in redshift
+        (i.e. do not try to compute it with :math:`z = 0`, use a value :math:`\\ge 10^{-7}`)
         """
 
         return lib_cosmo.cosmo_Hz( c_double( zz ), self.obj )
 
     def dC ( self, zz ) :
-        """
+        """ Comoving distance at given redshift
+
         Parameters
         ----------
-        zz : redshift
+        zz : float
+           redshift
 
         Returns
         -------
+        float
         """
 
         return lib_cosmo.cosmo_dC( c_double( zz ), self.obj )
@@ -155,6 +162,7 @@ class cosmology () :
 
         Returns
         -------
+        float
         """
 
         return lib_cosmo.cosmo_ddC( c_double( zz ), self.obj )
@@ -167,6 +175,7 @@ class cosmology () :
 
         Returns
         -------
+        float
         """
 
         return lib_cosmo.cosmo_comoving_volume_unit( c_double( zz ), self.obj )
@@ -179,6 +188,7 @@ class cosmology () :
 
         Returns
         -------
+        float
         """
 
         return lib_cosmo.cosmo_comoving_volume( c_double( zz ), self.obj )
@@ -191,6 +201,7 @@ class cosmology () :
 
         Returns
         -------
+        float
         """
 
         return lib_cosmo.cosmo_cosmic_time( c_double( zz ), self.obj )
@@ -203,6 +214,7 @@ class cosmology () :
 
         Returns
         -------
+        float
         """
 
         return lib_cosmo.cosmo_rho_crit( c_double( zz ), self.obj )
@@ -215,6 +227,7 @@ class cosmology () :
 
         Returns
         -------
+        float
         """
 
         return lib_cosmo.cosmo_rho_crit_comoving( c_double( zz ), self.obj )
@@ -227,6 +240,7 @@ class cosmology () :
 
         Returns
         -------
+        float
         """
 
         return lib_cosmo.cosmo_OmegaM( c_double( zz ), self.obj )
@@ -239,6 +253,7 @@ class cosmology () :
 
         Returns
         -------
+        float
         """
 
         return lib_cosmo.cosmo_Omegab( c_double( zz ), self.obj )
@@ -251,6 +266,7 @@ class cosmology () :
 
         Returns
         -------
+        float
         """
 
         return lib_cosmo.cosmo_deltac( c_double( zz ), self.obj )
@@ -263,6 +279,7 @@ class cosmology () :
 
         Returns
         -------
+        float
         """
 
         return lib_cosmo.cosmo_Deltac_BN98( c_double( zz ), self.obj )
@@ -275,6 +292,7 @@ class cosmology () :
 
         Returns
         -------
+        float
         """
 
         return lib_cosmo.cosmo_Deltac_NS98( c_double( zz ), self.obj )
@@ -287,6 +305,7 @@ class cosmology () :
 
         Returns
         -------
+        float
         """
 
         return lib_cosmo.cosmo_DD( c_double( zz ), self.obj )
@@ -299,6 +318,7 @@ class cosmology () :
 
         Returns
         -------
+        float
         """
 
         return lib_cosmo.cosmo_gz( c_double( zz ), self.obj )
@@ -312,6 +332,7 @@ class cosmology () :
 
         Returns
         -------
+        float
         """
 
         return lib_cosmo.cosmo_Pk( c_double( kk ), c_double( zz ), self.obj )
@@ -325,6 +346,7 @@ class cosmology () :
 
         Returns
         -------
+        float
         """
 
         return lib_cosmo.cosmo_sigma2M( c_double( mm ), c_double( zz ), self.obj )
@@ -338,6 +360,7 @@ class cosmology () :
 
         Returns
         -------
+        float
         """
 
         return lib_cosmo.cosmo_dndM( c_double( mm ), c_double( zz ), self.obj )
@@ -351,6 +374,7 @@ class cosmology () :
 
         Returns
         -------
+        float
         """
 
         return lib_cosmo.cosmo_hbias( c_double( mm ), c_double( zz ), self.obj )
@@ -365,6 +389,7 @@ class cosmology () :
 
         Returns
         -------
+        float
         """
 
         return lib_cosmo.cosmo_density_profile_FS( c_double( kk ), c_double( mm ), c_double( zz ), self.obj )
@@ -378,6 +403,7 @@ class cosmology () :
 
         Returns
         -------
+        float
         """
 
         return lib_cosmo.cosmo_dphidL( c_double( ll ), c_double( zz ), self.obj )
@@ -391,6 +417,7 @@ class cosmology () :
 
         Returns
         -------
+        float
         """
 
         return lib_cosmo.cosmo_dphidL_Bouwens15( c_double( ll ), c_double( zz ), self.obj )
@@ -404,6 +431,7 @@ class cosmology () :
 
         Returns
         -------
+        float
         """
 
         return lib_cosmo.cosmo_dphidL_Bouwens16( c_double( ll ), c_double( zz ), self.obj )
@@ -417,6 +445,7 @@ class cosmology () :
 
         Returns
         -------
+        float
         """
 
         return lib_cosmo.cosmo_dphidL_Lapi17_uv( c_double( ll ), c_double( zz ), self.obj )
@@ -430,6 +459,7 @@ class cosmology () :
 
         Returns
         -------
+        float
         """
 
         return lib_cosmo.cosmo_dphidL_Lapi17_uvir( c_double( ll ), c_double( zz ), self.obj )
@@ -442,7 +472,8 @@ class cosmology () :
 
         Returns
         -------
-        Log10 S.F.R. in [ M_sol / yr ]
+        float
+          :math:`\\log( S.F.R. )` in :math:`[ M_sol / yr ]`
         """
 
         return - 7.4 - 0.4 * Muv
@@ -457,7 +488,8 @@ class cosmology () :
 
         Returns
         -------
-        number of ionizing photons produced by the source per unit time [ sec^-1 ]
+        float
+          number of ionizing photons produced by the source per unit time [ sec^-1 ]
         """
 
         return sfr * fesc * kion
@@ -470,7 +502,8 @@ class cosmology () :
 
         Returns
         -------
-        Hydrogen mean density at given redshift [ cm^-3 ]
+        float
+          Hydrogen mean density at given redshift [ cm^-3 ]
         """      
         return 2.e-7 * self.Omegab( zz ) * 45.454545455
 
@@ -484,7 +517,8 @@ class cosmology () :
         
         Returns
         -------
-        Recombination time in [ Gyr ]
+        float
+          Recombination time in [ Gyr ]
         """
 
         red = 7. / ( 1. + zz )
@@ -502,7 +536,8 @@ class cosmology () :
 
         Returns
         -------
-        radius of the completelly ionized region around source (i.e. Stromgren sphere )
+        float
+          radius of the completelly ionized region around source (i.e. Stromgren sphere )
         """
 
         return ( 0.75 * ( np.pi * 1.e+7 * Nion ) * ( 1.e+9 * trec ) * ( 1. - np.exp( - tt / trec ) ) / ( nH * np.pi ) )**0.3333333333333333 * 3.2407789e-25
