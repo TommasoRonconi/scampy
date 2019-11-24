@@ -15,15 +15,16 @@ class cosmology () :
                'Om_K' : 0.00,
                'hh' : 0.7,
                'sigma8' : 0.8 }
-    
-    _c_par = c_cosmo_params_t( params[ 'Om_M' ],
-                               params[ 'Om_b' ],
-                               params[ 'Om_L' ],
-                               params[ 'Om_n' ],
-                               params[ 'Om_r' ],
-                               params[ 'Om_K' ],
-                               params[ 'hh' ],
-                               params[ 'sigma8' ] )
+
+    # _c_par = params
+    # _c_par = cosmo_params_t( params[ 'Om_M' ],
+    #                          params[ 'Om_b' ],
+    #                          params[ 'Om_L' ],
+    #                          params[ 'Om_n' ],
+    #                          params[ 'Om_r' ],
+    #                          params[ 'Om_K' ],
+    #                          params[ 'hh' ],
+    #                          params[ 'sigma8' ] )
     
     def __init__ ( self, kh0, pk0,
                    zmin = 1.e-7, zmax = 1.e+7,
@@ -47,6 +48,15 @@ class cosmology () :
             self._size_k = len( kh0 )
         else :
             raise ValueError( "list kh0 and list pk0 must have the same length" )
+        
+        self._c_par = c_cosmo_params_t( params[ 'Om_M' ],
+                                        params[ 'Om_b' ],
+                                        params[ 'Om_L' ],
+                                        params[ 'Om_n' ],
+                                        params[ 'Om_r' ],
+                                        params[ 'Om_K' ],
+                                        params[ 'hh' ],
+                                        params[ 'sigma8' ] )
         
         self._kh0 = ( c_double * len( kh0 ) )( *[ _k for _k in kh0 ] )
         self._pk0 = ( c_double * len( pk0 ) )( *[ _p for _p in pk0 ] )
@@ -106,10 +116,10 @@ class cosmology () :
                        'hh' : hh,
                        'sigma8' : sigma8 }
         self.obj = lib_cosmo.create_cosmology( self._c_par,
-                                               self._kh0, self._pk0,
-                                               c_size_t( self._size_k ),
-                                               c_double( self._zmin ), c_double( self._zmax ),
-                                               c_size_t( self._thinness ) )
+                                                     self._kh0, self._pk0,
+                                                     c_size_t( self._size_k ),
+                                                     c_double( self._zmin ), c_double( self._zmax ),
+                                                     c_size_t( self._thinness ) )
         return
 
     def Hz ( self, zz ) :
@@ -496,7 +506,7 @@ class cosmology () :
         """
 
         return ( 0.75 * ( np.pi * 1.e+7 * Nion ) * ( 1.e+9 * trec ) * ( 1. - np.exp( - tt / trec ) ) / ( nH * np.pi ) )**0.3333333333333333 * 3.2407789e-25
-        
+    
 
         
 
@@ -505,7 +515,7 @@ if __name__ == '__main__' :
     input_dir = "../tests/integration_tests/input/"
 
     kh0, pk0 = numpy.genfromtxt( input_dir + "not-norm_pk_lcdm_camb.dat",
-                              unpack = True )
+                                 unpack = True )
     cosmo = cosmology( kh0, pk0 )
 
     print( "H( z = 2 )\t=\t{:e}".format( cosmo.Hz( 2. ) ) )
