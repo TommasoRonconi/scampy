@@ -12,9 +12,34 @@
 #
 import os
 import sys
-
 # sys.path.insert( 0, os.path.abspath('.') )
-sys.path.insert( 0, os.path.abspath('@PYTHON_PATH@') )
+sys.path.insert( 0, os.path.abspath( '../../../python' ) )
+
+# -- Configuration for ReadTheDocs setup -------------------------------------
+
+import subprocess, os
+ 
+def configureDoxyfile(input_dir, output_dir):
+    with open('../../doxyfile.in', 'r') as file :
+        filedata = file.read()
+ 
+    filedata = filedata.replace('@DOXYGEN_INPUT_DIR@', input_dir)
+    filedata = filedata.replace('@DOXYGEN_OUTPUT_DIR@', output_dir)
+ 
+    with open('doxyfile', 'w') as file:
+        file.write(filedata)
+ 
+# Check if we're running on Read the Docs' servers
+read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
+ 
+breathe_projects = {}
+ 
+if read_the_docs_build:
+    input_dir = '../../../mbh'
+    output_dir = 'build'
+    configureDoxyfile(input_dir, output_dir)
+    subprocess.call('doxygen', shell=True)
+    breathe_projects['MBH'] = output_dir + '/xml'
     
 
 # -- Project information -----------------------------------------------------
@@ -37,7 +62,7 @@ extensions = [ 'breathe',
 breathe_default_project = 'ScamPy'
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['@SOURCE_DIR@/_templates']
+templates_path = ['_templates']
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -46,6 +71,7 @@ exclude_patterns = []
 
 # -- Autodoc configuration ---------------------------------------------------
 
+autodoc_mock_imports = [ 'numpy', 'scampy.cwrap' ]
 # autodoc_default_options = {
 #     'members': True
 #     }
@@ -60,4 +86,4 @@ html_theme = 'sphinx_rtd_theme'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['@SOURCE_DIR@/_static']
+html_static_path = ['_static']
