@@ -21,6 +21,18 @@ class cosmology () :
 
     thinness : int
       number of bins of the interpolation in redshift-space
+        
+    Note
+    ----
+    If the `hh` parameter has been set to `1` (e.g. using function cosmology.set_parameters())
+    then the output units of functions (if not conversely specified) are equivalent to their 
+    comoving counterpart (e.g. :math:`[\\text{Mpc}]\\ \\rightarrow\\ [\\text{Mpc}/h]`
+    
+    Warning
+    -------
+    Internally functions use an interpolated method on a logarithmic bin in redshift, 
+    except where conversely specified.
+    (i.e. do not try to compute it with :math:`z = 0`, use a value :math:`\\ge 10^{-7}`)
     """
 
     params = { 'Om_M' : 0.3,
@@ -142,11 +154,6 @@ class cosmology () :
         -------
         float
            Value of the Hubble parameter at given redshift
-
-        Warning
-        -------
-        Internally it uses an interpolated method on a logarithmic bin in redshift
-        (i.e. do not try to compute it with :math:`z = 0`, use a value :math:`\\ge 10^{-7}`)
         """
 
         return lib_cosmo.cosmo_Hz( c_double( zz ), self.obj )
@@ -169,16 +176,6 @@ class cosmology () :
         -------
         float
           the comoving distance at redshift `zz` in units of :math:`[\\text{Mpc}]`
-        
-        Note
-        ----
-        If the `hh` parameter has been set to `1` then the output units 
-        are equivalent to :math:`[\\text{Mpc}/h]`
-        
-        Warning
-        -------
-        Internally it uses an interpolated method on a logarithmic bin in redshift
-        (i.e. do not try to compute it with :math:`z = 0`, use a value :math:`\\ge 10^{-7}`)
         """
 
         return lib_cosmo.cosmo_dC( c_double( zz ), self.obj )
@@ -201,16 +198,6 @@ class cosmology () :
         -------
         float
           the comoving distance at redshift `zz` in units of :math:`[\\text{Mpc}]`
-        
-        Note
-        ----
-        If the `hh` parameter has been set to `1` then the output units 
-        are equivalent to :math:`[\\text{Mpc}/h]`
-        
-        Warning
-        -------
-        Internally it uses an interpolated method on a logarithmic bin in redshift
-        (i.e. do not try to compute it with :math:`z = 0`, use a value :math:`\\ge 10^{-7}`)
         """
 
         return lib_cosmo.cosmo_ddC( c_double( zz ), self.obj )
@@ -233,17 +220,8 @@ class cosmology () :
         Returns
         -------
         float
-          the comoving distance at redshift `zz` in units of :math:`[\\text{Mpc}^3]`
-        
-        Note
-        ----
-        If the `hh` parameter has been set to `1` then the output units 
-        are equivalent to :math:`[(\\text{Mpc}/h)^3]`
-        
-        Warning
-        -------
-        Internally it uses an interpolated method on a logarithmic bin in redshift
-        (i.e. do not try to compute it with :math:`z = 0`, use a value :math:`\\ge 10^{-7}`)
+          the comoving volume unit at redshift `zz` in units of 
+          :math:`[ \\text{Mpc}^3 \\text{rad}^{-1} ]`
         """
 
         return lib_cosmo.cosmo_comoving_volume_unit( c_double( zz ), self.obj )
@@ -253,6 +231,10 @@ class cosmology () :
         
         It computes
         
+        .. math:: V_C = \\dfrac{4 \\pi}{3} d_C^3(z)
+
+        where :math:`d_C(z)` is the comoving distance computed as in cosmology.dC( z )
+        
         Parameters
         ----------
         zz : float
@@ -261,54 +243,89 @@ class cosmology () :
         Returns
         -------
         float
+          the all-sky, total comoving volume up to redshift `zz`
         """
 
         return lib_cosmo.cosmo_comoving_volume( c_double( zz ), self.obj )
 
     def cosmic_time ( self, zz ) :
-        """
+        """ Cosmic time at given redshift.
+
+        It gives the age of the Universe at a given redshift
+
+        .. math:: t_C(z) = t_{H, 0} \\int_z^{\\infty} \\dfrac{dz'}{(1 + z') E(z')}
+
+        where :math:`t_{H, 0}` is the Hubble time at :math:`z = 0`, which is computed as
+        :math:`\\propto 1/ H_0`.
+
+
         Parameters
         ----------
-        zz : redshift
+        zz : float
+          redshift
 
         Returns
         -------
         float
+          Age of the Universe in :math:`[\\text{Gyr}]`
         """
 
         return lib_cosmo.cosmo_cosmic_time( c_double( zz ), self.obj )
 
     def rho_crit ( self, zz ) :
-        """
+        """ Critical matter density at redshift :math:`z = 0`
+        
+        .. math:: \\rho_\\text{crit}(z) = \\dfrac{8 \\pi G}{3 H(z)}
+
         Parameters
         ----------
-        zz : redshift
+        zz : float
+          redshift
 
         Returns
         -------
         float
+          the critical overdensity :math:`\\rho_\\text{crit}` 
+          in units of :math:`[M_\\odot \\text{Mpc}^{-3}]`
         """
 
         return lib_cosmo.cosmo_rho_crit( c_double( zz ), self.obj )
 
     def rho_crit_comoving ( self, zz ) :
-        """
+        """ Comoving critical matter density at redshift :math:`z = 0`
+        
+        .. math:: \\rho_\\text{crit}(z) = \\dfrac{8 \\pi G}{3 H(z)}
+
         Parameters
         ----------
-        zz : redshift
+        zz : float
+          redshift
 
         Returns
         -------
         float
+          the comoving value of the critical matter overdensity :math:`\\rho_\\text{crit}` 
+          in units of :math:`[M_\\odot \\text{Mpc}^{-3} h^2]`
+          
+        Note
+        ----
+        The returned value is independent to the chosen parameter `hh`
         """
 
         return lib_cosmo.cosmo_rho_crit_comoving( c_double( zz ), self.obj )
 
     def OmegaM ( self, zz ) :
-        """
+        """ The dimensioneless matter density parameter at given redshift.
+
+        It is computed as
+        
+        .. math:: \\Omega_M(z) = \\dfrac{\\Omega_{M, 0}}{E^2(a) () }
+        
+        
         Parameters
         ----------
-        zz : redshift
+        zz : float
+          redshift
 
         Returns
         -------
