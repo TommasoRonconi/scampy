@@ -1,4 +1,4 @@
-Sub-halo Clustering and Abundance matching Python API
+Sub-halo Clustering and Abundance Matching Python API
 -----------------------------------------------------
 
 Installation guide
