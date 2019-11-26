@@ -69,6 +69,8 @@ templates_path = ['_templates']
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
 
+source_suffix = ['.rst', '.md', '.txt']
+
 # -- Autodoc configuration ---------------------------------------------------
 
 autodoc_mock_imports = [ 'numpy', 'scipy', 'sklearn', 'scampy.cwrap' ]
