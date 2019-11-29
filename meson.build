@@ -87,9 +87,13 @@ subdir( 'python')
 #######################################################################
 # Testing
 
-subdir( 'tests' )
+if get_option( 'ENABLE_TEST' )
+    subdir( 'tests' )
+endif
 
 #######################################################################
 # Documentation
 
-# subdir( 'doc' )
+if get_option( 'ENABLE_DOC' )
+    subdir( 'doc' )
+endif

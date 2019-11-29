@@ -1,0 +1,4 @@
+option( 'ENABLE_TEST', type : 'boolean', value : false,
+   description : 'Enable integration tests and unit tests.' )
+option( 'ENABLE_DOC', type : 'boolean', value : false,
+   description : 'Enable documentation build. It only works if the required dependencies are available:\n\t- doxygen,\n\t- sphinx,\n\t- breathe,\n\t- sphinx_readthedocs_theme' )
