@@ -7,3 +7,5 @@ install*
 *.so
 *.x
 python/scampy/__pycache__/*
+subprojects/googletest-release-1.8.1*
+subprojects/packagecache*
