@@ -54,14 +54,14 @@ class cosmology () :
         else :
             raise ValueError( "list kh0 and list pk0 must have the same length" )
         
-        self._c_par = c_cosmo_params_t( params[ 'Om_M' ],
-                                        params[ 'Om_b' ],
-                                        params[ 'Om_L' ],
-                                        params[ 'Om_n' ],
-                                        params[ 'Om_r' ],
-                                        params[ 'Om_K' ],
-                                        params[ 'hh' ],
-                                        params[ 'sigma8' ] )
+        self._c_par = c_cosmo_params_t( self.params[ 'Om_M' ],
+                                        self.params[ 'Om_b' ],
+                                        self.params[ 'Om_L' ],
+                                        self.params[ 'Om_n' ],
+                                        self.params[ 'Om_r' ],
+                                        self.params[ 'Om_K' ],
+                                        self.params[ 'hh' ],
+                                        self.params[ 'sigma8' ] )
         
         self._kh0 = ( c_double * len( kh0 ) )( *[ _k for _k in kh0 ] )
         self._pk0 = ( c_double * len( pk0 ) )( *[ _p for _p in pk0 ] )
