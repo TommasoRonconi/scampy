@@ -13,16 +13,26 @@ scam::halo_model::halo_model ( const std::shared_ptr< scam::occupation_p > & ocp
 							 _thinness{ thinness } {
 							     
   std::cout << "Computing interpolated functions ...";
+
   auto f_dndM = [ & ] ( double Mh ) { return _cosmo->dndM( Mh, _redshift ); };
-  dndM_f = scam::halo_model::interp_func { f_dndM,
-					   _mass_integ_lim.inf,
-					   _mass_integ_lim.sup,
-					   _thinness };
+  
   auto f_hbias = [ & ] ( double Mh ) { return _cosmo->hbias( Mh, _redshift ); };
-  hbias_f = scam::halo_model::interp_func { f_hbias,
-					    _mass_integ_lim.inf,
-					    _mass_integ_lim.sup,
-					    _thinness };
+  
+  _Mv = scam::utl::log_vector( _thinness,
+			       _mass_integ_lim.inf,
+			       _mass_integ_lim.sup );
+  
+  std::vector< double > v_dndM ( _thinness ), v_hbias ( _thinness );
+  
+#pragma omp parallel for 
+  for ( size_t _m = 0; _m < _thinness; ++_m ) {
+    v_dndM[ _m ] = f_dndM( _Mv[ _m ] );
+    v_hbias[ _m ] = f_hbias( _Mv[ _m ] );
+  }
+
+  dndM_f = scam::halo_model::interp_func { _Mv, v_dndM };
+  hbias_f = scam::halo_model::interp_func { _Mv, v_hbias };
+  
   auto f_Ncen = [ & ] ( double Mh ) { return _handler->Ncen( Mh ); };
   Ncen_f = scam::halo_model::interp_func { f_Ncen,
 					   _mass_integ_lim.inf,
@@ -33,9 +43,7 @@ scam::halo_model::halo_model ( const std::shared_ptr< scam::occupation_p > & ocp
 					   _mass_integ_lim.inf,
 					   _mass_integ_lim.sup,
 					   _thinness };
-
-  _Mv = Ncen_f.get_xv();
-
+    
   std::vector< double > f_const2 ( _thinness, 2 );
   const2_f = scam::halo_model::interp_func { _Mv, f_const2 };
 
