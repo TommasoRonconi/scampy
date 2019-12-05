@@ -43,7 +43,11 @@ namespace scam {
 
       gsl_interpolator_interface ( const double x_min, const double x_max,
 				   const size_t thinness )
-	: interpolator_interface{ x_min, x_max, thinness } {}
+	: interpolator_interface{ x_min, x_max, thinness } {
+
+	_gv.reserve( _thinness );
+	
+      }
 
       /// move constructor
       gsl_interpolator_interface ( gsl_interpolator_interface && gsl_ii )
@@ -144,7 +148,7 @@ namespace scam {
 	_xv = lin_vector( thinness, x_min, x_max );
 	
 	for ( auto&& _x : _xv )
-	  _fv.push_back( func( _x ) );
+	  _fv.emplace_back( func( _x ) );
 	_gv = _fv;
 	
 	_alloc( gsl_interp_cspline );
@@ -189,8 +193,8 @@ namespace scam {
 	_xv = lin_vector( thinness, std::log( x_min ), std::log( x_max ) );
 
 	for ( auto&& _x : xv ) {
-	  _fv.push_back( func( _x ) );
-	  _gv.push_back( _x * _fv.back() );
+	  _fv.emplace_back( func( _x ) );
+	  _gv.emplace_back( _x * _fv.back() );
 	}
 	
 	_alloc( gsl_interp_cspline );

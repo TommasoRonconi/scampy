@@ -29,7 +29,12 @@ namespace scam {
 
       interpolator_interface ( const double x_min, const double x_max,
 			       const size_t thinness )
-	: _x_min{ x_min }, _x_max{ x_max }, _thinness{ thinness } {}
+	: _x_min{ x_min }, _x_max{ x_max }, _thinness{ thinness } {
+
+	  _xv.reserve( _thinness );
+	  _fv.reserve( _thinness );
+
+	}
 
       /// move constructor
       interpolator_interface ( interpolator_interface && ii )
