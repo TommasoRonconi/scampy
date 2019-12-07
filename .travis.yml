@@ -10,6 +10,7 @@ matrix:
 
 install:
   - pip install meson ninja
+  - sudo apt-get update
   - sudo apt-get install gsl2
 
 script:
