@@ -3,7 +3,7 @@
 
 project( 'master',
          'cpp',
-         default_options : [ 'cpp_std=c++17',
+         default_options : [ 'cpp_std=c++14',
                              'buildtype=release',
                              'prefix=' + meson.source_root() + '/install',
                              'libdir=lib' ],
