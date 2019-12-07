@@ -11,7 +11,7 @@ matrix:
 install:
   - pip install meson ninja
   - sudo apt-get update
-  - sudo apt-get install gsl2
+  - sudo apt-get install libgsl-dev
 
 script:
   - meson builddir
