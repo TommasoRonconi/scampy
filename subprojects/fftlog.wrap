@@ -7,5 +7,4 @@ source_hash = 5548708c1c80c8d00ab87036c8c8fc419a40b981def0699ebb9f26d21ecac2e7
 
 patch_url = https://github.com/TommasoRonconi/fftlog_patch/raw/master/fftlog_patch.zip
 patch_filename = fftlog_patch.zip
-patch_hash = f3414377a58727463e6ea373923f6cc24e31927d52e28e385f41e94daa086ce2
-
+patch_hash = 7d06add3fe04ef9be21d8d23c850dee03b55d8246d00df81a11c2a1edd28895a
