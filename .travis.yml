@@ -10,9 +10,9 @@ matrix:
 
 install:
   - pip install meson ninja
+  - sudo apt-get install gsl2
 
 script:
-  - sudo apt-get install gsl2
   - meson builddir
   - ninja -C builddir
   - ninja -C builddir test
