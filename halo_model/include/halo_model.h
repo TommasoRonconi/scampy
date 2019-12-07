@@ -1,3 +1,13 @@
+/**
+ *  @file halo_model/include/halo_model.h
+ *
+ *  @brief 
+ *
+ *  @author Tommaso Ronconi
+ *
+ *  @author tronconi@sissa.it
+ */
+
 #ifndef __HALO_MODEL__
 #define __HALO_MODEL__
 
