@@ -1,3 +1,6 @@
+.. image:: https://travis-ci.com/TommasoRonconi/scampy.svg?token=snqFgNBsFa2kbkxnNmAN&branch=master
+    :target: https://travis-ci.com/TommasoRonconi/scampy
+
 Sub-halo Clustering and Abundance Matching Python API
 -----------------------------------------------------
 
