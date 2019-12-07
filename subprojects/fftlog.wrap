@@ -1,0 +1,11 @@
+[wrap-file]
+directory = fftlog
+
+source_url = http://jila.colorado.edu/~ajsh/FFTLog/
+source_filename = fftlog.tgz
+source_hash = e97156dee5b8380c38ad622738a67624fbdae609b3dd4b2573852cfb36f81e37
+
+patch_url = https://github.com/TommasoRonconi/fftlog_patch/blob/master/meson.build
+patch_filename = meson.build
+patch_hash = 123
+

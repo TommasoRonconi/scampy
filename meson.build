@@ -42,7 +42,10 @@ gsl_dep = dependency( 'gsl',
 # FFTLog
 
 fftlog_dep = dependency( 'fftlog',
-                         required : true )
+                         required : false )
+if not fftlog_dep.found()
+    subproject( 'fftlog' )
+endif
 
 #######################################################################
 # Internal includes
