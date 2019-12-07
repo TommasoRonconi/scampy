@@ -18,3 +18,4 @@ script:
   - meson builddir -DENABLE_TEST=true
   - ninja -C builddir
   - ninja -C builddir test
+  
