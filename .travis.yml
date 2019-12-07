@@ -1,0 +1,17 @@
+dist: bionic
+group: travis_latest
+
+os: linux
+language: python
+
+matrix:
+  include:
+    - env: CC=gcc
+
+install:
+  - pip install meson ninja
+
+script:
+  - meson builddir
+  - ninja -C builddir
+  - ninja -C builddir test
