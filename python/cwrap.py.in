@@ -118,6 +118,10 @@ lib_cosmo.cosmo_rho_crit_comoving.restype = c_double
 lib_cosmo.cosmo_OmegaM.argtypes = [ c_double, c_void_p ]
 lib_cosmo.cosmo_OmegaM.restype = c_double
 
+# baryonic matter density parameter
+lib_cosmo.cosmo_Omegab.argtypes = [ c_double, c_void_p ]
+lib_cosmo.cosmo_Omegab.restype = c_double
+
 # linear critical overdensity at given redshift
 lib_cosmo.cosmo_deltac.argtypes = [ c_double, c_void_p ]
 lib_cosmo.cosmo_deltac.restype = c_double
