@@ -629,7 +629,7 @@ class cosmology () :
           radius of the completelly ionized region around source (i.e. Stromgren sphere )
         """
 
-        return ( 0.75 * ( np.pi * 1.e+7 * Nion ) * ( 1.e+9 * trec ) * ( 1. - np.exp( - tt / trec ) ) / ( nH * np.pi ) )**0.3333333333333333 * 3.2407789e-25
+        return ( 0.75 * ( numpy.pi * 1.e+7 * Nion ) * ( 1.e+9 * trec ) * ( 1. - numpy.exp( - tt / trec ) ) / ( nH * numpy.pi ) )**0.3333333333333333 * 3.2407789e-25
     
 
         
