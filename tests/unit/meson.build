@@ -5,8 +5,9 @@ gtest = dependency('gtest',
                    fallback : ['gtest', 'gtest_main_dep'],
                    required: true)
 
-_tests = [ 'test_occupation_p',
-           'test_interpolator' ]
+_tests = [ 'test_interpolator',
+           'test_occupation_p',
+           'test_cosmology' ]
 
 foreach _t : _tests
 	_e = executable( _t, _t+'.cpp',
@@ -16,7 +17,6 @@ foreach _t : _tests
                                          utl_dep,
                                          gtest ] )
 	test( _t, _e )
-
 endforeach
 
 #######################################################################

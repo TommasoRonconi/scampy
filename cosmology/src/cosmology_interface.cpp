@@ -379,7 +379,8 @@ double scam::cosmo_model::dndM_Tinker08 ( const double & mm, const double & zz )
     / ( s2 * mass );
   
   const double nu = gfact * ss;
-  const double Delta = 200, A0 = 0.186, a0 = 1.47, b0 = 2.57, c0 = 1.19;
+  const double Delta = 200;
+  const double A0 = 0.186, a0 = 1.47, b0 = 2.57, c0 = 1.19;
   const double alpha = 1.0676e-2; //<= std::pow( 10., -std::pow( 0.75/std::log10( Delta/75 ), 1.2 ) )
   const double Az = A0 * std::pow( 1 + zz, - 0.14 );
   const double az = a0 * std::pow( 1 + zz, - 0.06 );
