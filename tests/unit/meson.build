@@ -5,7 +5,8 @@ gtest = dependency('gtest',
                    fallback : ['gtest', 'gtest_main_dep'],
                    required: true)
 
-_tests = [ 'occupation_p' ]
+_tests = [ 'test_occupation_p',
+           'test_interpolator' ]
 
 foreach _t : _tests
 	_e = executable( _t, _t+'.cpp',
