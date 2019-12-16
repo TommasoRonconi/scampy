@@ -319,7 +319,15 @@ class cosmology () :
 
         It is computed as
         
-        .. math:: \\Omega_M(z) = \\dfrac{\\Omega_{M, 0}}{E^2(a) () }
+        .. math:: \\Omega_M(z) = \\dfrac{\\Omega_{M, 0}}{E^2(a) (1+z) }
+
+        where :math:`\\Omega_{M, 0}` is the matter density parameter at redshift :math:`z=0`
+        and :math:`E^2(a)` is given by the sum over all the :math:`i` energy components:
+
+        .. math:: E^2(a) = \\sum_i \\Omega_i \\biggl(\\dfrac{a}{a_0}\\biggr)^{w_i}
+
+        with :math:`a/a_0` the scale factor at the target cosmic time normalized with respect
+        to its value today 
         
         
         Parameters
@@ -330,19 +338,36 @@ class cosmology () :
         Returns
         -------
         float
+          :math:`\\Omega_M(z)`
         """
 
         return lib_cosmo.cosmo_OmegaM( c_double( zz ), self.obj )
 
     def Omegab ( self, zz ) :
-        """
+        """ The dimensioneless baryonic matter density parameter at given redshift.
+
+        It is computed as
+        
+        .. math:: \\Omega_b(z) = \\dfrac{\\Omega_{b, 0}}{E^2(a) (1+z) }
+
+        where :math:`\\Omega_{b, 0}` is the baryon density parameter at redshift :math:`z=0`
+        and :math:`E^2(a)` is given by the sum over all the :math:`i` energy components:
+
+        .. math:: E^2(a) = \\sum_i \\Omega_i \\biggl(\\dfrac{a}{a_0}\\biggr)^{w_i}
+
+        with :math:`a/a_0` the scale factor at the target cosmic time normalized with respect
+        to its value today 
+        
+        
         Parameters
         ----------
-        zz : redshift
+        zz : float
+          redshift
 
         Returns
         -------
         float
+          :math:`\\Omega_b(z)`
         """
 
         return lib_cosmo.cosmo_Omegab( c_double( zz ), self.obj )
