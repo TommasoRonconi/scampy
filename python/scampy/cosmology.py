@@ -373,14 +373,24 @@ class cosmology () :
         return lib_cosmo.cosmo_Omegab( c_double( zz ), self.obj )
 
     def deltac ( self, zz ) :
-        """
+        """ Linear extrapolation of the critical density contrast at given redshift
+        
+        It is computed as
+
+        .. math:: \\delta_c = 1.686 * ( 1 + 0.012299 * \\log( \\Omega_M(z) ) )
+        
+        where :math:`\\Omega_M(z)` is obtained with function OmegaM
+        
         Parameters
         ----------
-        zz : redshift
+        zz : float
+          redshift
 
         Returns
         -------
         float
+          The value of the spherical collapse density threshold, :math:`\\delta_c`, 
+          by using the approximated equation (C.28) provided by Nakamura & Suto (1997)
         """
 
         return lib_cosmo.cosmo_deltac( c_double( zz ), self.obj )
@@ -389,7 +399,8 @@ class cosmology () :
         """
         Parameters
         ----------
-        zz : redshift
+        zz : float
+          redshift
 
         Returns
         -------
@@ -402,7 +413,8 @@ class cosmology () :
         """
         Parameters
         ----------
-        zz : redshift
+        zz : float
+          redshift
 
         Returns
         -------
@@ -415,7 +427,8 @@ class cosmology () :
         """
         Parameters
         ----------
-        zz : redshift
+        zz : float
+          redshift
 
         Returns
         -------
@@ -428,7 +441,8 @@ class cosmology () :
         """
         Parameters
         ----------
-        zz : redshift
+        zz : float
+          redshift
 
         Returns
         -------
@@ -441,8 +455,10 @@ class cosmology () :
         """
         Parameters
         ----------
-        kk : scale 
-        zz : redshift
+        kk : float
+          scale 
+        zz : float
+          redshift
 
         Returns
         -------
@@ -455,8 +471,10 @@ class cosmology () :
         """
         Parameters
         ----------
-        mm : mass
-        zz : redshift
+        mm : float
+          mass
+        zz : float
+          redshift
 
         Returns
         -------
@@ -469,8 +487,10 @@ class cosmology () :
         """
         Parameters
         ----------
-        mm : mass
-        zz : redshift
+        mm : float
+          mass
+        zz : float
+          redshift
 
         Returns
         -------
@@ -483,8 +503,10 @@ class cosmology () :
         """
         Parameters
         ----------
-        mm : mass
-        zz : redshift
+        mm : float
+          mass
+        zz : float
+          redshift
 
         Returns
         -------
@@ -497,9 +519,12 @@ class cosmology () :
         """
         Parameters
         ----------
-        kk : scale
-        mm : mass
-        zz : redshift
+        kk : float
+          scale
+        mm : float
+          mass
+        zz : float
+          redshift
 
         Returns
         -------
@@ -512,8 +537,10 @@ class cosmology () :
         """
         Parameters
         ----------
-        ll : luminosity [ mag ]
-        zz : redshift
+        ll : float
+          luminosity [ mag ]
+        zz : float
+          redshift
 
         Returns
         -------
@@ -526,8 +553,10 @@ class cosmology () :
         """
         Parameters
         ----------
-        ll : luminosity [ mag ]
-        zz : redshift
+        ll : float
+          luminosity [ mag ]
+        zz : float
+          redshift
 
         Returns
         -------
@@ -540,8 +569,10 @@ class cosmology () :
         """
         Parameters
         ----------
-        ll : luminosity [ mag ]
-        zz : redshift
+        ll : float
+          luminosity [ mag ]
+        zz : float
+          redshift
 
         Returns
         -------
@@ -554,8 +585,10 @@ class cosmology () :
         """
         Parameters
         ----------
-        ll : luminosity [ mag ]
-        zz : redshift
+        ll : float
+          luminosity [ mag ]
+        zz : float
+          redshift
 
         Returns
         -------
@@ -568,8 +601,10 @@ class cosmology () :
         """
         Parameters
         ----------
-        ll : luminosity [ mag ]
-        zz : redshift
+        ll : float
+          luminosity [ mag ]
+        zz : float
+          redshift
 
         Returns
         -------
@@ -582,7 +617,8 @@ class cosmology () :
         """
         Parameters
         ----------
-        Muv : UV luminosity in [ mag ]
+        Muv : float
+          UV luminosity in [ mag ]
 
         Returns
         -------
@@ -596,9 +632,12 @@ class cosmology () :
         """
         Parameters
         ----------
-        sfr : star formation rate (S.F.R.)
-        fesc : escape fraction ( float between 0 and 1 )
-        kion : average production of ionizing photons per unit S.F.R.
+        sfr : float
+          star formation rate (S.F.R.)
+        fesc : float
+          escape fraction ( float between 0 and 1 )
+        kion : float
+          average production of ionizing photons per unit S.F.R.
 
         Returns
         -------
@@ -612,7 +651,8 @@ class cosmology () :
         """
         Parameters
         ----------
-        zz : redshift
+        zz : float
+          redshift
 
         Returns
         -------
@@ -626,8 +666,10 @@ class cosmology () :
         """
         Parameters
         ----------
-        zz : redshift
-        cHII : clumping factor of HII regions ( default = 3 )
+        zz : float
+          redshift
+        cHII : float
+          clumping factor of HII regions ( default = 3 )
         
         Returns
         -------
@@ -643,10 +685,14 @@ class cosmology () :
         """
         Parameters
         ----------
-        tt : time elapsed since the production of ionizing photons started ( in [ Gyr ] )
-        Nion : number of ionizing photons produced in unit time
-        nH : average density of neutral hydrogen around source
-        trec : recombination time in [ Gyr ]
+        tt : float
+          time elapsed since the production of ionizing photons started ( in [ Gyr ] )
+        Nion : float
+          number of ionizing photons produced in unit time
+        nH : float
+          average density of neutral hydrogen around source
+        trec : float
+          recombination time in [ Gyr ]
 
         Returns
         -------
