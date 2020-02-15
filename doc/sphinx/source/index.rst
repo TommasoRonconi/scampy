@@ -10,7 +10,7 @@ Welcome to ScamPy's documentation!
    :caption: Contents:
 
    python_doc
-   cpp_doc
+   .. cpp_doc
 
 Indices and tables
 ==================

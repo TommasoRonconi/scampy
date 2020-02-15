@@ -41,8 +41,18 @@ def cumulative_from_differential ( func, bins, fact ) :
 
 def abundance_matching ( gxy_array, lum_func, minL = -30, maxL = -15,
                          minP = 1.e-20, maxP = 1., nbinL = 200, factL = 1.,
-                         minM = 1.e+9, maxM = 1.e+15, nbinM = 50, factM = 1. ) :
+                         minM = None, maxM = None, nbinM = 10, factM = 1. ) :
 
+    if nbinL < 3 :
+        raise Exception( 'nbinL should not be smaller than 3, you gave {:d}'.format( nbinL ) )
+    masses = numpy.array( [ gxy.mass for gxy in gxy_array ] )
+    if minM is None :
+        minM = np.min( masses )
+        minM -= 0.0001 * minM
+    if maxM is None :
+        maxM = np.max( masses )
+        maxM += 0.0001 * maxM
+    
     # Get cumulative luminosity function
     LL = numpy.linspace( minL, maxL, nbinL )
     dPhi = cumulative_from_differential( lum_func, LL, factL )
@@ -58,11 +68,23 @@ def abundance_matching ( gxy_array, lum_func, minL = -30, maxL = -15,
     lmaxM = numpy.log10( maxM )
     invbinM = ( nbinM - 1 ) / ( lmaxM - lminM )
     MM = numpy.logspace( lminM, lmaxM, nbinM )
-    dN, _ = cumulative_counts( numpy.array( [ gxy.mass for gxy in gxy_array ] ), MM, factM )
+    invbinM = 1. / ( MM[ 1 ] - MM[ 0 ] )
+    dN, _ = cumulative_counts( numpy.array( [ gxy.mass for gxy in gxy_array ] ), MM, int( 1 ) )
+    if np.where( dN == 0 )[ 0 ].shape[ 0 ] > 0 :
+        raise Exception( 'Zero values encountered in number counts.' )
+
+    if np.min( dN ) < np.min( dPhi[ wP ] ) : 
+        raise Exception( 'Minimum cumulative number of objects ({0:.3e}) is smaller than minimum probability ({1:.3e})'.format( np.min( dN ),
+                                                                                                                                np.min( dPhi[ wP ] ) )  )
+    if np.max( dN ) > np.max( dPhi[ wP ] ) :
+        raise Exception( 'Maximum cumulative number of objects ({0:.3e}) is greater than maximum probability ({1:.3e})'.format( np.max( dN ),
+                                                                                                                                np.max( dPhi[ wP ] ) )  )
 
     # Variational bin matching
     for obj in gxy_array :
         idx = int( ( numpy.log10( obj.mass ) - lminM ) * invbinM ) + 1
+        if ( idx < 0 ) | ( nbinM <= idx ) :
+            Exception( 'Index {0:d} is out of bounds. This galaxy has mass {2:.3e} Msol/h.'.format( idx, obj.mass ) )
         Nl = dN[ idx ]
         Nh = dN[ idx - 1 ]
         if ( invPhi_f.get_xmin() < Nl ) & ( Nh < invPhi_f.get_xmax() ) :
