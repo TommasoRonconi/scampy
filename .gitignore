@@ -11,3 +11,4 @@ subprojects/googletest-release-1.8.1*
 subprojects/fftlog/*
 subprojects/packagecache*
 **.ipynb_checkpoints*
+doc/sphinx/source/tutorials/scampy_quickstart*
