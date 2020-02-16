@@ -12,6 +12,12 @@ Welcome to ScamPy's documentation!
    python_doc
    .. cpp_doc
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Tutorials
+	     
+   tutorials/scampy_quickstart
+
 Indices and tables
 ==================
 
