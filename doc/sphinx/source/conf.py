@@ -14,33 +14,32 @@ import glob
 import os
 import sys
 sys.path.insert( 0, os.path.abspath( '../../../python' ) )
-# sys.path.insert( 0, os.path.abspath( '../../../python/scampy' ) )
 
 # -- Configuration for ReadTheDocs setup -------------------------------------
 
-import subprocess, os
+# import subprocess, os
  
-def configureDoxyfile(input_dir, output_dir):
-    with open('../../doxyfile.in', 'r') as file :
-        filedata = file.read()
+# def configureDoxyfile(input_dir, output_dir):
+#     with open('../../doxyfile.in', 'r') as file :
+#         filedata = file.read()
  
-    filedata = filedata.replace('@DOXYGEN_INPUT_DIR@', input_dir)
-    filedata = filedata.replace('@DOXYGEN_OUTPUT_DIR@', output_dir)
+#     filedata = filedata.replace('@DOXYGEN_INPUT_DIR@', input_dir)
+#     filedata = filedata.replace('@DOXYGEN_OUTPUT_DIR@', output_dir)
  
-    with open('doxyfile', 'w') as file:
-        file.write(filedata)
+#     with open('doxyfile', 'w') as file:
+#         file.write(filedata)
  
-# Check if we're running on Read the Docs' servers
-read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
+# # Check if we're running on Read the Docs' servers
+# read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
  
-breathe_projects = {}
+# breathe_projects = {}
  
-if read_the_docs_build:
-    input_dir = '../../../mbh'
-    output_dir = 'build'
-    configureDoxyfile(input_dir, output_dir)
-    subprocess.call('doxygen', shell=True)
-    breathe_projects['MBH'] = output_dir + '/xml'
+# if read_the_docs_build:
+#     input_dir = '../../../mbh'
+#     output_dir = 'build'
+#     configureDoxyfile(input_dir, output_dir)
+#     subprocess.call('doxygen', shell=True)
+#     breathe_projects['MBH'] = output_dir + '/xml'
 
 # -- Convert the tutorials ----------------------------------------------------
 
