@@ -47,11 +47,11 @@ def abundance_matching ( gxy_array, lum_func, minL = -30, maxL = -15,
         raise Exception( 'nbinL should not be smaller than 3, you gave {:d}'.format( nbinL ) )
     masses = numpy.array( [ gxy.mass for gxy in gxy_array ] )
     if minM is None :
-        minM = np.min( masses )
-        minM -= 0.0001 * minM
+        minM = numpy.min( masses )
+        minM -= 0.01 * minM
     if maxM is None :
-        maxM = np.max( masses )
-        maxM += 0.0001 * maxM
+        maxM = numpy.max( masses )
+        maxM -= 0.01 * maxM
     
     # Get cumulative luminosity function
     LL = numpy.linspace( minL, maxL, nbinL )
@@ -68,23 +68,24 @@ def abundance_matching ( gxy_array, lum_func, minL = -30, maxL = -15,
     lmaxM = numpy.log10( maxM )
     invbinM = ( nbinM - 1 ) / ( lmaxM - lminM )
     MM = numpy.logspace( lminM, lmaxM, nbinM )
-    invbinM = 1. / ( MM[ 1 ] - MM[ 0 ] )
+    # invbinM = 1. / ( numpy.log10( MM[ 1 ] ) - numpy.log10( MM[ 0 ] ) )
     dN, _ = cumulative_counts( numpy.array( [ gxy.mass for gxy in gxy_array ] ), MM, int( 1 ) )
-    if np.where( dN == 0 )[ 0 ].shape[ 0 ] > 0 :
+    if numpy.where( dN == 0 )[ 0 ].shape[ 0 ] > 0 :
         raise Exception( 'Zero values encountered in number counts.' )
+    dN *= factM
 
-    if np.min( dN ) < np.min( dPhi[ wP ] ) : 
-        raise Exception( 'Minimum cumulative number of objects ({0:.3e}) is smaller than minimum probability ({1:.3e})'.format( np.min( dN ),
-                                                                                                                                np.min( dPhi[ wP ] ) )  )
-    if np.max( dN ) > np.max( dPhi[ wP ] ) :
-        raise Exception( 'Maximum cumulative number of objects ({0:.3e}) is greater than maximum probability ({1:.3e})'.format( np.max( dN ),
-                                                                                                                                np.max( dPhi[ wP ] ) )  )
+    if numpy.min( dN ) < numpy.min( dPhi[ wP ] ) : 
+        raise Exception( 'Minimum cumulative number of objects ({0:.3e}) is smaller than minimum probability ({1:.3e})'.format( numpy.min( dN ),
+                                                                                                                                numpy.min( dPhi[ wP ] ) )  )
+    if numpy.max( dN ) > numpy.max( dPhi[ wP ] ) :
+        raise Exception( 'Maximum cumulative number of objects ({0:.3e}) is greater than maximum probability ({1:.3e})'.format( numpy.max( dN ),
+                                                                                                                                numpy.max( dPhi[ wP ] ) )  )
 
     # Variational bin matching
     for obj in gxy_array :
-        idx = int( ( numpy.log10( obj.mass ) - lminM ) * invbinM ) + 1
+        idx = int( ( numpy.log10( obj.mass ) - lminM ) * invbinM )
         if ( idx < 0 ) | ( nbinM <= idx ) :
-            Exception( 'Index {0:d} is out of bounds. This galaxy has mass {2:.3e} Msol/h.'.format( idx, obj.mass ) )
+            raise Exception( 'Index {0:d} is out of bounds. This galaxy has mass {1:.3e} Msol/h.'.format( idx, obj.mass ) )
         Nl = dN[ idx ]
         Nh = dN[ idx - 1 ]
         if ( invPhi_f.get_xmin() < Nl ) & ( Nh < invPhi_f.get_xmax() ) :
