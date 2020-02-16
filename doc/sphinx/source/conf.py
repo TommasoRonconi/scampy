@@ -10,6 +10,7 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+import glob
 import os
 import sys
 sys.path.insert( 0, os.path.abspath( '../../../python' ) )
@@ -40,6 +41,20 @@ if read_the_docs_build:
     configureDoxyfile(input_dir, output_dir)
     subprocess.call('doxygen', shell=True)
     breathe_projects['MBH'] = output_dir + '/xml'
+
+# -- Convert the tutorials ----------------------------------------------------
+
+for fn in glob.glob("../../../examples/*.ipynb"):
+    name = os.path.splitext(os.path.split(fn)[1])[0]
+    outfn = os.path.join("tutorials", name + ".rst")
+    print("Building {0}...".format(name))
+    subprocess.check_call(
+        "jupyter nbconvert --template tutorials/tutorial_rst --to rst "
+        + fn
+        + " --output-dir tutorials",
+        shell=True,
+    )
+    subprocess.check_call("python fix_internal_links.py " + outfn, shell=True)
     
 
 # -- Project information -----------------------------------------------------
@@ -69,7 +84,7 @@ templates_path = ['_templates']
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
 
-source_suffix = ['.rst', '.md', '.txt']
+source_suffix = ['.rst', '.md', '.txt', '.ipynb']
 
 # -- Autodoc configuration ---------------------------------------------------
 

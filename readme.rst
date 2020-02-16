@@ -23,6 +23,7 @@ If you wanted to populate a DM catalogue with galaxies with given luminosity, yo
    from scampy import catalogue
    cat = catalogue.catalogue()
    cat.read_hierarchy_from_gadget( "/path/to/input_directory/subhalo_tab_snap" )
+   volume = 512.**3 # for a box with side-lenght = 512 Mpc/h
 
 
    # build an object of type occupation probability with given parameters
@@ -34,6 +35,21 @@ If you wanted to populate a DM catalogue with galaxies with given luminosity, yo
 
    # populate the catalogue
    galaxies = cat.populate( ocp, extract = True )
+
+   # define a Schechter-like luminosity function
+   import numpy as np
+   def schechter ( mag ) :
+	alpha = -1.07
+	norm = 1.6e-2
+	mstar = -19.7 + 5. * np.log10( 5. )
+	lum = - 0.4 * ( mag - mstar )
+	return 0.4 * np.log( 10 ) * norm * 10**( - 0.07 * lum ) * np.exp( - 10**lum )
+
+   # call the sub-halo abundance matching routine:
+   from scampy import abundance_matching
+   galaxies = abundance_matching.abundance_matching( galaxies, schechter, factM = 1. / volume )
+
+The :code:`galaxies` array contains the output mock-galaxies.
 
 Installation guide
 ^^^^^^^^^^^^^^^^^^
