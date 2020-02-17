@@ -14,7 +14,7 @@ import subprocess
 import glob
 import os
 import sys
-sys.path.insert( 0, os.path.abspath( '../../../python' ) )
+sys.path.insert( 0, os.path.abspath( '../python' ) )
 
 # -- Configuration for ReadTheDocs setup -------------------------------------
  
@@ -42,7 +42,7 @@ read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
 
 # -- Convert the tutorials ----------------------------------------------------
 
-for fn in glob.glob("../../../examples/*.ipynb"):
+for fn in glob.glob("../examples/*.ipynb"):
     name = os.path.splitext(os.path.split(fn)[1])[0]
     outfn = os.path.join("tutorials", name + ".rst")
     print("Building {0}...".format(name))

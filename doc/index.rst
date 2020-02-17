@@ -3,7 +3,7 @@
 Welcome to ScamPy's documentation!
 ==================================
 
-.. include:: ../../../readme.rst
+.. include:: ../readme.rst
 
 .. toctree::
    :maxdepth: 2
