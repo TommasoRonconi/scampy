@@ -84,6 +84,8 @@ exclude_patterns = []
 
 source_suffix = ['.rst', '.md', '.txt', '.ipynb']
 
+master_doc = 'index'
+
 # -- Autodoc configuration ---------------------------------------------------
 
 autodoc_mock_imports = [ 'numpy', 'scipy', 'sklearn', 'scampy.cwrap' ]
