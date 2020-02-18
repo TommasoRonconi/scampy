@@ -2,8 +2,10 @@ import numpy
 from .cwrap.cwrap import *
 
 class occupation_p :
+    """ Base occupation_p class, it defines the conceptually-"virtual" methods that have
+    to be overloaded in defining a derived occupation_p-type class.
+    """
 
-    # _param = None
     @classmethod
     def load () :
         pass
@@ -21,9 +23,58 @@ class occupation_p :
         pass
 
 class harikane16_p ( occupation_p ) :
+    """ c++ -wrapped 6-parameters occupation probability distribution (as in Harikane et al., 2016).
+    It adds a linear :code:`DC` parameter to the classical 5-parameters HOD model 
+    :math:`\\Rightarrow` by setting this additional parameter to :math:`1` it reduces to the
+    standard 5-parameters model.
+    The shapes of the occupation probabilities are:
+    
+    - average number of central galaxies per halo of mass :math:`M_h`:
+
+    .. math:: \\langle N_\\text{cen}\\rangle ( M_h ) \\equiv \\text{DC} \\dfrac{1}{2} \\biggl[
+              1 + \\text{erf}\\biggl(\\dfrac{\\log M_h - \\log M_\\text{min}}{\\sigma_{\\log M}}
+              \\biggr)\\biggr]
+
+    - average number of satellite galaxies per halo of mass :math:`M_h`:
+
+    .. math:: \\langle N_\\text{sat}\\rangle ( M_h ) \\equiv \\text{DC} \\biggl(
+              \\dfrac{M_h - M_0}{M_1}
+              \\biggr)^\\alpha    
+
+    Parameters
+    ----------
+    DC : scalar
+       *duty cycle* parameter (:math:`DC`).
+    M_min : scalar
+       *cut-off mass* parameter (:math:`M_\\text{min}`)
+    sigma_logM : scalar
+       *transition phase* parameter (:math:`\\sigma_{\\log M}`)
+    M0 : scalar
+       *satellite mass bias* parameter (:math:`M_0`)
+    M1 : scalar
+       *satellite mass normalization* parameter (:math:`M_1`)
+    alpha : scalar
+       *spectral index* parameter (:math:`alpha`)
+    """
     
     @classmethod
     def load ( cls, in_file ) :
+        """ class-method for building the object from a :code:`.npy` file containing 
+        an ordered array with the parameters of the model.
+
+        Parameters
+        ----------
+        in_file : string
+           string with :code:`/path/to/input_file.npy`
+        
+        Returns
+        -------
+        object of harikane16_p type
+        
+        Warning
+        -------
+        Raises a runtime error if the number of parameters in the file is :math:`\\neq 6`
+        """
 
         param = numpy.load( in_file )
         if len( param ) != 6 :
@@ -54,13 +105,12 @@ class harikane16_p ( occupation_p ) :
                                                   self._M1, self._alpha )
         
     def __del__ ( self ) :
+        """ Objects' denstructor. It calls the C-mangled destructor of the class.
+        (it frees the heap memory slot in which the object has been stored)
+        """
 
         # Python call to occupation dtor:
         lib_ocp.free_H16_occupation( self.obj )
-
-    # def __call__ ( self, idx ) :
-
-    #     return _param[ idx ]
 
     def set_parameters ( self,
                          DC = None,
@@ -69,6 +119,30 @@ class harikane16_p ( occupation_p ) :
                          M0 = None,
                          M1 = None,
                          alpha = None ) :
+        """ Convenience method for modifying the model parameters.
+        It calls the C-mangled constructor of the object.    
+
+        Parameters
+        ----------
+        DC : scalar or None
+           *duty cycle* parameter (:math:`DC`). 
+           If :code:`None` the old value is used.
+        M_min : scalar or None
+           *cut-off mass* parameter (:math:`M_\\text{min}`).
+           If :code:`None` the old value is used.
+        sigma_logM : scalar or None
+           *transition phase* parameter (:math:`\\sigma_{\\log M}`).
+           If :code:`None` the old value is used.
+        M0 : scalar or None
+           *satellite mass bias* parameter (:math:`M_0`).
+           If :code:`None` the old value is used.
+        M1 : scalar or None
+           *satellite mass normalization* parameter (:math:`M_1`).
+           If :code:`None` the old value is used.
+        alpha : scalar or None
+           *spectral index* parameter (:math:`alpha`).
+           If :code:`None` the old value is used.
+        """
 
         self._DC = c_double( DC ) if DC is not None else self._DC
         self._M_min = c_double( M_min ) if M_min is not None else self._M_min
@@ -83,14 +157,64 @@ class harikane16_p ( occupation_p ) :
         return
     
     def Ncen ( self, Mh ) :
+        """ Function that returns the average number of central galaxies 
+        per halo of mass :math:`M_h`:
+
+        .. math:: \\langle N_\\text{cen}\\rangle ( M_h ) \\equiv \\text{DC} \\dfrac{1}{2} \\biggl[
+                  1 + \\text{erf}\\biggl(\\dfrac{\\log M_h - \\log M_\\text{min}}{\\sigma_{\\log M}}
+                  \\biggr)\\biggr]
+
+        (It calls the C-mangled corresponding function)
+
+        Parameters
+        ----------
+        Mh : scalar
+           the mass :math:`M_h` of the host halo
+        
+        Returns
+        -------
+        scalar
+           value of :math:`\\langle N_\\text{cen}\\rangle(M_h)`
+        """
 
         return lib_ocp.Ncen_H16_ocp( c_double( Mh ), self.obj )
 
     def Nsat ( self, Mh ) :
+        """ Function that returns the average number of satellite galaxies 
+        per halo of mass :math:`M_h`:
+
+        .. math:: \\langle N_\\text{sat}\\rangle ( M_h ) \\equiv \\text{DC} \\biggl(
+                  \\dfrac{M_h - M_0}{M_1}
+                  \\biggr)^\\alpha    
+
+        (It calls the C-mangled corresponding function)
+
+        Parameters
+        ----------
+        Mh : scalar
+           the mass :math:`M_h` of the host halo
+        
+        Returns
+        -------
+        scalar
+           value of :math:`\\langle N_\\text{sat}\\rangle(M_h)`
+        """
 
         return lib_ocp.Nsat_H16_ocp( c_double( Mh ), self.obj )
 
     def save ( self, out_file ) :
+        """ Convenience-method for saving the current parameterisation in :code:`.npy` format.
+        It stores the current values of the defining parameters into a file :code:`out_file.npy`
+
+        Paramters
+        ---------
+        out_file : string
+           :code:`/path/to/output_file`, the :code:`numpy.save()` method is called
+
+        Returns
+        -------
+        None
+        """
 
         numpy.save( out_file, numpy.array( [ self._DC.value,
                                              self._M_min.value,
@@ -102,14 +226,51 @@ class harikane16_p ( occupation_p ) :
         return;
 
 class tinker10_p ( occupation_p ) :
+    """ c++ -wrapped 4-parameters occupation probability distribution (as in Tinker et al., 2010).
+    The shapes of the occupation probabilities are:
+    
+    - average number of central galaxies per halo of mass :math:`M_h`:
 
-    # _param = { 'Amin' : _Amin,
-    #            'siglogA' : _siglogA,
-    #            'Asat' : _Asat,
-    #            'alpsat' : _alpsat }
+    .. math:: \\langle N_\\text{cen}\\rangle ( M_h ) \\equiv \\dfrac{1}{2} \\biggl[
+              1 + \\text{erf}\\biggl(\\dfrac{\\log M_h - \\log M_\\text{min}}{\\sigma_{\\log M}}
+              \\biggr)\\biggr]
+
+    - average number of satellite galaxies per halo of mass :math:`M_h`:
+
+    .. math:: \\langle N_\\text{sat}\\rangle ( M_h ) \\equiv \\biggl(
+              \\dfrac{M_h}{M_\\text{sat}}
+              \\biggr)^\\alpha    
+
+    Parameters
+    ----------
+    Amin : scalar
+       *cut-off mass* parameter (:math:`M_\\text{min}`)
+    siglogA : scalar
+       *transition phase* parameter (:math:`\\sigma_{\\log M}`)
+    Asat : scalar
+       *satellite mass normalization* parameter (:math:`M_\\text{sat}`)
+    alpsat : scalar
+       *spectral index* parameter (:math:`alpha`)
+    """
     
     @classmethod
     def load ( cls, in_file ) :
+        """ class-method for building the object from a :code:`.npy` file containing 
+        an ordered array with the parameters of the model.
+
+        Parameters
+        ----------
+        in_file : string
+           string with :code:`/path/to/input_file.npy`
+        
+        Returns
+        -------
+        object of tinker10_p type
+        
+        Warning
+        -------
+        Raises a runtime error if the number of parameters in the file is :math:`\\neq 4`
+        """
 
         param = numpy.load( in_file )
         if len( param ) != 4 :
@@ -139,15 +300,29 @@ class tinker10_p ( occupation_p ) :
         # Python call to occupation dtor:
         lib_ocp.free_T10_occupation( self.obj )
 
-    # def __call__ ( self, idx ) :
-
-    #     return _param[ idx ]
-
     def set_parameters ( self,
                          Amin = None,
                          siglogA = None,
                          Asat = None,
                          alpsat = None ) :
+        """ Convenience method for modifying the model parameters.
+        It calls the C-mangled constructor of the object.    
+
+        Parameters
+        ----------
+        Amin : scalar or None
+           *cut-off mass* parameter (:math:`M_\\text{min}`).
+           If :code:`None` the old value is used.
+        siglogA : scalar or None
+           *transition phase* parameter (:math:`\\sigma_{\\log M}`).
+           If :code:`None` the old value is used.
+        Asat : scalar or None
+           *satellite mass normalization* parameter (:math:`M_\\text{sat}`).
+           If :code:`None` the old value is used.
+        alpsat : scalar or None
+           *spectral index* parameter (:math:`alpha`).
+           If :code:`None` the old value is used.
+        """
 
         self._Amin = c_double( Amin ) if Amin is not None else self._Amin
         self._siglogA = c_double( siglogA ) if siglogA is not None else self._siglogA
@@ -159,14 +334,64 @@ class tinker10_p ( occupation_p ) :
         return
     
     def Ncen ( self, Mh ) :
+        """ Function that returns the average number of central galaxies 
+        per halo of mass :math:`M_h`:
+
+        .. math:: \\langle N_\\text{cen}\\rangle ( M_h ) \\equiv \\dfrac{1}{2} \\biggl[
+                  1 + \\text{erf}\\biggl(\\dfrac{\\log M_h - \\log M_\\text{min}}{\\sigma_{\\log M}}
+                  \\biggr)\\biggr]
+
+        (It calls the C-mangled corresponding function)
+
+        Parameters
+        ----------
+        Mh : scalar
+           the mass :math:`M_h` of the host halo
+        
+        Returns
+        -------
+        scalar
+           value of :math:`\\langle N_\\text{cen}\\rangle(M_h)`
+        """
 
         return lib_ocp.Ncen_T10_ocp( c_double( Mh ), self.obj )
 
     def Nsat ( self, Mh ) :
+        """ Function that returns the average number of satellite galaxies 
+        per halo of mass :math:`M_h`:
+
+        .. math:: \\langle N_\\text{sat}\\rangle ( M_h ) \\equiv \\biggl(
+                  \\dfrac{M_h}{M_\\text{sat}}
+                  \\biggr)^\\alpha    
+
+        (It calls the C-mangled corresponding function)
+
+        Parameters
+        ----------
+        Mh : scalar
+           the mass :math:`M_h` of the host halo
+        
+        Returns
+        -------
+        scalar
+           value of :math:`\\langle N_\\text{sat}\\rangle(M_h)`
+        """
 
         return lib_ocp.Nsat_T10_ocp( c_double( Mh ), self.obj )
 
     def save ( self, out_file ) :
+        """ Convenience-method for saving the current parameterisation in :code:`.npy` format.
+        It stores the current values of the defining parameters into a file :code:`out_file.npy`
+
+        Paramters
+        ---------
+        out_file : string
+           :code:`/path/to/output_file`, the :code:`numpy.save()` method is called
+
+        Returns
+        -------
+        None
+        """
 
         numpy.save( out_file, numpy.array( [ self._Amin.value,
                                              self._siglogA.value,
