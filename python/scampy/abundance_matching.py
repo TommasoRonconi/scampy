@@ -4,6 +4,32 @@ from scipy.integrate import quad
 from scampy.interpolator import lin_interpolator
 
 def differential_counts ( var, binning, fact ) :
+    """ Function to obtain the differential distribution of a variable :math:`X`.
+    It computes :math:`\\frac{dN}{dX} \\cdot const`, where :math:`dN` is the number
+    of :math:`X` values in the bin, :math:`dX` it the size of the bin and :math:`const`
+    is a constant value.
+
+    Parameters
+    ----------
+    var : array-like
+       the list of :math:`X` values
+    binning : array-like
+       it defines the bin edges, including the rightmost edge, 
+       allowing for non-uniform bin widths.
+    fact : scalar
+       the value of :math:`const`, constant factor by which to multiply the result
+
+    Returns
+    -------
+    array-like
+       bin center (shape = binning.shape[ 0 ] - 1)
+    array-like
+       sequence of values with the values of 
+       :math:`\\frac{dN}{dX} \\cdot const` (shape = binning.shape[ 0 ] - 1)
+    array-like
+       Poisson errors on the differential counts, defined as
+       :math:`\\frac{\\sqrt{dN}}{dX} \\cdot const` (shape = binning.shape[ 0 ] - 1)    
+    """
     
     counts, bins = numpy.histogram( var, bins = binning )
 
@@ -16,6 +42,29 @@ def differential_counts ( var, binning, fact ) :
     return M, dndM, dndM_er
 
 def cumulative_counts ( var, binning, fact ) :
+    """ Function to obtain the cumulative distribution of a variable :math:`X`.
+    It computes :math:`N(X>x_i) \\cdot const`, where :math:`N(X>x_i)` is the number
+    of :math:`X` values greater than :math:`x_i` and :math:`const`
+    is a constant value.
+
+    Parameters
+    ----------
+    var : array-like
+       the list of :math:`X` values
+    binning : array-like
+       it defines the binned values :math:`x_i`, allowing for non-uniform bin widths.
+    fact : scalar
+       the value of :math:`const`, constant factor by which to multiply the result
+
+    Returns
+    -------
+    array-like
+       sequence of values with the result of 
+       :math:`N(X>x_i) \\cdot const` (shape = binning.shape)
+    array-like
+       Poisson errors on the cumulative counts, defined as
+       :math:`\\sqrt{N(X>x_i)} \\cdot const` (shape = binning.shape)    
+    """
     
     size = binning.shape[ 0 ]
     
@@ -29,6 +78,28 @@ def cumulative_counts ( var, binning, fact ) :
     return dN, dN_er
 
 def cumulative_from_differential ( func, bins, fact ) :
+    """ Function to obtain the cumulative distribution from a differential distribution :math:`f(X)`
+    It computes 
+
+    .. math:: F(X > x) \\equiv const \\cdot \\int_{-\\infty}^x f(X) dX
+
+    where :math:`F(X>x)` is the cumulative distribution and :math:`const` is a constant value.
+
+    Parameters
+    ----------
+    func : function
+       the differential function :math:`f(X)`, it should take only one argument (a.k.a. the 
+       value of :math:`X`). It allows :code:`lambda` expressions.
+    bins : array-like
+       it defines the list :math:`x_i` values, allowing for non-uniform bin widths.
+    fact : scalar
+       the value of :math:`const`, constant factor by which to multiply the result
+
+    Returns
+    -------
+    array-like
+       sequence of values with the result of :math:`F(X>x_i)` (shape = bins.shape)
+    """
 
     size = len( bins )
     
@@ -42,6 +113,44 @@ def cumulative_from_differential ( func, bins, fact ) :
 def abundance_matching ( gxy_array, lum_func, minL = -30, maxL = -15,
                          minP = 1.e-20, maxP = 1., nbinL = 200, factL = 1.,
                          minM = None, maxM = None, nbinM = 10, factM = 1. ) :
+    """ This function implements the Sub-halo Abundance Matching algorithm to an array of 
+    objects of type :code:`galaxy` that are supposed to have been obtained from the HOD
+    prescription of the :code:`catalogue` class.
+
+    Parameters
+    ----------
+    gxy_array : array of galaxy objects
+    
+    lum_func : function
+
+    minL : scalar
+
+    maxL : scalar
+
+    minP : scalar
+    
+    maxP : scalar
+    
+    nbinL : int
+    
+    factL : scalar
+    
+    minM : scalar or None
+    
+    maxM : scalar or None
+    
+    nbinM : int
+    
+    factM : scalar
+
+    Returns
+    -------
+    array of galaxy objects
+    
+    Note
+    ----
+    stability not guaranteed, results have some randomness
+    """
 
     # some checks and set-ups:
     if nbinL < 3 :
