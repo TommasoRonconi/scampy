@@ -258,6 +258,8 @@ class catalogue () :
             return catalogue( ll ), Ngxy
 
 def get_abundances ( catalogue, bins ) :
+    """
+    """
         
     # these extract several properties stored in the internal container of catalogue
     Mh = numpy.array( [ obj.mass for obj in catalogue.content ] ) # mass of the halo
@@ -306,21 +308,5 @@ def extract_galaxies ( hhaloes, ngxy ) :
             idx += 1
             
     return galaxies
-
-if __name__ == '__main__' :
-
-    cat = catalogue()
-    base = "/home/tomi/phd/gadget_catalogues/lcdm_mis0.125/output/groups_011/subhalo_tab_011"
-    cat.read_hierarchy_from_gadget( base )
-
-    coord_cen = cat.get_coord_cen()
-    coord_sat = cat.get_coord_sat()
-
-    print( coord_cen.shape, coord_sat.shape )
-
-    mass_cen = cat.get_mass_cen()
-    mass_sat = cat.get_mass_sat()
-
-    print( mass_cen.shape, mass_sat.shape )
 
 
