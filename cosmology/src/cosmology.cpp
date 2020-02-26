@@ -1,25 +1,7 @@
- #include <cosmology.h>
+#include <cosmology.h>
+#include <interpolation.h>
+#include <gsl_interpolation_interface.h>
 #include "gsl/gsl_sf_expint.h"
-
-//==============================================================================================
-
-//former N_z
-double scam::cosmology::norm_z ( const double & zz,
-				 const double & Lmin, const double & Lmax,
-				 const double & zmin, const double & zmax ) {
-
-  auto dnormdz = [ & ] ( double _zz ) {
-    
-    auto inner_integrand = [ & ] ( double LL ) { return phi_Bouwens15( LL, _zz ); };
-    
-    //v- !!! check magnitude limits !!! -v
-    return dV_dZdOmega( _zz, true ) * scam::utl::integrate_qng( inner_integrand, Lmin, Lmax );
-
-  };
-
-  return dnormdz( zz ) / scam::utl::integrate_qng( dnormdz, zmin, zmax );
-
-}
 
 //==============================================================================================
 
@@ -40,28 +22,15 @@ double scam::cosmology::z_form ( const double & Mass, const double & ff,
     return deltac( Z0 ) * D0 / DD( zz ) - delta;
     
   };
+
+  const unsigned int nthin = 100;
+  std::vector< double > zspace = scam::utl::lin_vector( nthin, z_now, z_max );
+  std::vector< double > fspace ( nthin );
+  for ( unsigned int ii = 0; ii < nthin; ++ii ) fspace[ ii ] = func( zspace[ ii ] );
+  scam::utl::interpolator< scam::utl::gsl_lin_interp > z_form_f { fspace, zspace };
   
   // find a zero (0.) of function (func) between lower and upper guess:
-  // return scam::utl::root_brent( func, 0., z_now, z_max );
-
-  try {
-    // find a zero (0.) of function (func) between lower and upper guess:
-    return scam::utl::root_brent( func, 0., z_now, z_max );
-  }
-  catch ( const scam_err::gsl_fail & exc ) {
-
-    std::cout << "At Mass " << Mass << " in interval [ " << z_now << "; " << z_max << " ]\n\t"
-  	      << exc.message << "\n\t"
-  	      << "with\n\t\tdelta = " << delta
-  	      << "\n\t\tsigma2_0 = " << sigma2_0
-  	      << "\n\t\tsigma2_f = " << sigma2_f
-  	      << "\n\t\talpha_f = " << alpha_f
-  	      << "\n\t\tomega_f = " << omega_f
-  	      << std::endl;
-    
-    return 666;
-
-  }
+  return z_form_f( 0. );
 
 }
 
@@ -91,9 +60,6 @@ double scam::cosmology::density_profile_FS ( const double kk, const double Mass,
 					     const double Redshift ) {
 
   double zz = Redshift;
-  // if (dataType == "ComovingBox") zz = 0.;
-  // else if (dataType == "ObservedNoForeground") zz = redshift;
-  // else { cerr << "Error in density_profile_FS() of functions.cpp: requested dataType not available!" << endl; exit(8008); }
 
   const double conc = concentration( Mass, zz );
 

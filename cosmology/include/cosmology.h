@@ -13,25 +13,6 @@
 
 // internal includes
 #include <utilities.h> // scam::ln_10 scam::utl::integrate_qng
-
-#ifdef USE_CBL
-
-#include <cbl_cosmology_interface.h>
-
-/**
- *  @addtogroup scam
- *
- *  @{
- */
-
-namespace scam { typedef struct cbl_cosmo_model cosmo_model; }
-
-/** 
- * @} End of Doxygen Groups
- */
-
-#else
-
 #include <cosmology_interface.h>
 
 /**
@@ -40,21 +21,9 @@ namespace scam { typedef struct cbl_cosmo_model cosmo_model; }
  *  @{
  */
 
-namespace scam { typedef struct cosmo_model cosmo_model; }
-
-/** 
- * @} End of Doxygen Groups
- */
-
-#endif //USE_CBL
-
-/**
- *  @addtogroup scam
- *
- *  @{
- */
-
 namespace scam {
+
+  typedef struct cosmo_model cosmo_model;
   
   /**
    * @name cosmology class inheriting from scam::cosmo_model defined in file include/cosmology.h
@@ -89,12 +58,10 @@ namespace scam {
      */
     cosmology () = default;
 
-#ifndef USE_CBL
     /**
      * @brief default destructor
      */
     ~cosmology () override = default;
-#endif
 
     /// @} End of Ctor/Dtor
     
