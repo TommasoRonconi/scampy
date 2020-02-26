@@ -424,29 +424,39 @@ class cosmology () :
         return lib_cosmo.cosmo_Deltac_NS98( c_double( zz ), self.obj )
 
     def DD ( self, zz ) :
-        """
+        """ Computes the amplitude of the growing mode :math:`D(z)` as a function of redshift
+        
+        Readapted from Hamilton2001 ( arXiv:astro-ph/0006089v3, note to Eq. 1 ) computes
+
+        .. math:: D(z) \equiv \dfrac{5 \Omega_{M,0}}{2} E( z ) \int_z^\infty \dfrac{(1 + z) dz}{E(z)}
+
         Parameters
         ----------
         zz : float
-          redshift
+          redshift at which to compute :math:`D( z )`
 
         Returns
         -------
         float
+          not normalized value of :math:`D(z)`
         """
 
         return lib_cosmo.cosmo_DD( c_double( zz ), self.obj )
 
     def gz ( self, zz ) :
-        """
+        """ Growth factor at redshift `zz`
+        
+        See cosmology.DD for further information
+        
         Parameters
         ----------
         zz : float
-          redshift
+          redshift at which to compute :math:`g( z )`
 
         Returns
         -------
         float
+          growth factor at redshift `zz`
         """
 
         return lib_cosmo.cosmo_gz( c_double( zz ), self.obj )
@@ -703,18 +713,4 @@ class cosmology () :
         return ( 0.75 * ( numpy.pi * 1.e+7 * Nion ) * ( 1.e+9 * trec ) * ( 1. - numpy.exp( - tt / trec ) ) / ( nH * numpy.pi ) )**0.3333333333333333 * 3.2407789e-25
     
 
-        
-
-if __name__ == '__main__' :
-
-    input_dir = "../tests/integration_tests/input/"
-
-    kh0, pk0 = numpy.genfromtxt( input_dir + "not-norm_pk_lcdm_camb.dat",
-                                 unpack = True )
-    cosmo = cosmology( kh0, pk0 )
-
-    print( "H( z = 2 )\t=\t{:e}".format( cosmo.Hz( 2. ) ) )
-    print( "tt( z = 3 )\t=\t{:e}".format( cosmo.cosmic_time( 3. ) ) )
-    print( "dV( z = 2 )\t=\t{:e}".format( cosmo.comoving_volume_unit( 2. ) ) )
-    print( "V( z = 2 )\t=\t{:e}".format( cosmo.comoving_volume( 2. ) ) )
     
