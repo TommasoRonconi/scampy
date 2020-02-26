@@ -257,6 +257,28 @@ class catalogue () :
         else :
             return catalogue( ll ), Ngxy
 
+def get_abundances ( catalogue, bins ) :
+        
+    # these extract several properties stored in the internal container of catalogue
+    Mh = numpy.array( [ obj.mass for obj in catalogue.content ] ) # mass of the halo
+    Nc = numpy.array( [ obj.Ncen for obj in catalogue.content ] ) # number of centrals
+    Ns = numpy.array( [ obj.Nsat for obj in catalogue.content ] ) # number of satellites
+    
+    # we obtain the index of the bin each mass belongs
+    dig = numpy.digitize( Mh, bins )
+
+    # mean number of centrals in each mass-bin
+    Nc_binned = numpy.array( [ Nc[ numpy.where( dig == idx ) ].mean() 
+                               if numpy.isin( idx, dig ) else 0. 
+                               for idx in range( 40 ) ] ) 
+    
+    # mean number of satellites in each mass-bin
+    Ns_binned = numpy.array( [ Ns[ numpy.where( dig == idx ) ].mean() 
+                               if numpy.isin( idx, dig ) else 0. 
+                               for idx in range( 40 ) ] )
+    
+    return Nc_binned, Ns_binned
+
 def extract_galaxies ( hhaloes, ngxy ) :
     """
     Extracts objects of type galaxy from an host halo catalogue
