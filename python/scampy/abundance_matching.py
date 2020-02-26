@@ -3,7 +3,7 @@ from scipy.integrate import quad
 
 from scampy.interpolator import lin_interpolator
 
-def differential_counts ( var, binning, fact ) :
+def differential_counts ( var, binning, fact = 1. ) :
     """ Function to obtain the differential distribution of a variable :math:`X`.
     It computes :math:`\\frac{dN}{dX} \\cdot const`, where :math:`dN` is the number
     of :math:`X` values in the bin, :math:`dX` it the size of the bin and :math:`const`
@@ -41,7 +41,7 @@ def differential_counts ( var, binning, fact ) :
     
     return M, dndM, dndM_er
 
-def cumulative_counts ( var, binning, fact ) :
+def cumulative_counts ( var, binning, fact = 1. ) :
     """ Function to obtain the cumulative distribution of a variable :math:`X`.
     It computes :math:`N(X>x_i) \\cdot const`, where :math:`N(X>x_i)` is the number
     of :math:`X` values greater than :math:`x_i` and :math:`const`
@@ -77,7 +77,7 @@ def cumulative_counts ( var, binning, fact ) :
         
     return dN, dN_er
 
-def cumulative_from_differential ( func, bins, fact ) :
+def cumulative_from_differential ( func, bins, fact = 1. ) :
     """ Function to obtain the cumulative distribution from a differential distribution :math:`f(X)`
     It computes 
 
