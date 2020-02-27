@@ -6,6 +6,17 @@ class halo_model () :
     """
     Class to handle the halo-model functions, 
     it depends on the classes occupation_p and cosmology
+    
+    Parameters
+    ----------
+    occupation : occupation_p
+      object that defines the occupation probability functions
+    cosmology : cosmology
+      defines methods and functions dependent on the chosen cosmology
+    redshift : float
+      the redshift at which to compute the halo-model functions (should be greater than zero)
+    thinness : int
+      refinement of the interpolation grid (should be greater than 10)
     """
 
     def __init__ ( self,
@@ -36,6 +47,8 @@ class halo_model () :
             raise ValueError( 'Wrong value of occupation argument' ) 
         
     def __del__ ( self ) :
+        """ Calls the destructor of the halo_model object
+        """
         
         # Python call to halo_model dtor:
         lib_hm.free_halo_model( self.obj )
@@ -424,28 +437,4 @@ class cross_halo_model () :
 #################################################################################
 #################################################################################
     
-if __name__ == '__main__' :
 
-    input_dir = "../tests/integration_tests/input/"
-
-    import numpy as np
-    import cosmology as csm
-    
-    kh0, pk0 = np.genfromtxt( input_dir + "not-norm_pk_lcdm_camb.dat",
-                              unpack = True )
-    cosmo = csm.cosmology( kh0, pk0 )
-    print( "Built object cosmology." )
-    
-    hm = halo_model( cosmology = cosmo )
-    
-    print( "Galaxy density: ", hm.ng(), " with type = ", type( hm.ng() ) )
-    
-    nbin = 10
-    rmin = 1.e-2
-    rmax = 1.e+2
-    rbin = ( np.log( rmax ) - np.log( rmin ) )/( nbin - 1 )
-    rv = [ np.exp( np.log( rmin ) + rbin * ii ) for ii in range( nbin ) ]
-    xi = hm.Xi( rv )
-
-    for ii in range( len( rv ) ) :
-        print( rv[ ii ], xi[ ii ] )
