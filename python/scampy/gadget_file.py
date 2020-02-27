@@ -161,14 +161,3 @@ class gadget_file () :
                 self.sub_vmaxrad = np.append( self.sub_vmaxrad, sub_vmaxrad_block )
                 self.sub_group = np.append( self.sub_group, sub_group_block )
 
-if __name__ == '__main__' :
-
-    gadg = gadget_file( "/home/tomi/phd/gadget_catalogues/lcdm_mis0.125/output/groups_011/subhalo_tab_011" )
-    gadg.read_header()
-    
-    for ii in range( gadg.glob['task'] ) :
-        gadg.read_file( ii, add_to_internal = True, verbose = True )
-
-    print( "{0:d} = {0:d} ?".format( gadg.glob[ 'tot_groups' ], gadg.mass.shape[ 0 ] ) )
-
-    print( "{0:d} = {0:d} ?".format( gadg.glob[ 'tot_subs' ], gadg.sub_mass.shape[ 0 ] ) )
