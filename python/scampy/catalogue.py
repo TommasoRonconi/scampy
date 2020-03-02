@@ -1,7 +1,7 @@
 # external:
 import numpy
 import copy
-from sklearn.neighbors import BallTree, KDTree
+# from sklearn.neighbors import BallTree, KDTree
 
 # internal:
 from scampy import gadget_file
@@ -21,7 +21,7 @@ class catalogue () :
         self.scale_mass = scale_mass
             
         self.gadget = None
-        self.tree = None
+        # self.tree = None
     
     def set_content ( self, X ) :
         """ Add element(s) to the catalogue
@@ -37,47 +37,47 @@ class catalogue () :
         self.content = numpy.append( self.content, X )
         return None
     
-    def read_balltree_from_gadget ( self, filebase ) :
-        """ Creates instance of sklearn.BallTree from a Subgroup gadget output
+    # def read_balltree_from_gadget ( self, filebase ) :
+    #     """ Creates instance of sklearn.BallTree from a Subgroup gadget output
         
-        Parameters
-        ----------
-        filebase :
+    #     Parameters
+    #     ----------
+    #     filebase :
         
-        Returns
-        -------
-        None        
-        """
+    #     Returns
+    #     -------
+    #     None        
+    #     """
         
-        if self.gadget is None :
-            self.gadget = gadget_file.gadget_file( filebase )
-            for ii in range( self.gadget.glob[ 'task' ] ) :
-                self.gadget.read_file( ii, scale_mass = self.scale_mass,
-                                       scale_lenght = self.scale_lenght,
-                                       add_to_internal = True )
+    #     if self.gadget is None :
+    #         self.gadget = gadget_file.gadget_file( filebase )
+    #         for ii in range( self.gadget.glob[ 'task' ] ) :
+    #             self.gadget.read_file( ii, scale_mass = self.scale_mass,
+    #                                    scale_lenght = self.scale_lenght,
+    #                                    add_to_internal = True )
         
-        self.tree = BallTree( self.gadget.sub_coord, leaf_size = 10 )
+    #     self.tree = BallTree( self.gadget.sub_coord, leaf_size = 10 )
     
-    def read_kdtree_from_gadget ( self, filebase ) :
-        """ Creates instance of sklearn.BallTree from a Subgroup gadget output
+    # def read_kdtree_from_gadget ( self, filebase ) :
+    #     """ Creates instance of sklearn.BallTree from a Subgroup gadget output
         
-        Parameters
-        ----------
-        filebase :
+    #     Parameters
+    #     ----------
+    #     filebase :
         
-        Returns
-        -------
-        None        
-        """
+    #     Returns
+    #     -------
+    #     None        
+    #     """
         
-        if self.gadget is None :
-            self.gadget = gadget_file.gadget_file( filebase )
-            for ii in range( self.gadget.glob[ 'task' ] ) :
-                self.gadget.read_file( ii, scale_mass = self.scale_mass,
-                                       scale_lenght = self.scale_lenght,
-                                       add_to_internal = True )
+    #     if self.gadget is None :
+    #         self.gadget = gadget_file.gadget_file( filebase )
+    #         for ii in range( self.gadget.glob[ 'task' ] ) :
+    #             self.gadget.read_file( ii, scale_mass = self.scale_mass,
+    #                                    scale_lenght = self.scale_lenght,
+    #                                    add_to_internal = True )
         
-        self.tree = KDTree( self.gadget.sub_coord, leaf_size = 10 )        
+    #     self.tree = KDTree( self.gadget.sub_coord, leaf_size = 10 )        
 
     def read_hierarchy_from_gadget ( self, filebase ) :
         """ Reads the halo/sub-halo hierarchy from a Subgroup gadget output

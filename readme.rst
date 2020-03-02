@@ -1,6 +1,9 @@
 .. image:: https://travis-ci.com/TommasoRonconi/scampy.svg?token=snqFgNBsFa2kbkxnNmAN&branch=master
     :target: https://travis-ci.com/TommasoRonconi/scampy
 
+.. image:: https://img.shields.io/badge/ascl-2002.006-blue.svg?colorB=262255
+    :target: http://ascl.net/2002.006
+
 A Python interface for Sub-halo Clustering and Abundance Matching
 -----------------------------------------------------------------
 

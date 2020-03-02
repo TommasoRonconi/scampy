@@ -1,22 +1,33 @@
-import numpy as np
+import numpy
 
 class gadget_file () :
     """
     A class for reading GaDGET SUBFIND subgroup tables
+    
+    Parameters
+    ----------
+    filebase : string
+      common name of the files to be read
+    byteorder : string
+      'little' or 'big' for little or big endian, respectively
+    ids_lenght : int
+      number of bytes of the integer storing the IDs (8 or 16)
+    masstab : bool
+      whether the file contains mass tables
     """
     
     local_elements = ( 'groups', 'ids', 'subs' )
     global_elements =  ( 'tot_groups', 'tot_ids', 'task', 'tot_subs' )
-    mass        = np.empty( (0,),  dtype = 'float32' )
-    coord       = np.empty( (0,3), dtype = 'float32' )
-    nsubs       = np.empty( (0,),  dtype = 'uint32'  )
-    sub_mass    = np.empty( (0,),  dtype = 'float32' )
-    sub_coord   = np.empty( (0,3), dtype = 'float32' )
-    sub_spin    = np.empty( (0,3), dtype = 'float32' )
-    sub_veldisp = np.empty( (0,),  dtype = 'float32' )
-    sub_vmax    = np.empty( (0,),  dtype = 'float32' )
-    sub_vmaxrad = np.empty( (0,),  dtype = 'float32' )
-    sub_group   = np.empty( (0,),  dtype = 'uint32'  )
+    mass        = numpy.empty( (0,),  dtype = 'float32' )
+    coord       = numpy.empty( (0,3), dtype = 'float32' )
+    nsubs       = numpy.empty( (0,),  dtype = 'uint32'  )
+    sub_mass    = numpy.empty( (0,),  dtype = 'float32' )
+    sub_coord   = numpy.empty( (0,3), dtype = 'float32' )
+    sub_spin    = numpy.empty( (0,3), dtype = 'float32' )
+    sub_veldisp = numpy.empty( (0,),  dtype = 'float32' )
+    sub_vmax    = numpy.empty( (0,),  dtype = 'float32' )
+    sub_vmaxrad = numpy.empty( (0,),  dtype = 'float32' )
+    sub_group   = numpy.empty( (0,),  dtype = 'uint32'  )
     
     def __init__ ( self, filebase, byteorder = 'little', ids_lenght = 8, masstab = True ) :
         
@@ -48,6 +59,7 @@ class gadget_file () :
     def read_header ( self, num = 0 ) :
         """
         Reads only the Header of the `num`^th file in `base`
+
         Parameters
         ----------
         num : the file number to read
@@ -66,7 +78,30 @@ class gadget_file () :
             
         return loc, glob
     
-    def read_file ( self, num, scale_mass = 1.e+10, scale_lenght = 1.e-3, add_to_internal = False, verbose = False ) :
+    def read_file ( self, num,
+                    scale_mass = 1.e+10,
+                    scale_lenght = 1.e-3,
+                    add_to_internal = False,
+                    verbose = False ) :
+        """ Reads the `num`^th file in `base`
+        
+        Parameters
+        ----------
+        num : int
+          file to read
+        scale_mass : float
+          mass unit (in terms of solar masses, default = 1.e+10)
+        scale_lenght : float
+          lenght unit (in terms of Mpc/h, default = 1.e-3)
+        add_to_internal : bool
+          whether to add the data to the internal storage array of the class (default = False)
+        verbose : bool
+          whether to print on screen additional info (default = False)
+        
+        Returns
+        -------
+        None
+        """
         
         current = self.filebase + ".{:d}".format( num )
         with open( current, "rb" ) as f :
@@ -83,10 +118,12 @@ class gadget_file () :
             f.seek( 2 * 4 * loc[ 'groups' ], 1 ) 
             
             # Halo mass:
-            mass_block = scale_mass * np.fromfile( f, dtype = 'float32', count = loc[ 'groups' ] )
+            mass_block = scale_mass * numpy.fromfile( f, dtype = 'float32',
+                                                      count = loc[ 'groups' ] )
             
             # Halo coords:
-            coord_block = scale_lenght * np.fromfile( f, dtype = 'float32', count = 3 * loc[ 'groups' ] ).reshape( loc[ 'groups' ], 3 )
+            coord_block = scale_lenght * numpy.fromfile( f, dtype = 'float32',
+                                                         count = 3 * loc[ 'groups' ] ).reshape( loc[ 'groups' ], 3 )
             
             # jump estimates block (mass, radius, veldisp)*(m200, c200, t200)
             f.seek( 9 * 4 * loc[ 'groups' ], 1 ) 
@@ -95,7 +132,8 @@ class gadget_file () :
             f.seek( 2 * 4 * loc[ 'groups' ], 1 )
             
             # Sub-Halos number:
-            nsubs_block = np.fromfile( f, dtype = 'uint32', count = loc[ 'groups' ] )
+            nsubs_block = numpy.fromfile( f, dtype = 'uint32',
+                                          count = loc[ 'groups' ] )
             
             # jump last groups block
             f.seek( 4 * loc[ 'groups' ], 1 )
@@ -108,10 +146,12 @@ class gadget_file () :
             f.seek( 3 * 4 * loc[ 'subs' ], 1 )
             
             # Sub-Halo mass:
-            sub_mass_block = scale_mass * np.fromfile( f, dtype = 'float32', count = loc[ 'subs' ] )
+            sub_mass_block = scale_mass * numpy.fromfile( f, dtype = 'float32',
+                                                          count = loc[ 'subs' ] )
             
             # Sub-Halo coords:
-            sub_coord_block = scale_lenght * np.fromfile( f, dtype = 'float32', count = 3 * loc[ 'subs' ] ).reshape( loc[ 'subs' ], 3 )
+            sub_coord_block = scale_lenght * numpy.fromfile( f, dtype = 'float32',
+                                                             count = 3 * loc[ 'subs' ] ).reshape( loc[ 'subs' ], 3 )
             
             # jump vel block:
             f.seek( 3 * 4 * loc[ 'subs' ], 1 )
@@ -120,16 +160,20 @@ class gadget_file () :
             f.seek( 3 * 4 * loc[ 'subs' ], 1 )
             
             # Sub-Halo spin:
-            sub_spin_block = np.fromfile( f, dtype = 'float32', count = 3 * loc[ 'subs' ] ).reshape( loc[ 'subs' ], 3 )
+            sub_spin_block = numpy.fromfile( f, dtype = 'float32',
+                                             count = 3 * loc[ 'subs' ] ).reshape( loc[ 'subs' ], 3 )
             
             # Sub-Halo veldisp:
-            sub_veldisp_block = np.fromfile( f, dtype = 'float32', count = loc[ 'subs' ] )
+            sub_veldisp_block = numpy.fromfile( f, dtype = 'float32',
+                                                count = loc[ 'subs' ] )
             
             # Sub-Halo Vmax:
-            sub_vmax_block = np.fromfile( f, dtype = 'float32', count = loc[ 'subs' ] )
+            sub_vmax_block = numpy.fromfile( f, dtype = 'float32',
+                                             count = loc[ 'subs' ] )
             
             # Sub-Halo Vmax-rad:
-            sub_vmaxrad_block = np.fromfile( f, dtype = 'float32', count = loc[ 'subs' ] )
+            sub_vmaxrad_block = numpy.fromfile( f, dtype = 'float32',
+                                                count = loc[ 'subs' ] )
             
             # jump half-mass radius block:
             f.seek( 4 * loc[ 'subs' ], 1 )
@@ -138,7 +182,7 @@ class gadget_file () :
             f.seek( self.ids_lenght * loc[ 'subs' ], 1 )
             
             # Group number:
-            sub_group_block = np.fromfile( f, dtype = 'uint32', count = loc[ 'subs' ] )
+            sub_group_block = numpy.fromfile( f, dtype = 'uint32', count = loc[ 'subs' ] )
             
             # jump mass tab (if present):
             if self.masstab :
@@ -150,14 +194,16 @@ class gadget_file () :
                 print( "Did not reach EOF:\t {:.8f} bytes left.".format( len( left ) ) )
                 
             if add_to_internal :
-                self.mass = np.append( self.mass, mass_block )
-                self.coord = np.append( self.coord, coord_block, axis = 0 )
-                self.nsubs = np.append( self.nsubs, nsubs_block )
-                self.sub_mass = np.append( self.sub_mass, sub_mass_block )
-                self.sub_coord = np.append( self.sub_coord, sub_coord_block, axis = 0 )
-                self.sub_spin = np.append( self.sub_spin, sub_spin_block, axis = 0 )
-                self.sub_veldisp = np.append( self.sub_veldisp, sub_veldisp_block )
-                self.sub_vmax = np.append( self.sub_vmax, sub_vmax_block )
-                self.sub_vmaxrad = np.append( self.sub_vmaxrad, sub_vmaxrad_block )
-                self.sub_group = np.append( self.sub_group, sub_group_block )
+                self.mass = numpy.append( self.mass, mass_block )
+                self.coord = numpy.append( self.coord, coord_block, axis = 0 )
+                self.nsubs = numpy.append( self.nsubs, nsubs_block )
+                self.sub_mass = numpy.append( self.sub_mass, sub_mass_block )
+                self.sub_coord = numpy.append( self.sub_coord, sub_coord_block, axis = 0 )
+                self.sub_spin = numpy.append( self.sub_spin, sub_spin_block, axis = 0 )
+                self.sub_veldisp = numpy.append( self.sub_veldisp, sub_veldisp_block )
+                self.sub_vmax = numpy.append( self.sub_vmax, sub_vmax_block )
+                self.sub_vmaxrad = numpy.append( self.sub_vmaxrad, sub_vmaxrad_block )
+                self.sub_group = numpy.append( self.sub_group, sub_group_block )
+
+            return;
 
