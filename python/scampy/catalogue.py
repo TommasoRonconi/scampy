@@ -12,13 +12,14 @@ class catalogue () :
     Class to handle catalogues of objects of type halo, host_halo, galaxy
     """
     
-    def __init__ ( self, X = None, scale_lenght = 1.e-3, scale_mass = 1.e+10 ) :
+    def __init__ ( self, X = None, scale_lenght = 1.e-3, scale_mass = 1.e+10, boxsize = None ) :
         if X is None : 
             self.content = numpy.array([])
         else :
             self.content = X 
         self.scale_lenght = scale_lenght
         self.scale_mass = scale_mass
+        self.boxsize = boxsize
             
         self.gadget = None
         # self.tree = None
@@ -79,7 +80,7 @@ class catalogue () :
         
     #     self.tree = KDTree( self.gadget.sub_coord, leaf_size = 10 )        
 
-    def read_hierarchy_from_gadget ( self, filebase ) :
+    def read_hierarchy_from_gadget ( self, filebase, boxsize = None ) :
         """ Reads the halo/sub-halo hierarchy from a Subgroup gadget output
         
         Parameters
@@ -90,7 +91,8 @@ class catalogue () :
         -------
         None        
         """
-        
+
+        self.boxsize = boxsize
         
         if self.gadget is None :
             self.gadget = gadget_file.gadget_file( filebase )
@@ -255,7 +257,7 @@ class catalogue () :
         if extract :
             return extract_galaxies( ll, Ngxy )
         else :
-            return catalogue( ll ), Ngxy
+            return catalogue( ll, boxsize = self.boxsize ), Ngxy
 
 def get_abundances ( catalogue, bins ) :
     """
