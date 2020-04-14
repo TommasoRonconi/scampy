@@ -57,6 +57,7 @@ scam::halo_model::halo_model ( const std::shared_ptr< scam::occupation_p > & ocp
   for ( size_t _k = 0; _k < _thinness; ++_k ) {
     
     auto f_denFS = [ & ] ( double Mh ) {
+      // return _cosmo->density_profile_FS( _kv[_k], Mh, _redshift );
       return _cosmo->density_profile_FS( _kv[_k], Mh, 0. );
     };
     

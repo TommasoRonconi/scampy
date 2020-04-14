@@ -56,12 +56,39 @@ double scam::cosmology::concentration_shimizu03 ( const double Mass, const doubl
 
 //==============================================================================================
 
+// double scam::cosmology::density_profile_FS ( const double kk, const double Mass,
+// 					     const double Redshift ) {
+
+//   double zz = Redshift;
+
+//   const double conc = concentration( Mass, zz );
+
+//   const double V_vir = Mass / ( Delta_c( zz ) * rho_crit( zz ) );
+
+//   const double r_vir = pow( 0.75 * V_vir * scam::ip, 0.333333333333333333333 );
+  
+//   const double r_s = r_vir / conc;
+  
+//   const double mu = kk * r_s;
+
+//   const double cosi_part = gsl_sf_Ci( mu + mu * conc ) - gsl_sf_Ci( mu );
+//   const double sini_part = gsl_sf_Si( mu + mu * conc ) - gsl_sf_Si( mu );
+//   const double sin_part = sin( mu * conc ) / ( mu + mu * conc );
+
+//   const double tmp = cos( mu ) * cosi_part + sin( mu ) * sini_part - sin_part;
+  
+//   return tmp / ( log( 1. + conc ) - conc / ( 1. + conc ) );
+  
+// }
+
+//==============================================================================================
+
 double scam::cosmology::density_profile_FS ( const double kk, const double Mass,
 					     const double Redshift ) {
 
-  double zz = Redshift;
+  double zz = 1.e-7;
 
-  const double conc = concentration( Mass, zz );
+  const double conc = concentration( Mass, Redshift );
 
   const double V_vir = Mass / ( Delta_c( zz ) * rho_crit( zz ) );
 
