@@ -23,6 +23,16 @@ class catalogue () :
             
         self.gadget = None
         # self.tree = None
+
+    def Nhost () :
+        """ Return the total number of host haloes (central + satellites)
+
+        Returns
+        -------
+        : int
+        """
+
+        return numpy.array( [ obj.Ncen + obj.Nsat for obj in self.content ] ).sum()
     
     def set_content ( self, X ) :
         """ Add element(s) to the catalogue
