@@ -24,7 +24,7 @@ class catalogue () :
         self.gadget = None
         # self.tree = None
 
-    def Nhost () :
+    def Nhost ( self ) :
         """ Return the total number of host haloes (central + satellites)
 
         Returns
