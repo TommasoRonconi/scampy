@@ -24,15 +24,23 @@ class catalogue () :
         self.gadget = None
         # self.tree = None
 
-    def Nhost ( self ) :
+    def Nhost ( self, mask = None ) :
         """ Return the total number of host haloes (central + satellites)
+
+        Parameters
+        ----------
+        mask : array-like
+          Array mask for filtering the original catalogue
 
         Returns
         -------
         : int
         """
 
-        return numpy.array( [ obj.Ncen + obj.Nsat for obj in self.content ] ).sum()
+        if mask is None :
+            return numpy.array( [ obj.Ncen + obj.Nsat for obj in self.content ] ).sum()
+        else :
+            return numpy.array( [ obj.Ncen + obj.Nsat for obj in self.content[ mask ] ] ).sum()            
     
     def set_content ( self, X ) :
         """ Add element(s) to the catalogue
