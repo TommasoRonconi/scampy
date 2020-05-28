@@ -72,6 +72,15 @@ class host_halo ( object ) :
         self.Nsat = len(self.satellites)
         return
 
+    def mask ( self, mask ) :
+        return host_halo( coords = self.coords,
+                          mass = self.mass,
+                          central = self.central[
+                              mask[ 0:len( self.central ) ] ],
+                          satellites = self.satellites[
+                              mask[ len( self.central ):len( self.satellites ) ] ] )
+                          
+
 
 if __name__ == '__main__' :
 
