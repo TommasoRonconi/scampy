@@ -56,13 +56,14 @@ class catalogue () :
         self.content = numpy.append( self.content, X )
         return None
 
-    def sub_sample ( self, fss ) :
+    def sub_sample ( self, nsample ) :
         """ Return a sub-sampled catalogue
 
         Parameters
         ----------
-        fss : float
-          sub-sampling factor, must be in the closed interval [0.,1.]
+        nsample : int
+          number of objects in the sub-sampled catalogue, must be in the interval [0.,Nhost)
+          where Nhost is the number of sub-haloes of the current catalogue
 
         Returns
         -------
@@ -71,20 +72,22 @@ class catalogue () :
         """
 
         # allocate memory for new catalogue content
-        content = np.empty( self.content.shape, dtype = host_halo )
+        content = numpy.empty( self.content.shape, dtype = host_halo )
 
         # create sub-sampling mask
         mask = numpy.full( self.content.shape, False, dtype = bool )
-        mask[ :int( round( fss * self.Nhost() ) ) ] = True
-        numpy.shuffle( mask )
+        mask[ :nsample ] = True
+        numpy.random.shuffle( mask )
 
         start = 0
         for ii in range( len( self.content ) ) :
             Nhalo = self.content[ ii ].Ncen + self.content[ ii ].Nsat
-            content[ ii ] = self.content[ ii ].mask( mask[ start:Nhalo ] )
-            start = Nhalo
+            content[ ii ] = self.content[ ii ].mask( mask[ start:start+Nhalo ] )
+            start += Nhalo
 
-        return catalogue( X = content, boxsize = self.boxsize )
+        ww = numpy.where( [ obj is not None for obj in content ] )
+
+        return catalogue( X = content[ ww ], boxsize = self.boxsize )
             
     # def read_balltree_from_gadget ( self, filebase ) :
     #     """ Creates instance of sklearn.BallTree from a Subgroup gadget output
