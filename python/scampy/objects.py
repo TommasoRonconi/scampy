@@ -73,12 +73,31 @@ class host_halo ( object ) :
         return
 
     def mask ( self, mask ) :
-        return host_halo( coords = self.coords,
-                          mass = self.mass,
-                          central = self.central[
-                              mask[ 0:len( self.central ) ] ],
-                          satellites = self.satellites[
-                              mask[ len( self.central ):len( self.satellites ) ] ] )
+        """ Returns masked copy of self
+        
+        Parameters
+        ----------
+        mask : array-like of booleans
+          The mask to be applied. The first element of the array masks the central 
+          sub-halo, the remaining mask the satellite sub-haloes.
+          The shape of the array should be ( Ncen + Nsat, )
+        
+        Returns
+        -------
+        : host_halo object or None
+          If any of the elements of mask is True -> masked host_halo
+          (with same coordinates and mass of the original, and masked sub-haloes).
+          If all the elements of the mask are False -> None
+        """
+        if numpy.any( mask ) :
+            return host_halo( coords = self.coords,
+                              mass = self.mass,
+                              central = self.central[
+                                  mask[ 0:len( self.central ) ] ],
+                              satellites = self.satellites[
+                                  mask[ self.Ncen:self.Ncen+self.Nsat ] ] )
+        else :
+            return None
                           
 
 
