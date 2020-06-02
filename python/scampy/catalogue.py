@@ -325,12 +325,12 @@ def get_abundances ( catalogue, bins ) :
     # mean number of centrals in each mass-bin
     Nc_binned = numpy.array( [ Nc[ numpy.where( dig == idx ) ].mean() 
                                if numpy.isin( idx, dig ) else 0. 
-                               for idx in range( 40 ) ] ) 
+                               for idx in range( len( bins ) ) ] ) 
     
     # mean number of satellites in each mass-bin
     Ns_binned = numpy.array( [ Ns[ numpy.where( dig == idx ) ].mean() 
                                if numpy.isin( idx, dig ) else 0. 
-                               for idx in range( 40 ) ] )
+                               for idx in range( len( bins ) ) ] )
     
     return Nc_binned, Ns_binned
 
