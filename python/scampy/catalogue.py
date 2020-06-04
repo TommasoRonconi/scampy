@@ -89,47 +89,6 @@ class catalogue () :
 
         return catalogue( X = content[ ww ], boxsize = self.boxsize )
             
-    # def read_balltree_from_gadget ( self, filebase ) :
-    #     """ Creates instance of sklearn.BallTree from a Subgroup gadget output
-        
-    #     Parameters
-    #     ----------
-    #     filebase :
-        
-    #     Returns
-    #     -------
-    #     None        
-    #     """
-        
-    #     if self.gadget is None :
-    #         self.gadget = gadget_file.gadget_file( filebase )
-    #         for ii in range( self.gadget.glob[ 'task' ] ) :
-    #             self.gadget.read_file( ii, scale_mass = self.scale_mass,
-    #                                    scale_lenght = self.scale_lenght,
-    #                                    add_to_internal = True )
-        
-    #     self.tree = BallTree( self.gadget.sub_coord, leaf_size = 10 )
-    
-    # def read_kdtree_from_gadget ( self, filebase ) :
-    #     """ Creates instance of sklearn.BallTree from a Subgroup gadget output
-        
-    #     Parameters
-    #     ----------
-    #     filebase :
-        
-    #     Returns
-    #     -------
-    #     None        
-    #     """
-        
-    #     if self.gadget is None :
-    #         self.gadget = gadget_file.gadget_file( filebase )
-    #         for ii in range( self.gadget.glob[ 'task' ] ) :
-    #             self.gadget.read_file( ii, scale_mass = self.scale_mass,
-    #                                    scale_lenght = self.scale_lenght,
-    #                                    add_to_internal = True )
-        
-    #     self.tree = KDTree( self.gadget.sub_coord, leaf_size = 10 )        
 
     def read_hierarchy_from_gadget ( self, filebase, boxsize = None ) :
         """ Reads the halo/sub-halo hierarchy from a Subgroup gadget output
@@ -183,14 +142,6 @@ class catalogue () :
                                             mass       = self.gadget.mass[ ii ], 
                                             central    = central,
                                             satellites = satellites )
-
-    # def get_num_cen ( self, store = False ) :
-
-    #     num_cen += len( obj.central ) for obj in self.content
-    #     if store :
-    #         self.num_cen = num_cen
-
-    #     return num_cen
             
     def get_coord_cen ( self, store = False ) :
         """ Get the coordinates of all the central objects in the catalogue
