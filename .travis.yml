@@ -15,7 +15,7 @@ install:
   - sudo apt-get install libgsl-dev
 
 script:
-  - meson builddir -DENABLE_TEST=true
+  - meson builddir -Denable-test=true
   - ninja -C builddir
   - ninja -C builddir test
   
