@@ -75,7 +75,7 @@ class catalogue () :
         content = numpy.empty( self.content.shape, dtype = host_halo )
 
         # create sub-sampling mask
-        mask = numpy.full( self.content.shape, False, dtype = bool )
+        mask = numpy.full( self.Nhost(), False, dtype = bool )
         mask[ :nsample ] = True
         numpy.random.shuffle( mask )
 
