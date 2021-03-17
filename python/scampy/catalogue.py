@@ -212,7 +212,8 @@ class catalogue () :
         
         Parameters
         ----------
-        store : whether to store the returned array into an internal variable ( default = False )
+        store : bool
+          whether to store the returned array into an internal variable ( default = False )
 
         Returns
         -------
