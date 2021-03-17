@@ -4,6 +4,9 @@ group: travis_latest
 os: linux
 language: python
 
+python:
+  - "3.7"
+
 matrix:
   include:
     - env: CC=gcc
