@@ -227,6 +227,26 @@ class catalogue () :
         return mass_halo
     
     def populate ( self, model, extract = False, rank_order = False ) :
+        """ Returns a catalogue of haloes that have to host galaxies to reproduce
+        the clustering properties of the provided model.
+
+        Parameters
+        ----------
+        model : occupation_p object
+          the parameterized occupation probability to reproduce
+        extract : bool
+          whether to extract the galaxies from the catalogue or not
+        rank_order : bool
+          If True, the Nsat satellites are randomly assigned to the sub-haloes.
+          If False, satellites are assigned only to the first Nsat most massive sub-haloes.
+
+        Returns
+        -------
+        If extract = False (default), returns a `trimmed' copy of the original catalogue with all and only
+        the haloes that have to host galaxies in order to reproduce the required model.
+        If extract = True, it returns an array of all and only the halo-type objects (both central and satellites)
+        that have to host galaxies in order to reproduce the required model.          
+        """
         
         ll = numpy.array( sorted( copy.deepcopy( self.content ),
                                   key = lambda x : x.mass,
