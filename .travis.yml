@@ -12,7 +12,7 @@ matrix:
     - env: CC=gcc
 
 install:
-  - pip install "meson<0.57"
+  - pip install "meson<0.57" ninja
   - sudo apt-get update
   - sudo apt-get install gfortran
   - sudo apt-get install libgsl-dev
