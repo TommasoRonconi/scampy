@@ -75,6 +75,14 @@ Pre-requisites
 
 can both be installed either via :code:`conda install` or with :code:`pip install`
 
+.. warning::
+   The current latest version of `meson` (i.e. `0.57.2`) does not always support compiling heritage fortran programs
+   (typically an error of type `UnicodeDecodeError` is raised). 
+   If the external library FFTLog (see below) is not already installed in your system (and visible to the linker),
+   the installation process will try to download and compile it with `ninja`.
+   If your `meson` version is superior to `0.56.2` this will cause a failure in the installation process.
+   The quickest fix is to downgrade your build system tool to `meson<0.56`.
+
 **Dependencies of the library:**
 
 - GNU Scientific Library version 2 or greater (`GSL link`_); 
