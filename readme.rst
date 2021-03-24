@@ -18,7 +18,7 @@ The procedure itself is quite easy since it only requires to apply the two metho
 What can be achieved
 ^^^^^^^^^^^^^^^^^^^^
 
-Here is an animation obtained by running ScamPy on the halo/subhalo catalogues of 42 different snapshots of the same :math:`64 Mpc/h` DM-only N-body simulation.
+Here is an animation obtained by running ScamPy on the halo/subhalo catalogues of 42 different snapshots, from redshift z=8 to redshift z=0, of the same :math:`64 Mpc/h` DM-only N-body simulation.
 The simulation has been obtained with the non-public code GADGET-3, following the evolution of :math:`512^3` DM particles.
 For each different redshift we have fixed the parameters values for the HOD and matched the UV-luminosity function of star-forming galaxies.
 
@@ -26,6 +26,9 @@ For each different redshift we have fixed the parameters values for the HOD and 
    :width: 400
    :alt: If the image is not directly shown in the text, it can be found in the subdirectory `plots/evolving_slice.gif`
 
+The background color-code shows the underlying DM-density field computed by smoothing the contribution of DM-particles in a 10 Mpc/h thick slice of the simulation.
+The markers locate the positions of the mock galaxies generated with ScamPy. Circles mark the position of the central galaxies while crosses mark the position of satellite galaxies.
+The marker color represents lower to higher luminosity going from brighter to darker.
 
    
 Basic Usage
