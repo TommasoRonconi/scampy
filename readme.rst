@@ -23,7 +23,7 @@ The simulation has been obtained with the non-public code GADGET-3, following th
 For each different redshift we have fixed the parameters values for the HOD and matched the UV-luminosity function of star-forming galaxies.
 
 .. image:: plots/evolving_slice.gif
-   :width: 400
+   :width: 300
    :alt: If the image is not directly shown in the text, it can be found in the subdirectory `plots/evolving_slice.gif`
 
 The background color-code shows the underlying DM-density field computed by smoothing the contribution of DM-particles in a 10 Mpc/h thick slice of the simulation.
@@ -92,12 +92,12 @@ Pre-requisites
 can both be installed either via :code:`conda install` or with :code:`pip install`
 
 .. warning::
-   The current latest version of `meson` (i.e. `0.57.2`) does not always support compiling heritage fortran programs
-   (typically an error of type `UnicodeDecodeError` is raised). 
+   The current latest version of :code:`meson` (i.e. :code:`0.57.2`) does not always support compiling heritage fortran programs
+   (typically an error of type :code:`UnicodeDecodeError` is raised). 
    If the external library FFTLog (see below) is not already installed in your system (and visible to the linker),
-   the installation process will try to download and compile it with `ninja`.
-   If your `meson` version is superior to `0.56.2` this will cause a failure in the installation process.
-   The quickest fix is to downgrade your build system tool to `meson<0.56`.
+   the installation process will try to download and compile it with :code:`ninja`.
+   If your :code:`meson` version is superior to :code:`0.56.2` this will cause a failure in the installation process.
+   The quickest fix is to downgrade your build system tool to :code:`meson<=0.56.2`.
 
 **Dependencies of the library:**
 
