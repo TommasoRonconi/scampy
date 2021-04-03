@@ -1,7 +1,9 @@
 #######################################################################
-# Install python module
+# Search for python installation
 
-install_subdir( 'scampy', install_dir : 'python' )
+pymod = import( 'python' )
+py = pymod.find_installation()
+message( py.get_install_dir() )
 
 #######################################################################
 # Configure python module
@@ -12,35 +14,25 @@ conf_data.set( 'COSMO_WRAP_PATH', cosmo_c_path )
 conf_data.set( 'OCP_WRAP_PATH', ocp_c_path )
 conf_data.set( 'HM_WRAP_PATH', hm_c_path )
 
-# configure_file( output : 'interpolator.py',
-#                 input : 'interpolator.py.in',
-#                 configuration : conf_data,
-#                 install : true,
-#                 install_dir : 'python/scampy' )
-
-# configure_file( output : 'cosmology.py',
-#                 input : 'cosmology.py.in',
-#                 configuration : conf_data,
-#                 install : true,
-#                 install_dir : 'python/scampy' )
-
-# configure_file( output : 'occupation_p.py',
-#                 input : 'occupation_p.py.in',
-#                 configuration : conf_data,
-#                 install : true,
-#                 install_dir : 'python/scampy' )
-
-# configure_file( output : 'halo_model.py',
-#                 input : 'halo_model.py.in',
-#                 configuration : conf_data,
-#                 install : true,
-#                 install_dir : 'python/scampy' )
-
 configure_file( output : 'cwrap.py',
                 input : 'cwrap.py.in',
                 configuration : conf_data,
                 install : true,
-                install_dir : 'python/scampy/cwrap' )
+                install_dir :  py.get_install_dir() + 'scampy/cwrap' )
+
+py.install_sources( [ 'scampy/__init__.py',
+                      'scampy/abundance_matching.py',
+                      'scampy/catalogue.py',
+                      'scampy/cosmology.py',
+                      'scampy/gadget_file.py',
+                      'scampy/halo_model.py',
+                      'scampy/interpolator.py',
+                      'scampy/objects.py',
+                      'scampy/occupation_p.py' ],
+                    subdir : 'scampy' )
+
+py.install_sources( [ 'scampy/cwrap/__init__.py' ],
+                    subdir : 'scampy/cwrap' )
 
 #######################################################################
 
