@@ -6,7 +6,7 @@ project( 'master',
          default_options : [ 'cpp_std=c++14',
                              'buildtype=release',
                              'libdir=lib' ],
-         version : '0.1.0',
+         version : '0.1.1',
          license : 'SISSA' )
 
 root = meson.source_root()
