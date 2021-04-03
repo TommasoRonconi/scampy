@@ -1,7 +1,7 @@
 #######################################################################
 # Global project info
 
-project( 'master',
+project( 'scampy',
          'cpp',
          default_options : [ 'cpp_std=c++14',
                              'buildtype=release',
