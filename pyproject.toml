@@ -1,5 +1,5 @@
 [build-system]
-requires = [ "mesonpep517", "meson<0.57", "numpy", "gsl>2" ]
+requires = [ "mesonpep517", "meson<0.57", "numpy" ]
 build-backend = "mesonpep517.buildapi"
 
 [tool.mesonpep517.metadata]
@@ -7,7 +7,7 @@ author = "Tommaso Ronconi"
 author-email = "tronconi@sissa.it"
 summary = "A Python interface for Sub-halo Clustering and Abundance Matching"
 description-file = "readme.rst"
-repository = "https://github.com/TommasoRonconi/scampy"
+home-page = "https://github.com/TommasoRonconi/scampy"
 
 classifiers = [
 	      "Operating System :: POSIX",
@@ -22,7 +22,7 @@ module = "scampy"
 
 meson-options = [ "-Dfull-build=false", "-Denable-docs=false", "-Denable-test=false" ]
 
-requires = [ "mesonpep517", "meson<0.57", "numpy", "gsl>2" ]
+# requires = [ "mesonpep517", "meson<0.57", "numpy" ]
 requires-python = ">=3.6"
 
 project-urls= [

@@ -38,7 +38,8 @@ intrp_c_lib = library( 'interpolation_c_wrap',
                        dependencies : [ intrp_dep,
                                         gsl_dep,
                                         utl_dep ],
-                       install : true )
+                       install : true,
+                       install_dir : libdir )
 
 intrp_c_dep = declare_dependency( link_with : intrp_c_lib,
                                   include_directories : [ inc_intrp ] )

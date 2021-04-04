@@ -73,7 +73,8 @@ ocp_c_lib = library( 'ocp_c_wrap',
                                       intrp_dep,
                                       fftlwrap_dep,
                                       cosmo_dep ],
-                     install : true )
+                     install : true,
+                     install_dir : libdir )
 
 ocp_c_dep = declare_dependency( link_with : ocp_c_lib,
                                 include_directories : [ inc_hm ] )
@@ -101,7 +102,8 @@ hm_c_lib = library( 'hm_c_wrap',
                                      intrp_dep,
                                      fftlwrap_dep,
                                      cosmo_dep ],
-                    install : true )
+                    install : true,
+                    install_dir : libdir )
 
 hm_c_dep = declare_dependency( link_with : hm_c_lib,
                                include_directories : [ inc_hm ] )

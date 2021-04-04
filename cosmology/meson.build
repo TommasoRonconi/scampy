@@ -21,17 +21,17 @@ cosmo_lib = library( 'cosmo',
                      install : true,
                      install_dir : libdir )
 else
-custom_pack_lib = static_library( 'cosmo',
-                                  [ 'src/cosmology_interface.cpp',
-                                    'src/cosmology.cpp',
-                                    'src/luminosity_function.cpp' ],
-       	 	                  include_directories : [ inc_cosmo,
-                                                          inc_intrp ],
-		                  dependencies : [ gsl_dep,
-                                                   utl_dep,
-                                                   intrp_dep ],
-                                  install : true,
-                                  install_dir : libdir )
+cosmo_lib = static_library( 'cosmo',
+                            [ 'src/cosmology_interface.cpp',
+                              'src/cosmology.cpp',
+                              'src/luminosity_function.cpp' ],
+       	 	            include_directories : [ inc_cosmo,
+                                                    inc_intrp ],
+		            dependencies : [ gsl_dep,
+                                             utl_dep,
+                                             intrp_dep ],
+                            install : true,
+                            install_dir : libdir )
 endif
 
 cosmo_dep = declare_dependency( link_with : cosmo_lib,
