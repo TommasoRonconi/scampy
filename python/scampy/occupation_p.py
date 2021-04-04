@@ -1,5 +1,5 @@
 import numpy
-from .cwrap.cwrap import *
+from .internal.cwrap import *
 
 class occupation_p :
     """ Base occupation_p class, it defines the conceptually-"virtual" methods that have
