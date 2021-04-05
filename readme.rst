@@ -4,6 +4,10 @@
 .. image:: https://img.shields.io/badge/ascl-2002.006-blue.svg?colorB=262255
     :target: http://ascl.net/2002.006
 
+.. image:: https://readthedocs.org/projects/scampy/badge/?version=latest
+    :target: https://scampy.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
+
 A Python interface for Sub-halo Clustering and Abundance Matching
 -----------------------------------------------------------------
 
@@ -23,7 +27,7 @@ The simulation has been obtained with the non-public code GADGET-3, following th
 For each different redshift we have fixed the parameters values for the HOD and matched the UV-luminosity function of star-forming galaxies.
 
 .. image:: plots/evolving_slice.gif
-   :width: 300
+   :width: 100%
    :alt: If the image is not directly shown in the text, it can be found in the subdirectory `plots/evolving_slice.gif`
 
 The background color-code shows the underlying DM-density field computed by smoothing the contribution of DM-particles in a 10 Mpc/h thick slice of the simulation.
