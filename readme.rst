@@ -4,6 +4,10 @@
 .. image:: https://img.shields.io/badge/ascl-2002.006-blue.svg?colorB=262255
     :target: http://ascl.net/2002.006
 
+.. image:: https://readthedocs.org/projects/scampy/badge/?version=latest
+    :target: https://scampy.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
+
 A Python interface for Sub-halo Clustering and Abundance Matching
 -----------------------------------------------------------------
 
