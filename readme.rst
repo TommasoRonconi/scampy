@@ -80,17 +80,59 @@ Installation guide
 Installation of ScamPy is dealt by the  `Meson Build System`_.
 Each module of the API is built by a specific :code:`meson.build` script.
 
+You can decide to install it either in
+- :code:`developer-mode`, with shared libraries for the C/C++ sectors and headers organized in the
+  POSIX directory structure (libraries in :code:`lib`, headers in :code:`include`, python package in :code:`lib/pythonX.Y/site-packages`)
+- :code:`package-mode`, with the C++ sector compiled into static libraries within an internal sub-module of the
+  package and C-wrapping compiled dynamically along with the former. This is what you would obtain by :code:`pip`-installing from the root
+  directory of the project.
+
 .. references:
    
 .. _`Meson Build System`: https://mesonbuild.com/
 
+:code:`developer-mode` Install
+''''''''''''''''''''''''''''''
+
+From the root directory of this repository run
+
+.. code-block:: bash
+		
+   meson build_dir --prefix /path/to/install_directory
+   meson install -C build_dir
+
+If no :code:`--prefix` is specified the library will be installed in the system default prefix directory (usually :code:`/usr/local`).
+
+:code:`package-mode` Install
+''''''''''''''''''''''''''''
+
+From the root directory of this repository either run
+
+.. code-block:: bash
+		
+   meson build_dir --prefix /path/to/install_directory -Dfull-build=false
+   meson install -C build_dir
+
+or run
+
+.. code-block:: bash
+   pip install .
+
+In the latter case the standard path for the python installation directory will be used.
+
+Meson options
+'''''''''''''
+
+- :code:`full-build`: *boolean*, enables/disables the full build installation.
+- :code:`enable-doc`: *boolean*, enables/disables building of the documentation. If enabled, docs will appear in the :code:`$PREFIX/share/man` directory
+- :code:`enable-test`: *boolean*, enables/disables testing (to run tests after having compiled the project run :code:`meson test -C build_dir` from the root directory of this repository)
 
 Pre-requisites
 ''''''''''''''
 
 **For building:**
 
-- :code:`meson` build system tool
+- :code:`meson<0.56` build system tool
 - :code:`ninja`
 
 can both be installed either via :code:`conda install` or with :code:`pip install`
@@ -115,6 +157,9 @@ While GSL has to be already installed in the system, if FFTLog is not present Me
 - Doxygen
 - Sphynx (with breathe, autodoc and rtd_theme extensions)
 
+.. note::
+  
+   A YAML file containing the specs for building a conda environment with all the dependencies needed to build the docs is available at `doc_environment.yml <https://raw.githubusercontent.com/TommasoRonconi/documentation/master/useful/doc_environment.yml>`_
 
 **Dependencies for enabling testing:**
 
@@ -125,17 +170,4 @@ While GSL has to be already installed in the system, if FFTLog is not present Me
 .. _patch: https://github.com/TommasoRonconi/fftlog_patch
 .. _`GSL link`: https://www.gnu.org/software/gsl/
 .. _`FFTLog link`: https://jila.colorado.edu/~ajsh/FFTLog/index.html
-
-Install
-'''''''
-
-.. code-block:: bash
-		
-   # from root directory
-   meson build_dir -Dprefix=/path/to/install_directory
-   cd build_dir
-
-   ninja install
-
-If no :code:`-Dprefix` is specified the library will be installed in :code:`/path/to/scampy/install` directory.
 
