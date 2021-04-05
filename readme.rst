@@ -132,7 +132,7 @@ Pre-requisites
 
 **For building:**
 
-- :code:`meson<0.56` build system tool
+- :code:`meson<0.57` build system tool
 - :code:`ninja`
 
 can both be installed either via :code:`conda install` or with :code:`pip install`
