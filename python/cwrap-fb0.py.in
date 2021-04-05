@@ -1,0 +1,465 @@
+from ctypes import *
+import os 
+
+###########################################################################
+############################ INTERPOLATOR WRAP ############################
+###########################################################################
+
+lib_intrp = CDLL( os.path.dirname( os.path.abspath( __file__ ) ) + "@INTRP_WRAP_PATH@" )
+
+# ===============
+# ===== LIN =====
+# ===============
+
+# Interpolator constructors
+lib_intrp.create_lin_interpolator.argtypes = [ POINTER( c_double ),
+                                               POINTER( c_double ),
+                                               c_size_t ]
+lib_intrp.create_lin_interpolator.restype = c_void_p
+
+# Interpolator destructors
+lib_intrp.free_lin_interpolator.argtypes = [ c_void_p ]
+lib_intrp.free_lin_interpolator.restype = c_void_p
+
+# Evaluate function in point x
+lib_intrp.lin_interpolator_eval.argtypes = [ c_double, c_void_p ]
+lib_intrp.lin_interpolator_eval.restype = c_double
+
+# Integrate function in an inteval
+lib_intrp.lin_interpolator_integrate.argtypes = [ c_double, c_double, c_void_p ]
+lib_intrp.lin_interpolator_integrate.restype = c_double
+
+# ===============
+# ===== LOG =====
+# ===============
+
+# Interpolator constructors
+lib_intrp.create_log_interpolator.argtypes = [ POINTER( c_double ),
+                                               POINTER( c_double ),
+                                               c_size_t ]
+lib_intrp.create_log_interpolator.restype = c_void_p
+
+# Interpolator destructors
+lib_intrp.free_log_interpolator.argtypes = [ c_void_p ]
+lib_intrp.free_log_interpolator.restype = c_void_p
+
+# Evaluate function in point x
+lib_intrp.log_interpolator_eval.argtypes = [ c_double, c_void_p ]
+lib_intrp.log_interpolator_eval.restype = c_double
+
+# Integrate function in an inteval
+lib_intrp.log_interpolator_integrate.argtypes = [ c_double, c_double, c_void_p ]
+lib_intrp.log_interpolator_integrate.restype = c_double
+
+
+###########################################################################
+############################# COSMOLOGY WRAP ##############################
+###########################################################################
+
+class c_cosmo_params_t ( Structure ) :
+    _fields_ = [
+        ( "Om_M", c_double ),
+        ( "Om_b", c_double ),
+        ( "Om_L", c_double ),
+        ( "Om_n", c_double ),
+        ( "Om_r", c_double ),
+        ( "Om_K", c_double ),
+        ( "hh", c_double ),
+        ( "sigma8", c_double )
+    ]
+    
+lib_cosmo = CDLL( os.path.dirname( os.path.abspath( __file__ ) ) + "@COSMO_WRAP_PATH@" )
+
+# Cosmology constructor
+lib_cosmo.create_cosmology.argtypes = [ POINTER( c_cosmo_params_t ),
+                                        POINTER( c_double ),
+                                        POINTER( c_double ),
+                                        c_size_t,
+                                        c_double, c_double,
+                                        c_size_t ]
+lib_cosmo.create_cosmology.restype = c_void_p
+
+# Cosmology destructor
+lib_cosmo.free_cosmology.argtypes = [ c_void_p ]
+lib_cosmo.free_cosmology.restype = c_void_p
+
+# H( z )
+lib_cosmo.cosmo_Hz.argtypes = [ c_double, c_void_p ]
+lib_cosmo.cosmo_Hz.restype = c_double
+
+# d_C
+lib_cosmo.cosmo_dC.argtypes = [ c_double, c_void_p ]
+lib_cosmo.cosmo_dC.restype = c_double
+
+# derivative of d_C
+lib_cosmo.cosmo_ddC.argtypes = [ c_double, c_void_p ]
+lib_cosmo.cosmo_ddC.restype = c_double
+
+# dV/dzdOmega
+lib_cosmo.cosmo_comoving_volume_unit.argtypes = [ c_double, c_void_p ]
+lib_cosmo.cosmo_comoving_volume_unit.restype = c_double
+
+# V( z )
+lib_cosmo.cosmo_comoving_volume.argtypes = [ c_double, c_void_p ]
+lib_cosmo.cosmo_comoving_volume.restype = c_double
+
+# t_age( z )
+lib_cosmo.cosmo_cosmic_time.argtypes = [ c_double, c_void_p ]
+lib_cosmo.cosmo_cosmic_time.restype = c_double
+
+# rho_crit( z )
+lib_cosmo.cosmo_rho_crit.argtypes = [ c_double, c_void_p ]
+lib_cosmo.cosmo_rho_crit.restype = c_double
+
+# rho_crit( z ) comoving
+lib_cosmo.cosmo_rho_crit_comoving.argtypes = [ c_double, c_void_p ]
+lib_cosmo.cosmo_rho_crit_comoving.restype = c_double
+
+# matter density parameter
+lib_cosmo.cosmo_OmegaM.argtypes = [ c_double, c_void_p ]
+lib_cosmo.cosmo_OmegaM.restype = c_double
+
+# baryonic matter density parameter
+lib_cosmo.cosmo_Omegab.argtypes = [ c_double, c_void_p ]
+lib_cosmo.cosmo_Omegab.restype = c_double
+
+# linear critical overdensity at given redshift
+lib_cosmo.cosmo_deltac.argtypes = [ c_double, c_void_p ]
+lib_cosmo.cosmo_deltac.restype = c_double
+
+# overdensity parameter ( Bryan & Norman '98 )
+lib_cosmo.cosmo_Deltac_BN98.argtypes = [ c_double, c_void_p ]
+lib_cosmo.cosmo_Deltac_BN98.restype = c_double
+
+# overdensity parameter ( Nakamura & Suto '98 )
+lib_cosmo.cosmo_Deltac_NS98.argtypes = [ c_double, c_void_p ]
+lib_cosmo.cosmo_Deltac_NS98.restype = c_double
+
+# growth factor at given redshift
+lib_cosmo.cosmo_DD.argtypes = [ c_double, c_void_p ]
+lib_cosmo.cosmo_DD.restype = c_double
+
+# growth factor at given redshift
+lib_cosmo.cosmo_gz.argtypes = [ c_double, c_void_p ]
+lib_cosmo.cosmo_gz.restype = c_double
+
+# linear power spectrum at given redshift
+lib_cosmo.cosmo_Pk.argtypes = [ c_double, c_double, c_void_p ]
+lib_cosmo.cosmo_Pk.restype = c_double
+
+# cosmic mass-variance
+lib_cosmo.cosmo_sigma2M.argtypes = [ c_double, c_double, c_void_p ]
+lib_cosmo.cosmo_sigma2M.restype = c_double
+
+# halo-mass function
+lib_cosmo.cosmo_dndM.argtypes = [ c_double, c_double, c_void_p ]
+lib_cosmo.cosmo_dndM.restype = c_double
+
+# halo bias
+lib_cosmo.cosmo_hbias.argtypes = [ c_double, c_double, c_void_p ]
+lib_cosmo.cosmo_hbias.restype = c_double
+
+# density profile of DM haloes in fourier space
+lib_cosmo.cosmo_density_profile_FS.argtypes = [ c_double, c_double, c_double, c_void_p ]
+lib_cosmo.cosmo_density_profile_FS.restype = c_double
+
+# luminosity function ( default )
+lib_cosmo.cosmo_dphidL.argtypes = [ c_double, c_double, c_void_p ]
+lib_cosmo.cosmo_dphidL.restype = c_double
+
+# luminosity function ( Bouwens et al., 2015 )
+lib_cosmo.cosmo_dphidL_Bouwens15.argtypes = [ c_double, c_double, c_void_p ]
+lib_cosmo.cosmo_dphidL_Bouwens15.restype = c_double
+
+# luminosity function ( Bouwens et al., 2016 )
+lib_cosmo.cosmo_dphidL_Bouwens16.argtypes = [ c_double, c_double, c_void_p ]
+lib_cosmo.cosmo_dphidL_Bouwens16.restype = c_double
+
+# UV luminosity function ( Lapi et al., 2017 )
+lib_cosmo.cosmo_dphidL_Lapi17_uv.argtypes = [ c_double, c_double, c_void_p ]
+lib_cosmo.cosmo_dphidL_Lapi17_uv.restype = c_double
+
+# UV+IR-corrected luminosity function ( Lapi et al., 2017 )
+lib_cosmo.cosmo_dphidL_Lapi17_uvir.argtypes = [ c_double, c_double, c_void_p ]
+lib_cosmo.cosmo_dphidL_Lapi17_uvir.restype = c_double
+
+###########################################################################
+############################ OCCUPATION WRAP ##############################
+###########################################################################
+
+lib_ocp = CDLL( os.path.dirname( os.path.abspath( __file__ ) ) + "@OCP_WRAP_PATH@" )
+
+# ================
+# == Harikane16 ==
+# ================
+
+#
+lib_ocp.create_H16_occupation.argtypes = [ c_double, c_double,
+                                       c_double, c_double,
+                                       c_double, c_double ]
+lib_ocp.create_H16_occupation.restype = c_void_p
+
+#
+lib_ocp.free_H16_occupation.argtypes = [ c_void_p ]
+lib_ocp.free_H16_occupation.restype = c_void_p
+
+#
+lib_ocp.Ncen_H16_ocp.argtypes = [ c_double, c_void_p ]
+lib_ocp.Ncen_H16_ocp.restype = c_double
+
+#
+lib_ocp.Nsat_H16_ocp.argtypes = [ c_double, c_void_p ]
+lib_ocp.Nsat_H16_ocp.restype = c_double
+
+# ================
+# === Tinker16 ===
+# ================
+
+#
+lib_ocp.create_T10_occupation.argtypes = [ c_double, c_double,
+                                           c_double, c_double ]
+lib_ocp.create_T10_occupation.restype = c_void_p
+
+#
+lib_ocp.free_T10_occupation.argtypes = [ c_void_p ]
+lib_ocp.free_T10_occupation.restype = c_void_p
+
+#
+lib_ocp.Ncen_T10_ocp.argtypes = [ c_double, c_void_p ]
+lib_ocp.Ncen_T10_ocp.restype = c_double
+
+#
+lib_ocp.Nsat_T10_ocp.argtypes = [ c_double, c_void_p ]
+lib_ocp.Nsat_T10_ocp.restype = c_double
+
+###########################################################################
+############################ HALO-MODEL WRAP ##############################
+###########################################################################
+
+lib_hm = CDLL( os.path.dirname( os.path.abspath( __file__ ) ) + "@HM_WRAP_PATH@" )
+
+# ===============
+# ==== BASIC ====
+# ===============
+
+# Halo Model constructor:
+lib_hm.create_halo_model_H16.argtypes = [ c_void_p, c_void_p,
+                                          c_double, c_size_t ]
+lib_hm.create_halo_model_H16.restype = c_void_p
+lib_hm.create_halo_model_T10.argtypes = [ c_void_p, c_void_p,
+                                          c_double, c_size_t ]
+lib_hm.create_halo_model_T10.restype = c_void_p
+
+# Halo Model denstructor:
+lib_hm.free_halo_model.argtypes = [ c_void_p ]
+lib_hm.free_halo_model.restype = c_void_p
+
+# Halo Model function set_parameters():
+lib_hm.set_parameters_hm_H16.argtypes = [ c_double, c_double,
+                                          c_double, c_double,
+                                          c_double, c_double,
+                                          c_void_p ]
+lib_hm.set_parameters_hm_H16.restype = c_void_p
+lib_hm.set_parameters_hm_T10.argtypes = [ c_double, c_double,
+                                          c_double, c_double,
+                                          c_void_p ]
+lib_hm.set_parameters_hm_T10.restype = c_void_p
+
+# Halo Model function ng():
+lib_hm.ng_hm.argtypes = [ c_void_p ]
+lib_hm.ng_hm.restype = c_double
+
+# Halo Model function bias():
+lib_hm.bias_hm.argtypes = [ c_void_p ]
+lib_hm.bias_hm.restype = c_double
+
+# Halo Model function Mhalo():
+lib_hm.Mhalo_hm.argtypes = [ c_void_p ]
+lib_hm.Mhalo_hm.restype = c_double
+
+# Halo Model function Ncen():
+lib_hm.dngdM_hm.argtypes = [ c_double, c_void_p ]
+lib_hm.dngdM_hm.restype = c_double
+
+# Halo Model function model_Pk():
+lib_hm.model_Pk_hm.argtypes = [ POINTER( c_double ),
+                                POINTER( c_double ),
+                                c_void_p ]
+lib_hm.model_Pk_hm.restype = c_void_p
+
+# Halo Model function model_Pk_1halo():
+lib_hm.model_Pk_1halo_hm.argtypes = [ POINTER( c_double ),
+                                      POINTER( c_double ),
+                                      c_void_p ]
+lib_hm.model_Pk_1halo_hm.restype = c_void_p
+
+# Halo Model function model_Pk_cs():
+lib_hm.model_Pk_cs_hm.argtypes = [ POINTER( c_double ),
+                                   POINTER( c_double ),
+                                   c_void_p ]
+lib_hm.model_Pk_cs_hm.restype = c_void_p
+
+# Halo Model function model_Pk_ss():
+lib_hm.model_Pk_ss_hm.argtypes = [ POINTER( c_double ),
+                                   POINTER( c_double ),
+                                   c_void_p ]
+lib_hm.model_Pk_ss_hm.restype = c_void_p
+
+# Halo Model function model_Pk_2halo():
+lib_hm.model_Pk_2halo_hm.argtypes = [ POINTER( c_double ),
+                                      POINTER( c_double ),
+                                      c_void_p ]
+lib_hm.model_Pk_2halo_hm.restype = c_void_p
+
+# Halo Model function model_Xi():
+lib_hm.model_Xi_hm.argtypes = [ POINTER( c_double ),
+                                POINTER( c_double ),
+                                c_uint, c_void_p ]
+lib_hm.model_Xi_hm.restype = c_void_p
+
+# Halo Model function model_Xi_1halo():
+lib_hm.model_Xi_1halo_hm.argtypes = [ POINTER( c_double ),
+                                      POINTER( c_double ),
+                                      c_uint, c_void_p ]
+lib_hm.model_Xi_1halo_hm.restype = c_void_p
+
+# Halo Model function model_Xi_2halo():
+lib_hm.model_Xi_2halo_hm.argtypes = [ POINTER( c_double ),
+                                      POINTER( c_double ),
+                                      c_uint, c_void_p ]
+lib_hm.model_Xi_2halo_hm.restype = c_void_p
+
+# Halo Model function model_Wr():
+lib_hm.model_Wr_hm.argtypes = [ POINTER( c_double ),
+                                POINTER( c_double ),
+                                c_uint, c_void_p ]
+lib_hm.model_Wr_hm.restype = c_void_p
+
+# Halo Model function model_Wr_1halo():
+lib_hm.model_Wr_1halo_hm.argtypes = [ POINTER( c_double ),
+                                      POINTER( c_double ),
+                                      c_uint, c_void_p ]
+lib_hm.model_Wr_1halo_hm.restype = c_void_p
+
+# Halo Model function model_Wr_2halo():
+lib_hm.model_Wr_2halo_hm.argtypes = [ POINTER( c_double ),
+                                      POINTER( c_double ),
+                                      c_uint, c_void_p ]
+lib_hm.model_Wr_2halo_hm.restype = c_void_p
+
+# Halo Model function model_Wt():
+lib_hm.model_Wt_hm.argtypes = [ POINTER( c_double ),
+                                POINTER( c_double ),
+                                c_uint, c_void_p ]
+lib_hm.model_Wt_hm.restype = c_void_p
+
+# Halo Model function model_Wt_1halo():
+lib_hm.model_Wt_1halo_hm.argtypes = [ POINTER( c_double ),
+                                      POINTER( c_double ),
+                                      c_uint, c_void_p ]
+lib_hm.model_Wt_1halo_hm.restype = c_void_p
+
+# Halo Model function model_Wt_cs():
+lib_hm.model_Wt_cs_hm.argtypes = [ POINTER( c_double ),
+                                   POINTER( c_double ),
+                                   c_uint, c_void_p ]
+lib_hm.model_Wt_cs_hm.restype = c_void_p
+
+# Halo Model function model_Wt_ss():
+lib_hm.model_Wt_ss_hm.argtypes = [ POINTER( c_double ),
+                                   POINTER( c_double ),
+                                   c_uint, c_void_p ]
+lib_hm.model_Wt_ss_hm.restype = c_void_p
+
+# Halo Model function model_Wt_2halo():
+lib_hm.model_Wt_2halo_hm.argtypes = [ POINTER( c_double ),
+                                      POINTER( c_double ),
+                                      c_uint, c_void_p ]
+lib_hm.model_Wt_2halo_hm.restype = c_void_p
+
+# Halo Model function model_Wt_large_scale():
+lib_hm.model_Wt_large_scale_hm.argtypes = [ POINTER( c_double ),
+                                            POINTER( c_double ),
+                                            c_uint, c_void_p ]
+lib_hm.model_Wt_large_scale_hm.restype = c_void_p
+
+# ===============
+# ==== CROSS ====
+# ===============
+
+# Cross Halo Model constructor:
+lib_hm.create_cross_halo_model_H16.argtypes = [ c_void_p, c_void_p, c_void_p,
+                                                c_double, c_size_t ]
+lib_hm.create_cross_halo_model_H16.restype = c_void_p
+lib_hm.create_cross_halo_model_T10.argtypes = [ c_void_p, c_void_p, c_void_p,
+                                                c_double, c_size_t ]
+lib_hm.create_cross_halo_model_T10.restype = c_void_p
+
+# Cross Halo Model denstructor:
+lib_hm.free_cross_halo_model.argtypes = [ c_void_p ]
+lib_hm.free_cross_halo_model.restype = c_void_p
+
+# Cross Halo Model function set_parameters():
+lib_hm.set_parameters_pop1_chm_H16.argtypes = [ c_double, c_double,
+                                                c_double, c_double,
+                                                c_double, c_double,
+                                                c_void_p ]
+lib_hm.set_parameters_pop1_chm_H16.restype = c_void_p
+lib_hm.set_parameters_pop2_chm_H16.argtypes = [ c_double, c_double,
+                                                c_double, c_double,
+                                                c_double, c_double,
+                                                c_void_p ]
+lib_hm.set_parameters_pop2_chm_H16.restype = c_void_p
+lib_hm.set_parameters_pop1_chm_T10.argtypes = [ c_double, c_double,
+                                                c_double, c_double,
+                                                c_void_p ]
+lib_hm.set_parameters_pop1_chm_T10.restype = c_void_p
+lib_hm.set_parameters_pop2_chm_T10.argtypes = [ c_double, c_double,
+                                                c_double, c_double,
+                                                c_void_p ]
+lib_hm.set_parameters_pop2_chm_T10.restype = c_void_p
+
+# Cross Halo Model function ng1():
+lib_hm.ng1_chm.argtypes = [ c_void_p ]
+lib_hm.ng1_chm.restype = c_double
+
+# Cross Halo Model function ng2():
+lib_hm.ng2_chm.argtypes = [ c_void_p ]
+lib_hm.ng2_chm.restype = c_double
+
+# Cross Halo Model function model_Pk():
+lib_hm.model_Pk_chm.argtypes = [ POINTER( c_double ),
+                                 POINTER( c_double ),
+                                 c_void_p ]
+lib_hm.model_Pk_chm.restype = c_void_p
+
+# Cross Halo Model function model_Pk_1halo():
+lib_hm.model_Pk_1halo_chm.argtypes = [ POINTER( c_double ),
+                                       POINTER( c_double ),
+                                       c_void_p ]
+lib_hm.model_Pk_1halo_chm.restype = c_void_p
+
+# Cross Halo Model function model_Pk_2halo():
+lib_hm.model_Pk_2halo_chm.argtypes = [ POINTER( c_double ),
+                                       POINTER( c_double ),
+                                       c_void_p ]
+lib_hm.model_Pk_2halo_chm.restype = c_void_p
+
+# Cross Halo Model function model_Xi():
+lib_hm.model_Xi_chm.argtypes = [ POINTER( c_double ),
+                                 POINTER( c_double ),
+                                 c_uint, c_void_p ]
+lib_hm.model_Xi_chm.restype = c_void_p
+
+# Cross Halo Model function model_Xi_1halo():
+lib_hm.model_Xi_1halo_chm.argtypes = [ POINTER( c_double ),
+                                       POINTER( c_double ),
+                                       c_uint, c_void_p ]
+lib_hm.model_Xi_1halo_chm.restype = c_void_p
+
+# Cross Halo Model function model_Xi_2halo():
+lib_hm.model_Xi_2halo_chm.argtypes = [ POINTER( c_double ),
+                                       POINTER( c_double ),
+                                       c_uint, c_void_p ]
+lib_hm.model_Xi_2halo_chm.restype = c_void_p
+

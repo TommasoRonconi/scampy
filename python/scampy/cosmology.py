@@ -1,5 +1,5 @@
 import numpy
-from .cwrap.cwrap import *
+from .internal.cwrap import *
 
 #Wrap class cosmology:
 class cosmology () :

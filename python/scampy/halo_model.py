@@ -1,4 +1,4 @@
-from .cwrap.cwrap import *
+from .internal.cwrap import *
 from scampy.occupation_p import *
 
 # Wrap class halo_model:

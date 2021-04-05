@@ -1,4 +1,6 @@
+option( 'full-build', type : 'boolean', value : true,
+	description : 'Enable the full build scheme, with shared objects and headers installed in the @prefix@/lib, @prefix@/include directories.' )
 option( 'enable-test', type : 'boolean', value : false,
-   description : 'Enable integration tests and unit tests.' )
+   	description : 'Enable integration tests and unit tests.' )
 option( 'enable-doc', type : 'boolean', value : false,
-   description : 'Enable documentation build. It only works if the required dependencies are available:\n\t- doxygen,\n\t- sphinx,\n\t- breathe,\n\t- sphinx_readthedocs_theme' )
+   	description : 'Enable documentation build. It only works if the required dependencies are available:\n\t- doxygen,\n\t- sphinx,\n\t- breathe,\n\t- sphinx_readthedocs_theme' )

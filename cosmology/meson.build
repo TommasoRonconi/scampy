@@ -8,6 +8,7 @@ inc_cosmo = include_directories( inc_dir )
 #######################################################################
 # Cosmology Lib
 
+if get_option( 'full-build' )
 cosmo_lib = library( 'cosmo',
                      [ 'src/cosmology_interface.cpp',
                        'src/cosmology.cpp',
@@ -17,14 +18,25 @@ cosmo_lib = library( 'cosmo',
 		     dependencies : [ gsl_dep,
                                       utl_dep,
                                       intrp_dep ],
-                     install : true )
+                     install : true,
+                     install_dir : libdir )
+else
+cosmo_lib = static_library( 'cosmo',
+                            [ 'src/cosmology_interface.cpp',
+                              'src/cosmology.cpp',
+                              'src/luminosity_function.cpp' ],
+       	 	            include_directories : [ inc_cosmo,
+                                                    inc_intrp ],
+		            dependencies : [ gsl_dep,
+                                             utl_dep,
+                                             intrp_dep ],
+                            install : true,
+                            install_dir : libdir )
+endif
 
 cosmo_dep = declare_dependency( link_with : cosmo_lib,
                                 include_directories : [ inc_cosmo,
                                                         inc_intrp ] )
-
-lib_headers += [ root + '/cosmology/' + inc_dir + '/cosmology_interface.h',
-                 root + '/cosmology/' + inc_dir + '/cosmology.h' ]
 
 #######################################################################
 # Cosmology Lib C interface
@@ -37,7 +49,8 @@ cosmo_c_lib = library( 'cosmo_c_wrap',
                                         gsl_dep,
                                         utl_dep,
                                         intrp_dep ],
-                       install : true )
+                       install : true,
+                       install_dir : libdir )
 
 cosmo_c_dep = declare_dependency( link_with : cosmo_c_lib,
                                   include_directories : [ inc_cosmo ] )
@@ -48,7 +61,14 @@ cosmo_c_path = '/'.join( [ get_option( 'prefix' ),
                            get_option( 'libdir' ),
                            cosmo_c_lib_name ] )
 
-lib_headers += [ root + '/cosmology/' + inc_dir + '/cosmo_c_interface.h' ]
+#######################################################################
+# Add headers to list
+
+if get_option( 'full-build' )
+lib_headers += [  root + '/cosmology/' + inc_dir + '/cosmology_interface.h',
+                  root + '/cosmology/' + inc_dir + '/cosmology.h',
+                  root + '/cosmology/' + inc_dir + '/cosmo_c_interface.h' ]
+endif
 
 #######################################################################
 
