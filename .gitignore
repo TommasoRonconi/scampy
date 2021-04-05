@@ -12,3 +12,4 @@ subprojects/fftlog/*
 subprojects/packagecache*
 **.ipynb_checkpoints*
 doc/tutorials/scampy_quickstart*
+dist/*
