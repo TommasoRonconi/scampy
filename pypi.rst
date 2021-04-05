@@ -75,7 +75,8 @@ The :code:`galaxies` array contains the output mock-galaxies.
 Dependencies
 ^^^^^^^^^^^^
 
-If you are installing from Source Distribution (:code:`sdist`) be aware of the dependencies!
+Be aware of the dependencies!!
+If you are installing from Source Distribution (:code:`sdist`) the installation using :code:`pip` will simply not compile. Installing from build though will work but calling modules which are not pure-python implemented will cause an :code:`OSError`.
 
 The compiled sector of the package depends on the `GNU Scientific Library (GSL) <https://www.gnu.org/software/gsl/>`_ and thus it should be installed and visible to your system to allow for correct runtime linking.
 

@@ -21,7 +21,7 @@ classifiers = [
 module = "scampy"
 
 meson-options = [ "-Dfull-build=false", "-Denable-docs=false", "-Denable-test=false" ]
-
+meson-python-option-name = 'python'
 # requires = [ "mesonpep517", "meson<0.57", "numpy" ]
 requires-python = ">=3.6"
 
