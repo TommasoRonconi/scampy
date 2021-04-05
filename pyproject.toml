@@ -6,7 +6,7 @@ build-backend = "mesonpep517.buildapi"
 author = "Tommaso Ronconi"
 author-email = "tronconi@sissa.it"
 summary = "A Python interface for Sub-halo Clustering and Abundance Matching"
-description-file = "readme.rst"
+description-file = "pypi.rst"
 home-page = "https://github.com/TommasoRonconi/scampy"
 
 classifiers = [
