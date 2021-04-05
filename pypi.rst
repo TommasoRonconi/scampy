@@ -22,13 +22,12 @@ The procedure itself is quite easy since it only requires to apply the two metho
 What can be achieved
 ^^^^^^^^^^^^^^^^^^^^
 
-Here is an animation obtained by running ScamPy on the halo/subhalo catalogues of 42 different snapshots, from redshift z=8 to redshift z=0, of the same :math:`64 Mpc/h` DM-only N-body simulation.
-The simulation has been obtained with the non-public code GADGET-3, following the evolution of :math:`512^3` DM particles.
+Here is an animation obtained by running ScamPy on the halo/subhalo catalogues of 42 different snapshots, from redshift z=8 to redshift z=0, of the same `64 Mpc/h` DM-only N-body simulation.
+The simulation has been obtained with the non-public code GADGET-3, following the evolution of `512^3` DM particles.
 For each different redshift we have fixed the parameters values for the HOD and matched the UV-luminosity function of star-forming galaxies.
 
-.. image:: plots/evolving_slice.gif
+.. image:: https://raw.githubusercontent.com/TommasoRonconi/scampy/master/plots/evolving_slice.gif
    :width: 100%
-   :alt: If the image is not directly shown in the text, it can be found in the subdirectory `plots/evolving_slice.gif`
 
 The background color-code shows the underlying DM-density field computed by smoothing the contribution of DM-particles in a 10 Mpc/h thick slice of the simulation.
 The markers locate the positions of the mock galaxies generated with ScamPy. Circles mark the position of the central galaxies while crosses mark the position of satellite galaxies.
@@ -78,11 +77,13 @@ Dependencies
 
 If you are installing from Source Distribution (:code:`sdist`) be aware of the dependencies!
 
-The compiled sector of the package depends on the `GNU Scientific Library (GSL)<https://www.gnu.org/software/gsl/>`_ and thus it should be installed and visible to your system to allow for correct runtime linking.
+The compiled sector of the package depends on the `GNU Scientific Library (GSL) <https://www.gnu.org/software/gsl/>`_ and thus it should be installed and visible to your system to allow for correct runtime linking.
+
+Precompiled binary packages are included in most GNU/Linux distributions.
+A compiled version of GSL is available as part of Cygwin on Windows.
+
 On Linux Debian distributions GSL can be installed using :code:`apt`:
 
 .. code-block:: bash
 
   $ sudo apt install libgsl-dev -y
-
-

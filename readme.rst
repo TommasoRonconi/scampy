@@ -26,7 +26,7 @@ Here is an animation obtained by running ScamPy on the halo/subhalo catalogues o
 The simulation has been obtained with the non-public code GADGET-3, following the evolution of :math:`512^3` DM particles.
 For each different redshift we have fixed the parameters values for the HOD and matched the UV-luminosity function of star-forming galaxies.
 
-.. image:: plots/evolving_slice.gif
+.. image:: https://raw.githubusercontent.com/TommasoRonconi/scampy/master/plots/evolving_slice.gif
    :width: 100%
    :alt: If the image is not directly shown in the text, it can be found in the subdirectory `plots/evolving_slice.gif`
 
