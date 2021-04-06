@@ -81,6 +81,7 @@ Installation of ScamPy is dealt by the  `Meson Build System`_.
 Each module of the API is built by a specific :code:`meson.build` script.
 
 You can decide to install it either in
+
 - :code:`developer-mode`, with shared libraries for the C/C++ sectors and headers organized in the
   POSIX directory structure (libraries in :code:`lib`, headers in :code:`include`, python package in :code:`lib/pythonX.Y/site-packages`)
 - :code:`package-mode`, with the C++ sector compiled into static libraries within an internal sub-module of the
@@ -116,6 +117,7 @@ From the root directory of this repository either run
 or run
 
 .. code-block:: bash
+
    pip install .
 
 In the latter case the standard path for the python installation directory will be used.
@@ -123,9 +125,11 @@ In the latter case the standard path for the python installation directory will 
 Meson options
 '''''''''''''
 
-- :code:`full-build`: *boolean*, enables/disables the full build installation.
-- :code:`enable-doc`: *boolean*, enables/disables building of the documentation. If enabled, docs will appear in the :code:`$PREFIX/share/man` directory
-- :code:`enable-test`: *boolean*, enables/disables testing (to run tests after having compiled the project run :code:`meson test -C build_dir` from the root directory of this repository)
+Build options that can be set by the user when running a :code:`meson build - meson install` build:
+
+- :code:`full-build`: *boolean*, enables/disables the full build installation (default :code:`=true`).
+- :code:`enable-doc`: *boolean*, enables/disables building of the documentation. If enabled, docs will appear in the :code:`$PREFIX/share/man` directory (default :code:`=false`).
+- :code:`enable-test`: *boolean*, enables/disables testing (to run tests after having compiled the project run :code:`meson test -C build_dir` from the root directory of this repository, default :code:`=false`).
 
 Pre-requisites
 ''''''''''''''
@@ -135,7 +139,9 @@ Pre-requisites
 - :code:`meson<0.57` build system tool
 - :code:`ninja`
 
-can both be installed either via :code:`conda install` or with :code:`pip install`
+can both be installed either via :code:`conda install` or with :code:`pip install`.
+
+If you are running a :code:`pip install` build you will also need :code:`mesonpep517`.
 
 .. warning::
    The current latest version of :code:`meson` (i.e. :code:`0.57.2`) does not always support compiling heritage fortran programs
