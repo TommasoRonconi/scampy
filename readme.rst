@@ -82,9 +82,9 @@ Each module of the API is built by a specific :code:`meson.build` script.
 
 You can decide to install it either in
 
-- :code:`developer-mode`, with shared libraries for the C/C++ sectors and headers organized in the
+* :code:`developer-mode`, with shared libraries for the C/C++ sectors and headers organized in the
   POSIX directory structure (libraries in :code:`lib`, headers in :code:`include`, python package in :code:`lib/pythonX.Y/site-packages`)
-- :code:`package-mode`, with the C++ sector compiled into static libraries within an internal sub-module of the
+* :code:`package-mode`, with the C++ sector compiled into static libraries within an internal sub-module of the
   package and C-wrapping compiled dynamically along with the former. This is what you would obtain by :code:`pip`-installing from the root
   directory of the project.
 
@@ -127,17 +127,17 @@ Meson options
 
 Build options that can be set by the user when running a :code:`meson build - meson install` build:
 
-- :code:`full-build`: *boolean*, enables/disables the full build installation (default :code:`=true`).
-- :code:`enable-doc`: *boolean*, enables/disables building of the documentation. If enabled, docs will appear in the :code:`$PREFIX/share/man` directory (default :code:`=false`).
-- :code:`enable-test`: *boolean*, enables/disables testing (to run tests after having compiled the project run :code:`meson test -C build_dir` from the root directory of this repository, default :code:`=false`).
+* :code:`full-build`: *boolean*, enables/disables the full build installation (default :code:`=true`).
+* :code:`enable-doc`: *boolean*, enables/disables building of the documentation. If enabled, docs will appear in the :code:`$PREFIX/share/man` directory (default :code:`=false`).
+* :code:`enable-test`: *boolean*, enables/disables testing (to run tests after having compiled the project run :code:`meson test -C build_dir` from the root directory of this repository, default :code:`=false`).
 
 Pre-requisites
 ''''''''''''''
 
 **For building:**
 
-- :code:`meson<0.57` build system tool
-- :code:`ninja`
+* :code:`meson<0.57` build system tool
+* :code:`ninja`
 
 can both be installed either via :code:`conda install` or with :code:`pip install`.
 
@@ -153,15 +153,15 @@ If you are running a :code:`pip install` build you will also need :code:`mesonpe
 
 **Dependencies of the library:**
 
-- GNU Scientific Library version 2 or greater (`GSL link`_); 
-- FFTLog (`FFTLog link`_).
+* GNU Scientific Library version 2 or greater (`GSL link`_); 
+* FFTLog (`FFTLog link`_).
 
 While GSL has to be already installed in the system, if FFTLog is not present Meson will authomatically download it along with a patch_ we have developed, both will be installed in the :code:`subprojects` directory of the repository.
 
 **Dependencies for building the documentation locally:**
 
-- Doxygen
-- Sphynx (with breathe, autodoc and rtd_theme extensions)
+* Doxygen
+* Sphynx (with breathe, autodoc and rtd_theme extensions)
 
 .. note::
   
@@ -169,7 +169,7 @@ While GSL has to be already installed in the system, if FFTLog is not present Me
 
 **Dependencies for enabling testing:**
 
-- Google Test (is authomatically installed by Meson)
+* Google Test (is authomatically installed by Meson)
   
 .. references:
 
