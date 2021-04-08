@@ -1,11 +1,13 @@
 # external:
 import numpy
 import copy
-# from sklearn.neighbors import BallTree, KDTree
 
 # internal:
 from scampy import gadget_file
 from scampy.objects import *
+
+##########################################################################################
+# catalogue class
 
 class catalogue () :
     """
@@ -22,7 +24,6 @@ class catalogue () :
         self.boxsize = boxsize
             
         self.gadget = None
-        # self.tree = None
 
     def Nhost ( self, mask = None ) :
         """ Return the total number of host haloes (central + satellites)
@@ -184,7 +185,7 @@ class catalogue () :
 
         Returns
         -------
-        Array of central objects mass ( shape = ( n_central, 3 ) )
+        Array of central objects mass ( shape = ( n_central, ) )
         """
         mass_cen = numpy.array( [ cen.mass for obj in self.content for cen in obj.central ] )
         if store : 
@@ -200,7 +201,7 @@ class catalogue () :
 
         Returns
         -------
-        Array of satellite objects mass ( shape = ( n_satellites, 3 ) )
+        Array of satellite objects mass ( shape = ( n_satellites, ) )
         """
         mass_sat = numpy.array( [ sat.mass for obj in self.content for sat in obj.satellites ] )
         if store : 
@@ -212,12 +213,11 @@ class catalogue () :
         
         Parameters
         ----------
-        store : bool
-          whether to store the returned array into an internal variable ( default = False )
+        store : whether to store the returned array into an internal variable ( default = False )
 
         Returns
         -------
-        Array of ( shape = ( , 3 ) )
+        Array of ( shape = ( n_central + n_satellites, ) )
         """
         mass_halo_cen = numpy.array( [ obj.mass for obj in self.content for _ in obj.central ] )
         mass_halo_sat = numpy.array( [ obj.mass for obj in self.content for _ in obj.satellites ] )
@@ -226,50 +226,81 @@ class catalogue () :
             self.mass_halo = mass_halo
         return mass_halo
     
-    def populate ( self, model, extract = False ) :
+    def populate ( self, model, extract = False, rank_order = False ) :
         
         ll = numpy.array( sorted( copy.deepcopy( self.content ),
                                   key = lambda x : x.mass,
                                   reverse = True ) )
 
-        Ngxy = 0
-        for obj in ll :
-            
-            Nc = model.Ncen( obj.mass )
-            select = numpy.random.choice( [ True, False ],
-                                          size = 1,
-                                          replace = False, 
-                                          p = [ Nc, 1 - Nc ] )
-            if select :
-                central = obj.central
-            else :
-                central = numpy.array([])
-            obj.set_central( central = central )
-            
-            Ns = numpy.random.poisson( model.Nsat( obj.mass ) )
-            if Ns < len( obj.satellites ) :
-                satellites = numpy.random.choice( obj.satellites, 
-                                                  size = int( round( Ns ) ), 
-                                                  replace = False )
-            else :
-                satellites = obj.satellites
-            obj.set_satellites( satellites = satellites )
+        masses = numpy.array( [ obj.mass for obj in ll ] )
+        action = numpy.array( [ [ model.Ncen( _m ), model.Nsat( _m ) ] for _m in masses ] )
 
-            Ngxy += ( obj.Ncen + obj.Nsat )
+        gxy_cat = catalogue( X = ll,
+                             scale_mass = self.scale_mass,
+                             scale_lenght = self.scale_lenght,
+                             boxsize = self.boxsize )
 
-        if extract :
-            return extract_galaxies( ll, Ngxy )
+        if not extract :
+            return populate( gxy_cat, action, rank_order )
         else :
-            return catalogue( ll, boxsize = self.boxsize ), Ngxy
+            return select_galaxies( gxy_cat, action, rank_order )
 
-def get_abundances ( catalogue, bins ) :
+
+##########################################################################################
+# catalogue manipulation functions
+
+def _set_probs( cata, actions, rank_order ) :
+    
+    # centrals
+    all_cen = [ obj.central for obj in cata.content ]
+    Nc = numpy.random.binomial( numpy.ones( len( actions.T[0] ), dtype=int ), actions.T[ 0 ] )
+    
+    # satellites
+    if rank_order :
+        all_sat = [ numpy.array( sorted( obj.satellites,
+                                         key = lambda x : x.mass,
+                                         reverse = True ) )
+                    for obj in cata.content ]
+    else :      
+        all_sat = [ obj.satellites for obj in cata.content ]  
+        list( map( numpy.random.shuffle, all_sat ) )
+    Ns = numpy.random.poisson( actions.T[1] )
+
+    return all_cen, Nc, all_sat, Ns 
+    
+def select_galaxies ( cata, actions, rank_order = False ) :
+    
+    return numpy.block( [ numpy.append( Ac[:nc], As[:ns] ) 
+                          for Ac, nc, As, ns 
+                          in zip( *_set_probs( cata, actions, rank_order ) ) ] )
+
+def _set_halo( obj, cens, sats ) :
+    
+    return host_halo( coords = obj.coords, 
+                      mass = obj.mass,
+                      central = cens, 
+                      satellites = sats )
+
+def populate ( cata, actions, rank_order = False ) :
+
+    # content with same shape as halo catalogue
+    content = numpy.array( [ _set_halo( obj, Ac[:nc], As[:ns] ) 
+                             for obj, Ac, nc, As, ns 
+                             in zip( cata.content, *_set_probs( cata, actions, rank_order ) ) ] )
+    
+    return catalogue( X = content,
+                      scale_mass = cata.scale_mass,
+                      scale_lenght = cata.scale_lenght,
+                      boxsize = cata.boxsize )
+
+def get_abundances ( cata, bins ) :
     """
     """
         
     # these extract several properties stored in the internal container of catalogue
-    Mh = numpy.array( [ obj.mass for obj in catalogue.content ] ) # mass of the halo
-    Nc = numpy.array( [ obj.Ncen for obj in catalogue.content ] ) # number of centrals
-    Ns = numpy.array( [ obj.Nsat for obj in catalogue.content ] ) # number of satellites
+    Mh = numpy.array( [ obj.mass for obj in cata.content ] ) # mass of the halo
+    Nc = numpy.array( [ obj.Ncen for obj in cata.content ] ) # number of centrals
+    Ns = numpy.array( [ obj.Nsat for obj in cata.content ] ) # number of satellites
     
     # we obtain the index of the bin each mass belongs
     dig = numpy.digitize( Mh, bins )
