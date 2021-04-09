@@ -257,14 +257,14 @@ def _set_probs( cata, actions, rank_order ) :
     
     # satellites
     if rank_order :
-        all_sat, Nsat = np.array( [ [ numpy.array( sorted( obj.satellites,
-                                                           key = lambda x : x.mass,
-                                                           reverse = True ) ),
-                                      obj.Nsat ]
-                                    for obj in cata.content ], dtype = object ).T
+        all_sat, Nsat = numpy.array( [ [ numpy.array( sorted( obj.satellites,
+                                                              key = lambda x : x.mass,
+                                                              reverse = True ) ),
+                                         obj.Nsat ]
+                                       for obj in cata.content ], dtype = object ).T
     else :      
-        all_sat, Nsat = np.array( [ [ obj.satellites, obj.Nsat ] 
-                                    for obj in catalogue.content ], dtype = object ).T  
+        all_sat, Nsat = numpy.array( [ [ obj.satellites, obj.Nsat ] 
+                                       for obj in cata.content ], dtype = object ).T  
         list( map( numpy.random.shuffle, all_sat ) )
     Ns = numpy.random.poisson( actions.T[1] * Nsat.astype( int ) )
 
