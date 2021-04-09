@@ -241,15 +241,36 @@ class catalogue () :
                              boxsize = self.boxsize )
 
         if not extract :
-            return populate( gxy_cat, action, rank_order )
+            return populate( gxy_cat, action, rank_order, probs = False )
         else :
-            return select_galaxies( gxy_cat, action, rank_order )
+            return select_galaxies( gxy_cat, action, rank_order, probs = False )
 
 
 ##########################################################################################
 # catalogue manipulation functions
 
 def _set_probs( cata, actions, rank_order ) :
+    
+    # centrals
+    all_cen = [ obj.central for obj in cata.content ]
+    Nc = numpy.random.binomial( numpy.ones( len( actions.T[0] ), dtype=int ), actions.T[ 0 ] )
+    
+    # satellites
+    if rank_order :
+        all_sat, Nsat = np.array( [ [ numpy.array( sorted( obj.satellites,
+                                                           key = lambda x : x.mass,
+                                                           reverse = True ) ),
+                                      obj.Nsat ]
+                                    for obj in cata.content ], dtype = object ).T
+    else :      
+        all_sat, Nsat = np.array( [ [ obj.satellites, obj.Nsat ] 
+                                    for obj in catalogue.content ], dtype = object ).T  
+        list( map( numpy.random.shuffle, all_sat ) )
+    Ns = numpy.random.poisson( actions.T[1] * Nsat.astype( int ) )
+
+    return all_cen, Nc, all_sat, Ns 
+
+def _set_numbs( cata, actions, rank_order ) :
     
     # centrals
     all_cen = [ obj.central for obj in cata.content ]
@@ -268,11 +289,16 @@ def _set_probs( cata, actions, rank_order ) :
 
     return all_cen, Nc, all_sat, Ns 
     
-def select_galaxies ( cata, actions, rank_order = False ) :
+def select_galaxies ( cata, actions, rank_order = False, probs = True ) :
+
+    if probs :
+        _set = _set_probs
+    else :
+        _set = _set_numbs
     
     return numpy.block( [ numpy.append( Ac[:nc], As[:ns] ) 
                           for Ac, nc, As, ns 
-                          in zip( *_set_probs( cata, actions, rank_order ) ) ] )
+                          in zip( *_set( cata, actions, rank_order ) ) ] )
 
 def _set_halo( obj, cens, sats ) :
     
@@ -281,12 +307,17 @@ def _set_halo( obj, cens, sats ) :
                       central = cens, 
                       satellites = sats )
 
-def populate ( cata, actions, rank_order = False ) :
+def populate ( cata, actions, rank_order = False, probs = True ) :
+
+    if probs :
+        _set = _set_probs
+    else :
+        _set = _set_numbs
 
     # content with same shape as halo catalogue
     content = numpy.array( [ _set_halo( obj, Ac[:nc], As[:ns] ) 
                              for obj, Ac, nc, As, ns 
-                             in zip( cata.content, *_set_probs( cata, actions, rank_order ) ) ] )
+                             in zip( cata.content, *_set( cata, actions, rank_order ) ) ] )
     
     return catalogue( X = content,
                       scale_mass = cata.scale_mass,
