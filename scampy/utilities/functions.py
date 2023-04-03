@@ -67,3 +67,24 @@ def FT_tophat_D1 ( kR ) :
     return 3 * ( kR**2 - 3. ) * numpy.sin( kR ) + 9 * kR * numpy.cos( kR ) / kR**4 
 
 ############################################################################################
+
+def trap_int ( xx, yy ) :
+    """ Trapezoid integration
+
+    Parameters
+    ----------
+    xx : array-like
+       x-domain grid
+    yy : array-like
+       y-domain grid
+    
+    Returns
+    -------
+    : float 
+       the integral along the whole x-domain
+    """
+    xx = numpy.asarray(xx)
+    yy = numpy.asarray(yy)
+    return numpy.sum( 0.5 * ( yy[:-1] + yy[1:] ) * ( xx[1:] - xx[:-1] ), axis = 0 )
+
+############################################################################################
