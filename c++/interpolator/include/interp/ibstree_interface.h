@@ -294,7 +294,7 @@ namespace utl {
     friend lin_interp operator/ ( const double & lhs,
 				  lin_interp rhs ) {
 
-      for ( size_t ii = 0; ii < rhs._thinness; ++ii ) rhs._fv[ ii ] *= lhs / rhs._fv[ ii ];
+      for ( size_t ii = 0; ii < rhs._thinness; ++ii ) rhs._fv[ ii ] = lhs / rhs._fv[ ii ];
       
       rhs._alloc();
 	
@@ -471,106 +471,127 @@ namespace utl {
     }
 
     // Not implemented yet:
-    // // =============================================================================
-    // // Overload arithmetic operators
+    // =============================================================================
+    // Overload arithmetic operators
 
-    // /// overload of operator += for same type add
-    // virtual log_interp & operator+= ( const log_interp & rhs ) {
+    /// overload of operator += for same type add
+    virtual log_interp & operator+= ( const log_interp & rhs ) {
 	
-    //   if ( _thinness != rhs._thinness)
-    // 	throw utl_err::size_invalid {
-    // 	  "Error in addition: right hand side has different size from left hand side!"
-    // 	    };
+      if ( _thinness != rhs._thinness)
+	throw utl_err::size_invalid {
+	  "Error in addition: right hand side has different size from left hand side!"
+	    };
 
-    //   for ( size_t ii = 0; ii < _thinness; ++ii ) _fv[ ii ] += rhs._fv[ ii ];
+      for ( size_t ii = 0; ii < _thinness; ++ii ) {
+	_fv[ ii ] += rhs._fv[ ii ];
+	_gv[ ii ] = _fv[ ii ] * _xv[ ii ];
+      }
 
-    //   _alloc();
+      _alloc();
 	
-    //   return *this;
+      return *this;
 	
-    // }
+    }
 
-    // /// overload of operator -= for same type subtract
-    // virtual log_interp & operator-= ( const log_interp & rhs ) {
+    /// overload of operator -= for same type subtract
+    virtual log_interp & operator-= ( const log_interp & rhs ) {
 
-    //   if ( _thinness != rhs._thinness)
-    // 	throw utl_err::size_invalid {
-    // 	  "Error in subtraction: right hand side has different size from left hand side!"
-    // 	    };
+      if ( _thinness != rhs._thinness)
+	throw utl_err::size_invalid {
+	  "Error in subtraction: right hand side has different size from left hand side!"
+	    };
 
-    //   for ( size_t ii = 0; ii < _thinness; ++ii ) _fv[ ii ] -= rhs._fv[ ii ];
+      for ( size_t ii = 0; ii < _thinness; ++ii ) {
+	_fv[ ii ] -= rhs._fv[ ii ];
+	_gv[ ii ] = _fv[ ii ] * _xv[ ii ];
+      }
       
-    //   _alloc();
+      _alloc();
 	
-    //   return *this;
+      return *this;
 	
-    // }
+    }
 
-    // /// overload of operator *= for same type mult
-    // virtual log_interp & operator*= ( const log_interp & rhs ) {
+    /// overload of operator *= for same type mult
+    virtual log_interp & operator*= ( const log_interp & rhs ) {
 	
-    //   if ( _thinness != rhs._thinness)
-    // 	throw utl_err::size_invalid {
-    // 	  "Error in multiplication: right hand side has different size from left hand side!"
-    // 	    };
+      if ( _thinness != rhs._thinness)
+	throw utl_err::size_invalid {
+	  "Error in multiplication: right hand side has different size from left hand side!"
+	    };
 
-    //   for ( size_t ii = 0; ii < _thinness; ++ii ) _fv[ ii ] *= rhs._fv[ ii ];
+      for ( size_t ii = 0; ii < _thinness; ++ii ) {
+	_fv[ ii ] *= rhs._fv[ ii ];
+	_gv[ ii ] *= rhs._fv[ ii ];
+      }
       
-    //   _alloc();
+      _alloc();
 	
-    //   return *this;
+      return *this;
 	
-    // }
+    }
 
-    // /// overload of operator /= for same type div
-    // virtual log_interp & operator/= ( const log_interp & rhs ) {
+    /// overload of operator /= for same type div
+    virtual log_interp & operator/= ( const log_interp & rhs ) {
 	
-    //   if ( _thinness != rhs._thinness)
-    // 	throw utl_err::size_invalid {
-    // 	  "Error in division: right hand side has different size from left hand side!"
-    // 	    };
+      if ( _thinness != rhs._thinness)
+	throw utl_err::size_invalid {
+	  "Error in division: right hand side has different size from left hand side!"
+	    };
 
-    //   for ( size_t ii = 0; ii < _thinness; ++ii ) _fv[ ii ] /= rhs._fv[ ii ];
+      for ( size_t ii = 0; ii < _thinness; ++ii ) {
+	_fv[ ii ] /= rhs._fv[ ii ];
+	_gv[ ii ] /= rhs._fv[ ii ];
+      }
       
-    //   _alloc();
+      _alloc();
 	
-    //   return *this;
+      return *this;
 	
-    // }
+    }
 
-    // /// overload of operator += for adding a scalar
-    // virtual log_interp & operator+= ( const double & rhs ) {
+    /// overload of operator += for adding a scalar
+    virtual log_interp & operator+= ( const double & rhs ) {
 
-    //   for ( size_t ii = 0; ii < _thinness; ++ii ) _fv[ ii ] += rhs;
+      for ( size_t ii = 0; ii < _thinness; ++ii ) {
+	_fv[ ii ] += rhs;
+	_gv[ ii ] = _fv[ ii ] * _xv[ ii ];
+      }
       
-    //   _alloc();
+      _alloc();
 	
-    //   return *this;
+      return *this;
       
-    // }
+    }
 
-    // /// overload of operator *= for multiplying by a scalar
-    // virtual log_interp & operator*= ( const double & rhs ) {
+    /// overload of operator *= for multiplying by a scalar
+    virtual log_interp & operator*= ( const double & rhs ) {
 
-    //   for ( size_t ii = 0; ii < _thinness; ++ii ) _fv[ ii ] *= rhs;
+      for ( size_t ii = 0; ii < _thinness; ++ii ) {
+	_fv[ ii ] *= rhs;
+	_gv[ ii ] *= rhs;
+      }
       
-    //   _alloc();
+      _alloc();
 	
-    //   return *this;
+      return *this;
       
-    // }
+    }
 
-    // /// overload of operator *= for dividing by a scalar
-    // friend log_interp operator/ ( const double & lhs,
-    // 				  log_interp rhs ) {
+    /// overload of operator /= for dividing by a scalar
+    friend log_interp operator/ ( const double & lhs,
+				  log_interp rhs ) {
 
-    //   for ( size_t ii = 0; ii < rhs._thinness; ++ii ) rhs._fv[ ii ] *= lhs / rhs._fv[ ii ];
+      for ( size_t ii = 0; ii < rhs._thinness; ++ii ) {
+	rhs._fv[ ii ] = lhs / rhs._fv[ ii ];
+	rhs._gv[ ii ] = rhs._fv[ ii ] * rhs._xv[ ii ];
+      }
       
-    //   rhs._alloc();
+      rhs._alloc();
 	
-    //   return rhs;
+      return rhs;
             
-    // }
+    }
 
     // =============================================================================
     // Serialize Object:
