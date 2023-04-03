@@ -65,6 +65,7 @@ PYBIND11_MODULE( cosmology, m ) {
 	 "Growth factor at given redshift (i.e. (1+z)*D(z))",
 	 py::arg("zz") )
     .def_readonly("zmin", &scam::cosmo_model::z_min, "Minimum redshift of internal grid")
-    .def_readonly("zmax", &scam::cosmo_model::z_max, "Maximum redshift of internal grid");
+    .def_readonly("zmax", &scam::cosmo_model::z_max, "Maximum redshift of internal grid")
+    .def_readonly("param", &scam::cosmo_model::param, "Cosmological parameters");
 
 } // end PYBIND11_MODULE
