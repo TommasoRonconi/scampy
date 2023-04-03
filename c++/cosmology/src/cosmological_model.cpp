@@ -36,9 +36,6 @@ scam::cosmo_model::cosmo_model ( const double Om_M,
   
   // build associated quantities
   H0 *= param["hh"];
-  // h_1 /= param["hh"];
-  // h_2 *= h_1 * h_1;
-  // h_3 *= h_2 * h_1;
   scam::cosmo_model::set_internal();
 
 }
