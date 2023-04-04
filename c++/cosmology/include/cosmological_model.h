@@ -121,9 +121,6 @@ namespace scam {
 	Ez_f = other.Ez_f;
 	zE_f = other.zE_f;
 	H0 = other.H0;
-	h_1 = other.h_1;
-	h_2 = other.h_2;
-	h_3 = other.h_3;
 	t_H0 = other.t_H0;
 	d_H0 = other.d_H0;
 
