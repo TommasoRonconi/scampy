@@ -43,7 +43,7 @@ PYBIND11_MODULE( cosmology, m ) {
     .def("cosmic_time", py::vectorize(&scam::cosmo_model::cosmic_time),
 	 "Age of the Universe at given redshift (i.e. at the time photons were emitted)",
 	 py::arg("zz") )
-    .def("comoving_critical_density", py::vectorize(&scam::cosmo_model::rho_crit_comoving),
+    .def("critical_density_comoving", py::vectorize(&scam::cosmo_model::rho_crit_comoving),
 	 "Critical density at given redshift in units of [Msol Mpc^-3 h^2]",
 	 py::arg("zz") )
     .def("critical_density", py::vectorize(&scam::cosmo_model::rho_crit),
