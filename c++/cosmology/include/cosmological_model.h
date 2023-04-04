@@ -79,7 +79,6 @@ namespace scam {
     size_t thinness { 10000 };
     
     double H0 = 100.;
-    double h_1 = 1., h_2 = 1., h_3 = 1.;
     double t_H0, d_H0;
 
     /**
