@@ -79,7 +79,7 @@ def density_profile_FT ( kk, mm, zz, pk, comoving = True ) :
     mu = kk * rs[:,numpy.newaxis]
     Si1, Ci1 = sici( mu )
     Si2, Ci2 = sici( mu + mu * conc[:,numpy.newaxis] )
-    return (
+    return numpy.squeeze(
         ( 
             numpy.cos( mu ) * ( Ci2 - Ci1 ) + 
             numpy.sin( mu ) * ( Si2 - Si1 ) -
