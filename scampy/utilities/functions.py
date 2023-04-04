@@ -64,7 +64,7 @@ def FT_tophat ( kR ) :
 def FT_tophat_D1 ( kR ) :
     """Fourier space transform of a top-hat filter function, first order derivative
     """
-    return 3 * ( kR**2 - 3. ) * numpy.sin( kR ) + 9 * kR * numpy.cos( kR ) / kR**4 
+    return ( 3 * ( kR**2 - 3. ) * numpy.sin( kR ) + 9 * kR * numpy.cos( kR ) ) / kR**4 
 
 ############################################################################################
 
