@@ -64,6 +64,8 @@ PYBIND11_MODULE( cosmology, m ) {
     .def("gz", py::vectorize(&scam::cosmo_model::gz),
 	 "Growth factor at given redshift (i.e. (1+z)*D(z))",
 	 py::arg("zz") )
+    .def("Delta_c", py::vectorize(&scam::cosmo_model::Delta_c_NakamuraSuto98),
+	 "Nakamura & Suto 1998" )
     .def_readonly("zmin", &scam::cosmo_model::z_min, "Minimum redshift of internal grid")
     .def_readonly("zmax", &scam::cosmo_model::z_max, "Maximum redshift of internal grid")
     .def_readonly("param", &scam::cosmo_model::param, "Cosmological parameters");
