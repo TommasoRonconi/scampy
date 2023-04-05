@@ -54,11 +54,13 @@ def main () :
     setup( name = "scampy",
            package_dir = {
                'scampy' : 'scampy',
+               'scampy.halo' : os.path.join( 'scampy', 'halo' ),
                'scampy.io' : os.path.join( 'scampy', 'io' ),
                'scampy.utilities' : os.path.join( 'scampy', 'utilities' ),
                'scampy.measure' : os.path.join( 'scampy', 'measure' )
            },
            packages = [ 'scampy',
+                        'scampy.halo',
                         'scampy.io',
                         'scampy.utilities',
                         'scampy.measure'
