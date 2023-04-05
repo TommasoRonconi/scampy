@@ -11,6 +11,7 @@ import scampy.cosmology as c
 from scampy.utilities.functions import trap_int
 from scampy.utilities.interpolation import lin_interp
 from scampy.utilities.functions import FT_tophat, FT_tophat_D1
+from scampy.utilities.fft import fstl
 
 #############################################################################################
 # Classes
@@ -179,5 +180,12 @@ class power_spectrum () :
             ( rr / ( 3. * mm ) ) * 
             self.dsigma2RdR( rr, zz, comoving = comoving ).T
         ).T
+
+    def Xi ( self, rr, zz = 0.0, comoving = True ) :
+        """Linear 2-point correlation function
+        obtained by Fourier-Transforming the linear power spectrum
+        """
+        rn, xin = fstl( self.kh, self.Pz( self.kh, zz, comoving ) )
+        return lin_interp( rn, xin )( rr )                        
 
 #############################################################################################
