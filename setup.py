@@ -54,19 +54,21 @@ def main () :
     setup( name = "scampy",
            package_dir = {
                'scampy' : 'scampy',
-               'scampy.halo' : os.path.join( 'scampy', 'halo' ),
                'scampy.io' : os.path.join( 'scampy', 'io' ),
-               'scampy.utilities' : os.path.join( 'scampy', 'utilities' ),
-               'scampy.measure' : os.path.join( 'scampy', 'measure' )
+               'scampy.halo' : os.path.join( 'scampy', 'halo' ),
+               'scampy.measure' : os.path.join( 'scampy', 'measure' ),
+               'scampy.plot' : os.path.join( 'scampy', 'plot' ),
+               'scampy.utilities' : os.path.join( 'scampy', 'utilities' )
            },
            packages = [ 'scampy',
-                        'scampy.halo',
                         'scampy.io',
-                        'scampy.utilities',
-                        'scampy.measure'
+                        'scampy.halo',
+                        'scampy.measure',
+                        'scampy.plot',
+                        'scampy.utilities'
            ],
            ext_modules = [ intrp_ext, cosmo_ext, clust_ext ],
-           install_requires = [ 'numpy', 'scipy' ]
+           install_requires = [ 'numpy', 'scipy', 'matplotlib' ]
     )
 
 ########################################################################################
