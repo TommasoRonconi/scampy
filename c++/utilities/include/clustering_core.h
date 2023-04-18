@@ -8,14 +8,15 @@
 #include <string>
 
 namespace utl {
+  
+  //==================================================================================
+  // Tentative templated implementation, W.I.P.
 
   // inline float dist ( const float d ) { return d; }
 
   // inline float dist_periodic ( const float d, const float box ) {
   //   return d < 0.5*box ? d : box-d;
   // }
-  
-  //==================================================================================
 
   // template < typename fdist, typename ... Args >
   // std::vector< std::size_t > d2D_DD_generic ( const std::vector< float > & XX,
