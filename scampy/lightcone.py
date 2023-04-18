@@ -160,6 +160,43 @@ def size_ang ( theta, z, cosmo, rad = True ) :
 
 ##############################################################################
 
+def coords_to_cone ( coords, cosmo,
+                     funcs = None ) :
+
+    # Preparatory steps, checking inputs and generating grids if necessary
+    if not isinstance( cosmo, c.model ) :
+        raise TypeError( "Attribute cosmo should be an instance of class scampy.cosmology.model" )
+    if funcs is None :
+        zz = numpy.arange(0.0, 20.0, 1.e-2)
+        dC = cosmo.dC(zz)
+        z2d = lint( zz, dC )
+        d2z = lint( dC, zz )
+    else :
+        try :
+            z2d, d2z = funcs
+        except :
+            raise
+        if not hasattr( z2d, "__call__" ) :
+            raise TypeError( "First element of argument funcs should be callable" )
+        if not hasattr( d2z, "__call__" ) :
+            raise TypeError( "Second element of argument funcs should be callable" )
+
+    x, y, dC = numpy.array( coords.T ) # make a copy
+        
+    # Get redshift
+    z = d2z( dC )
+    
+    # Convert to angles
+    x /= dC
+    y /= dC
+
+    return numpy.array( [ x, y, z ] ).T
+    
+
+##############################################################################
+
+# New name shortly:
+# def box_to_cone 
 def to_cone ( box, zbox, Lbox, cosmo,
               funcs = None, theta = None,
               zmin = None, zmax = None,
@@ -239,7 +276,8 @@ def to_cone ( box, zbox, Lbox, cosmo,
     dbox = z2d( zbox )
     # Find viewing angle (if not provided as input)
     if theta is None :
-        zmin, zmax  = d2z(dbox+numpy.array([-0.5,0.5])*Lbox)
+        # This does not seam to be of any use if below there is a control 'zmin/zmax is not None'
+        # zmin, zmax  = d2z(dbox+numpy.array([-0.5,0.5])*Lbox)
         theta = ang_size( Lbox, zmax, cosmo )
     
     # Centre the box to the observers LOS
