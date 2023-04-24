@@ -13,7 +13,7 @@ from scampy.halo.bias import Tinker10
 from scampy.halo.density_profile import density_profile_FT
 from scampy.hod import HOD
 from scampy.utilities.functions import trap_int
-from scampy.utilities.fft import fstl
+from scampy.utilities.fft import fstl, fpstl
 from scampy.utilities.interpolation import lin_interp
 
 #############################################################################################
@@ -41,7 +41,7 @@ class halo_model () :
         
     def ng ( self, hod, zz = 0.0 ) :
         return trap_int( 
-            self.Mh_grid, 
+            self.Mh_grid[:, numpy.newaxis], 
             ( hod.Pcen( self.Mh_grid ) + 
               hod.Psat( self.Mh_grid ) ) *
             self.hmf( self.Mh_grid, zz, self.pk )
@@ -141,5 +141,52 @@ class halo_model () :
             lk0 = 0.0, bias = 0.0, mu = 0.5
         )
         return lin_interp( rn, xi1h + xi2h )( rr )
+    
+    ####################################################################################
+    # Projected 2-point correlation function
+
+    def Wr_1halo ( self, rp, hod, zz = 0.0, fact = -1.0 ) :
+        rn, wr1h = fpstl(
+            self.kh_grid,
+            self.Pk_1halo( self.kh_grid, hod, zz, fact ),
+            lk0 = 0.0, bias = 0.0, mu = 0.0
+        )
+        return lin_interp( rn, wr1h )( rp )
+
+    def Wr_2halo ( self, rp, hod, zz = 0.0, fact = -1.0 ) :
+        rn, wr2h = fpstl(
+            self.kh_grid,
+            self.Pk_2halo( self.kh_grid, hod, zz, fact ),
+            lk0 = 0.0, bias = 0.0, mu = 0.0
+        )
+        return lin_interp( rn, wr2h )( rp )
+    
+    def Wr ( self, rp, hod, zz = 0.0, fact = -1.0 ) :
+        rn, wr1h = fpstl(
+            self.kh_grid,
+            self.Pk_1halo( self.kh_grid, hod, zz, fact ),
+            lk0 = 0.0, bias = 0.0, mu = 0.0
+        )
+        _,  wr2h = fpstl(
+            self.kh_grid,
+            self.Pk_2halo( self.kh_grid, hod, zz, fact ),
+            lk0 = 0.0, bias = 0.0, mu = 0.0
+        )
+        return lin_interp( rn, wr1h + wr2h )( rp )
+    
+    ####################################################################################
+    # Angular 2-point correlation function
+
+    def Wt_1halo ( self, th, hod, zz = 0.0, fact = -1.0 ) :
+        rp = th * self.pk.cosmo.dC( zz )
+        return self.Wr_1halo( rp, hod, zz, fact )
+
+    def Wt_2halo ( self, th, hod, zz = 0.0, fact = -1.0 ) :
+        rp = th * self.pk.cosmo.dC( zz )
+        return self.Wr_2halo( rp, hod, zz, fact )
+
+    def Wt ( self, th, hod, zz = 0.0, fact = -1.0 ) :
+        rp = th * self.pk.cosmo.dC( zz )
+        return self.Wr( rp, hod, zz, fact )
 
 #############################################################################################
