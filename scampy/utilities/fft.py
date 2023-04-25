@@ -30,7 +30,7 @@ def fstl ( xn, yn, lk0 = 0.0, bias = 0.0, mu = 0.5 ) :
         
     # Prepare input function for transform
     fct = 0.5 * numpy.sqrt( 0.5 * numpy.pi ) / numpy.pi**2
-    an  = numpy.array( fct * yn * xn * numpy.sqrt( xn ) )
+    an  = numpy.array( fct * yn.T * xn * numpy.sqrt( xn ) ).T
         
     # Find optimal centre for transform
     kr = fft.fhtoffset( dlr, initial = lk0, 
@@ -45,7 +45,7 @@ def fstl ( xn, yn, lk0 = 0.0, bias = 0.0, mu = 0.5 ) :
     # Return a tuple with
     # - wavenumber grid
     # - converted sin-transform of input function
-    return kn, bn / ( kn * numpy.sqrt( kn ) )
+    return kn, ( bn.T / ( kn * numpy.sqrt( kn ) ) ).T
 
 #############################################################################################
 
@@ -70,7 +70,7 @@ def fpstl ( xn, yn, lk0 = 0.0, bias = 0.0, mu = 0.0 ) :
         
     # Prepare input function for transform
     fct = 0.5  / numpy.pi
-    an  = numpy.array( fct * yn * xn )
+    an  = numpy.array( fct * yn.T * xn ).T
         
     # Find optimal centre for transform
     kr = fft.fhtoffset( dlr, initial = lk0, 
@@ -85,6 +85,6 @@ def fpstl ( xn, yn, lk0 = 0.0, bias = 0.0, mu = 0.0 ) :
     # Return a tuple with
     # - wavenumber grid
     # - converted sin-transform of input function
-    return kn, bn / kn
+    return kn, ( bn.T / kn ).T
 
 #############################################################################################

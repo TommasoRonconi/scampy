@@ -48,11 +48,21 @@ def concentration_zhao09 ( mm, zz, pk, comoving = True ) :
 
 # Eq. 4 from Shimizu et al. 2003
 def concentration_shimizu03 ( mm, zz, pk, comoving = True ) :
+        
+    mm = numpy.asarray(mm)
+    if mm.ndim == 0 :
+        mm = mm[None]
+    zz = numpy.asarray(zz)
+    if zz.ndim == 0 :
+        zz = zz[None]
     hh = 1.
     if not comoving :
         hh = pk.h0
         
-    return 8.0 / ( 1 + zz ) * ( 1.0204e-14 * mm * hh )**(-0.13)
+    return numpy.squeeze(
+        8.0 / ( 1 + zz ) *
+        ( ( 1.0204e-14 * mm * hh )**(-0.13) )[:,numpy.newaxis]
+    )
 
 #############################################################################################
 
@@ -71,21 +81,27 @@ def density_profile_FT ( kk, mm, zz, pk, comoving = True ) :
         
     conc = concentration_shimizu03( mm, zz, pk, comoving )
     if comoving :
-        Vvir = mm / ( pk.cosmo.Delta_c( zz ) * pk.cosmo.critical_density_comoving( zz ) )
+        Vvir = numpy.squeeze(
+            mm[:,numpy.newaxis] /
+            ( pk.cosmo.Delta_c( zz ) * pk.cosmo.critical_density_comoving( zz ) )
+        )
     else :
-        Vvir = mm / ( pk.cosmo.Delta_c( zz ) * pk.cosmo.critical_density( zz ) )
+        Vvir = numpy.squeeze(
+            mm[:,numpy.newaxis] /
+            ( pk.cosmo.Delta_c( zz ) * pk.cosmo.critical_density( zz ) )
+        )
     rvir = ( 0.75 * Vvir / numpy.pi )**(1/3)
     rs = rvir / conc
-    mu = kk * rs[:,numpy.newaxis]
+    mu = numpy.squeeze( kk[:,numpy.newaxis,numpy.newaxis] * rs )
     Si1, Ci1 = sici( mu )
-    Si2, Ci2 = sici( mu + mu * conc[:,numpy.newaxis] )
-    return numpy.squeeze(
+    Si2, Ci2 = sici( mu + mu * conc )
+    return numpy.squeeze( 
         ( 
             numpy.cos( mu ) * ( Ci2 - Ci1 ) + 
             numpy.sin( mu ) * ( Si2 - Si1 ) -
-            numpy.sin( mu * conc[:,numpy.newaxis] ) / ( mu + mu * conc[:,numpy.newaxis] )
+            numpy.sin( mu * conc ) / ( mu + mu * conc )
         ) /
-        ( numpy.log( 1 + conc ) - conc / ( 1 + conc ) )[:,numpy.newaxis]
+        ( numpy.log( 1 + conc ) - conc / ( 1 + conc ) )
     )
 
 #############################################################################################
