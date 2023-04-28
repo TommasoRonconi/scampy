@@ -176,3 +176,67 @@ def rejection_sampling ( pdf,
     return sample
 
 ############################################################################################
+
+def linear_interpolation ( x, xgrid, ygrid ) :
+    """Interpolates values of some input array on a user defined grid, where the
+    x-domain must be evenly spaced.
+    Specifically, computes:
+
+    .. math::
+    
+        y = y_i + ( x - x_i ) \dfrac{y_{i+1}-y_i}{x_{i+1}-x_i}
+    
+    Parameters
+    ----------
+    x : 1d-array
+        x-values
+    xg : 1d-array
+        x-axis of the interpolation grid
+    yg : 1d-array
+        y-axis of the interpolation grid
+    
+    Returns
+    -------
+    y : 1d-array
+        interpolated y-values
+    """
+
+    x = numpy.asarray( x )
+    xg = numpy.array( xgrid )
+    yg = numpy.array( ygrid )
+    if xg.ndim != 1 :
+        raise AttributeError(
+            "Currently working only on 1-dimensional arrays"
+        )
+    if not numpy.all( xg == sorted(xg) ) :
+        raise RuntimeError(
+            "The input grid must be sorted in ascending xg-order"
+        )
+    if xg.size != yg.size :
+        raise AttributeError(
+            "Arrays defining the interpolation grid should have same shape"
+        )
+
+    # Get extremes of interpolation interval
+    # Note that this will work also for future N-dimensional broadcasting
+    xmin, xmax = xg.min(axis=-1), xg.max(axis=-1)
+    
+    # Compute constant x-step
+    dxg = numpy.abs( xmax - xmin ) / ( xg.size - 1 )
+    
+    # Get index of closest interval (accounting for extrapolation)
+    idx = numpy.floor( ( x - xmin ) / dxg ).astype( int )
+    idx = numpy.where( idx < xg.size - 1, idx, xg.size - 2 )
+    idx = numpy.where( idx >= 0, idx, 0 )
+    
+    # Final sanity check
+    if idx.size != x.size :
+        raise RuntimeError( "Something went wrong." )
+    
+    # return interpolated values
+    return (
+        yg[idx] + ( x - xg[idx] ) * ( yg[ idx + 1 ] - yg[ idx ] ) /
+        ( xg[ idx + 1 ] - xg[ idx ] )
+    )
+
+############################################################################################

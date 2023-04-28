@@ -11,7 +11,10 @@ import numpy
 
 # Fast sin-transform log (direct)
 def fstl ( xn, yn, lk0 = 0.0, bias = 0.0, mu = 0.5 ) :
-    
+
+    # copy input and prep for transform
+    lxn = numpy.log( xn )
+    yn = numpy.array( yn ).T    
     # log and copy input
     lxn = numpy.log( xn )
     
@@ -30,7 +33,7 @@ def fstl ( xn, yn, lk0 = 0.0, bias = 0.0, mu = 0.5 ) :
         
     # Prepare input function for transform
     fct = 0.5 * numpy.sqrt( 0.5 * numpy.pi ) / numpy.pi**2
-    an  = numpy.array( fct * yn.T * xn * numpy.sqrt( xn ) ).T
+    an  = fct * yn * xn * numpy.sqrt( xn )
         
     # Find optimal centre for transform
     kr = fft.fhtoffset( dlr, initial = lk0, 
@@ -45,15 +48,16 @@ def fstl ( xn, yn, lk0 = 0.0, bias = 0.0, mu = 0.5 ) :
     # Return a tuple with
     # - wavenumber grid
     # - converted sin-transform of input function
-    return kn, ( bn.T / ( kn * numpy.sqrt( kn ) ) ).T
+    return kn, ( bn / ( kn * numpy.sqrt( kn ) ) ).T
 
 #############################################################################################
 
 # Fast projected sin-transform log (direct)
 def fpstl ( xn, yn, lk0 = 0.0, bias = 0.0, mu = 0.0 ) :
     
-    # log and copy input
+    # copy input and prep for transform
     lxn = numpy.log( xn )
+    yn = numpy.array( yn ).T
     
     # Find log-spacing and check equal
     dlr = None
@@ -70,8 +74,8 @@ def fpstl ( xn, yn, lk0 = 0.0, bias = 0.0, mu = 0.0 ) :
         
     # Prepare input function for transform
     fct = 0.5  / numpy.pi
-    an  = numpy.array( fct * yn.T * xn ).T
-        
+    an  = numpy.array( fct * yn * xn )
+    
     # Find optimal centre for transform
     kr = fft.fhtoffset( dlr, initial = lk0, 
                         mu = mu, bias = bias )
@@ -85,6 +89,6 @@ def fpstl ( xn, yn, lk0 = 0.0, bias = 0.0, mu = 0.0 ) :
     # Return a tuple with
     # - wavenumber grid
     # - converted sin-transform of input function
-    return kn, ( bn.T / kn ).T
+    return kn, ( bn / kn ).T
 
 #############################################################################################

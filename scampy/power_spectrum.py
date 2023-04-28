@@ -185,6 +185,9 @@ class power_spectrum () :
         """Linear 2-point correlation function
         obtained by Fourier-Transforming the linear power spectrum
         """
+        if hasattr( zz, '__len__' ) :
+            raise RuntimeError(
+                'function not supporting broadcasting to 2nd dimension yet' )
         rn, xin = fstl( self.kh, self.Pz( self.kh, zz, comoving ) )
         return lin_interp( rn, xin )( rr )                        
 
