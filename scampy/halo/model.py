@@ -252,12 +252,12 @@ class halo_model () :
         Parameters
         ----------
         theta : 1d-array
-        hmodel : halo-model instance
         hod : hod instance
         zbins : 1d-array
         Nzdist : 1d-array
             normalized redshift distribution of sources (# in bin/# tot).
             Nzdist.size == zbins.size - 1
+        fact : float or 1d-array
         
         Returns
         -------
