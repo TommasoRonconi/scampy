@@ -211,6 +211,105 @@ class HOD () :
         sat_gxy[sat_idx] = rng.binomial(1, psg[cat.subhaloes.Parent[sat_idx]])
     
         return cen_gxy, sat_gxy
-        
 
+
+class HOD_zdep () :
     
+    zdep_parameters = ['Mmin', 'sigma', 'M0', 'M1', 'alpha']
+    free_parameters = set([ 
+        'lMmin', 'lMmin_b', 
+        'lsigma', 'lsigma_b', 
+        'lM0', 'lM0_b', 
+        'lM1', 'lM1_b', 
+        'lalpha', 'lalpha_b' 
+    ])
+    
+    def __init__ ( self, 
+                   redshift,
+                   lMmin = +10,
+                   lMmin_b = 0.0,
+                   lsigma = 0.0,
+                   lsigma_b = 0.0,
+                   lM0 = +10,
+                   lM0_b = 0.0,
+                   lM1 = +10,
+                   lM1_b = 0.0,
+                   lalpha = 0.0,
+                   lalpha_b = 0.0 ) :
+
+        self.scalar = False
+        self._set_z( redshift )
+        
+        self.lMmin = lMmin
+        self.lMmin_b = lMmin_b
+        self.lsigma = lsigma
+        self.lsigma_b = lsigma_b
+        self.lM0 = lM0
+        self.lM0_b = lM0_b
+        self.lM1 = lM1
+        self.lM1_b = lM1_b
+        self.lalpha = lalpha
+        self.lalpha_b = lalpha_b
+        self.set()
+        
+    def _set_z ( self, redshift ) :
+        
+        self.z = numpy.array(redshift)
+        if self.z.ndim == 0 :
+            self.z = self.z[None]
+            self.scalar = True
+        return;
+        
+    def set ( self, redshift = None, **kwargs ) :
+        
+        if redshift is not None :
+            self._set_z( redshift )
+                
+        self.__dict__.update( {
+            k : v for k, v in kwargs.items() if k in type(self).free_parameters
+        } )
+        self.params = dict(zip(
+            type(self).zdep_parameters,
+            10.**numpy.array([
+                self.lMmin + self.lMmin_b * self.z,
+                self.lsigma + self.lsigma_b * self.z,
+                self.lM0 + self.lM0_b * self.z,
+                self.lM1 + self.lM1_b * self.z,
+                self.lalpha + self.lalpha_b * self.z,
+            ])
+        ))
+        
+        return;
+    
+    def _Pcen ( self, Mh, redshift = None, **kwargs ) :
+        
+        self.set( redshift, **kwargs )
+        Mh = numpy.asarray( numpy.squeeze(Mh) )
+        ret = numpy.zeros( shape = (Mh.size, self.z.size), dtype=float )
+        ww = Mh > 0.0
+        ret[ww] = 0.5 * (
+            1. + erf(
+                (numpy.log10( Mh[ww,numpy.newaxis] ) -
+                 numpy.log10( self.params['Mmin'][numpy.newaxis,:] )) /
+                self.params['sigma']
+            )
+        )
+        return ret
+    
+    def Pcen ( self, Mh, redshift = None, **kwargs ) :
+        return numpy.squeeze(self._Pcen( Mh, redshift, **kwargs ))
+    
+    def Psat ( self, Mh, redshift = None, **kwargs ) :
+        
+        self.set( redshift, **kwargs )
+        Mh = numpy.asarray(numpy.squeeze(Mh))
+        psat = ( 
+            ( Mh[:,numpy.newaxis] - self.params['M0'][numpy.newaxis,:] ) / 
+            self.params['M1'][numpy.newaxis,:] 
+        )
+        psat[~(psat>0.0)] = 0.0
+        return numpy.squeeze( 
+            self._Pcen( Mh ) * 
+            psat**self.params['alpha'][numpy.newaxis,:] 
+        )
+
