@@ -247,7 +247,7 @@ class halo_model () :
         rp = th * self.pk.cosmo.dC( zz )
         return self.Wr( rp, hod, zz, fact )
 
-    def Wt_zdist ( self, th, hod, zbins, Nzdist, fact = -1 ) :
+    def Wt_zdist ( self, th, hod, zbins, Nzdist, fact = -1, valid_rp = (1.e-2, 8.e+1) ) :
         """
         Parameters
         ----------
@@ -258,6 +258,9 @@ class halo_model () :
             normalized redshift distribution of sources (# in bin/# tot).
             Nzdist.size == zbins.size - 1
         fact : float or 1d-array
+        valid_rp : tuple
+            interval of projected radii valid for interpolation of the
+            angular 2pt at fixed redshift (change at own risk)
         
         Returns
         -------
@@ -269,7 +272,7 @@ class halo_model () :
         fact = numpy.array( fact )
         if zbins.size - 1 != Nzdist.size :
             raise RuntimeError(
-                'argument ``zbins`` should have one element more than argumen ``Nzdist``'
+                'argument ``zbins`` should have one element more than argument ``Nzdist``'
             )
     
         # compute power spectrum
@@ -280,6 +283,7 @@ class halo_model () :
             self.kh_grid, pks,
             lk0 = 0.0, bias = 0.0, mu = 0.0
         )
+        vr = (valid_rp[0] < rint) & (rint < valid_rp[1])
         
         # derive theta array for fourier-transformed x-space
         thint = rint[:,numpy.newaxis] / self.pk.cosmo.dC(zmed)
@@ -287,7 +291,10 @@ class halo_model () :
         # compute angular 2-point on input array
         wt = numpy.array( [ 
             numpy.exp( 
-                linear_interpolation( numpy.log( th ), numpy.log( _t ), numpy.log( _w ) ) 
+                linear_interpolation(
+                    numpy.log( th ),
+                    numpy.log( _t[vr] ),
+                    numpy.log( _w[vr] ) ) 
             ) 
             for _t, _w in zip( thint.T, wtint.T ) ] 
         ).T
