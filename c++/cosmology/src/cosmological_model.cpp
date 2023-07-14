@@ -69,10 +69,10 @@ void scam::cosmo_model::set_internal () {
   for ( auto && ez : Ez_f.get_fv() ) zE.emplace_back( 1 / ez );
   zE_f = interp_lin { zz, zE };
 
-  // computes the Hubble time in yr/h
+  // computes the Hubble time in yr
   t_H0 = 1.e+3 * utl::cnst::pc / ( utl::cnst::yr * H0 );
   
-  // computes the Hubble-orizon distance in Mpc/h
+  // computes the Hubble-orizon distance in Mpc
   d_H0 = 1.e-3 * utl::cnst::cc / H0;
 
   return;
@@ -140,7 +140,7 @@ double scam::cosmo_model::cosmic_time ( const double zz ) {
 
   scam::cosmo_model::interp_lin func { zv, fv };
 
-  return 1.e-9 * t_H0 * func.integrate( zz, 1.e+7 );
+  return 1.e-9 * t_H0 * func.integrate( zz, z_max );
 
 }
 
@@ -195,7 +195,7 @@ double scam::cosmo_model::DD ( const double & zz ) noexcept {
   
   scam::cosmo_model::interp_lin func { zv, fv };
 
-  return 2.5 * param["Om_M"] * Ez_f( zz ) * func.integrate( zz, 1.e+7 );
+  return 2.5 * param["Om_M"] * Ez_f( zz ) * func.integrate( zz, z_max );
 
 }
 
