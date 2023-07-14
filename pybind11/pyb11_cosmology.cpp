@@ -21,7 +21,7 @@ PYBIND11_MODULE( cosmology, m ) {
   	 py::arg("Om_M") = 0.3, py::arg("Om_b") = 0.045, py::arg("Om_L") = 0.7,
   	 py::arg("Om_n") = 0.0, py::arg("Om_r") = 0.0, py::arg("Om_K") = 0.0,
   	 py::arg("hh") = 0.7, py::arg("sigma8") = 0.8,
-  	 py::arg("w_0") = 0.0, py::arg("w_a") = 0.0,
+  	 py::arg("w_0") = -1.0, py::arg("w_a") = 0.0,
   	 py::arg("zmin") = 0.0, py::arg("zmax") = 100.,
   	 py::arg("thin") = 1000,
   	 "Constructor of the class cosmology.model" )
@@ -30,16 +30,16 @@ PYBIND11_MODULE( cosmology, m ) {
     .def("dH", py::vectorize(&scam::cosmo_model::d_H),
 	 "Hubble distance at given redshift", py::arg("zz") )
     .def("dC", py::vectorize(&scam::cosmo_model::d_C),
-	 "Comoving distance at given redshift", py::arg("zz") )
+	 "Comoving distance at given redshift [Mpc]", py::arg("zz") )
     .def("ddC", py::vectorize(&scam::cosmo_model::dd_C),
 	 "Derivative of the comoving distance at given redshift", py::arg("zz") )
     .def("dA", py::vectorize(&scam::cosmo_model::d_A),
-	 "Angular diameter distance at given redshift", py::arg("zz") )
+	 "Angular diameter distance at given redshift [Mpc]", py::arg("zz") )
     .def("comoving_volume_unit", py::vectorize(&scam::cosmo_model::comoving_volume_unit),
 	 "Comoving volume per redshift bin per unit steradian (dV/dzdOmega)",
 	 py::arg("zz") )
     .def("comoving_volume", py::vectorize(&scam::cosmo_model::comoving_volume),
-	 "Comoving volume at given redshift", py::arg("zz") )
+	 "Comoving volume at given redshift [(Mpc/h)^3]", py::arg("zz") )
     .def("cosmic_time", py::vectorize(&scam::cosmo_model::cosmic_time),
 	 "Age of the Universe at given redshift (i.e. at the time photons were emitted)",
 	 py::arg("zz") )
@@ -66,6 +66,12 @@ PYBIND11_MODULE( cosmology, m ) {
 	 py::arg("zz") )
     .def("Delta_c", py::vectorize(&scam::cosmo_model::Delta_c_NakamuraSuto98),
 	 "Nakamura & Suto 1998" )
+    .def_readonly("H0", &scam::cosmo_model::H0,
+		  "Hubble constant at z=0 (defined as 100*h0 and expressed in km/s/Mpc)")
+    .def_readonly("t_H0", &scam::cosmo_model::t_H0,
+		  "Hubble time (defined as 1/H0 and expressed in yr)")
+    .def_readonly("d_H0", &scam::cosmo_model::d_H0,
+		  "Hubble orizon distance (defined as 1/H0 and expressed in Mpc)")
     .def_readonly("zmin", &scam::cosmo_model::z_min, "Minimum redshift of internal grid")
     .def_readonly("zmax", &scam::cosmo_model::z_max, "Maximum redshift of internal grid")
     .def_readonly("param", &scam::cosmo_model::param, "Cosmological parameters");
