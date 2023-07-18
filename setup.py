@@ -68,7 +68,7 @@ def main () :
                         'scampy.utilities'
            ],
            ext_modules = [ intrp_ext, cosmo_ext, clust_ext ],
-           install_requires = [ 'numpy', 'scipy', 'matplotlib' ]
+           install_requires = [ 'numpy', 'scipy', 'matplotlib', 'h5py' ]
     )
 
 ########################################################################################
