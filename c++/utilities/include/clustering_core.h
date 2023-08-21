@@ -73,6 +73,30 @@ namespace utl {
 					  const std::vector< float > & X2,
 					  const std::vector< float > & Y2,
 					  const std::vector< float > & rbin );
+  
+  //==================================================================================
+  //=================================== 2D-Angular ===================================
+  //==================================================================================
+
+  std::vector< std::size_t > dA2D_DD ( const std::vector< float > & RA,
+				       const std::vector< float > & Dec,
+				       const std::vector< float > & thetabin );
+
+  std::vector< std::size_t > dA2D_DD_omp ( const std::vector< float > & RA,
+					   const std::vector< float > & Dec,
+					   const std::vector< float > & thetabin );
+
+  std::vector< std::size_t > dA2D_DR ( const std::vector< float > & RA1,
+				       const std::vector< float > & Dec1,
+				       const std::vector< float > & RA2,
+				       const std::vector< float > & Dec2,
+				       const std::vector< float > & thetabin );
+
+  std::vector< std::size_t > dA2D_DR_omp ( const std::vector< float > & RA1,
+					   const std::vector< float > & Dec1,
+					   const std::vector< float > & RA2,
+					   const std::vector< float > & Dec2,
+					   const std::vector< float > & thetabin );
 
   //==================================================================================
   //======================================= 3D =======================================

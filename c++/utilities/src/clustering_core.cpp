@@ -136,6 +136,140 @@ std::vector< std::size_t > utl::d2D_DR_omp ( const std::vector< float > & X1,
 }
 
 //==================================================================================
+//=================================== 2D-Angular ===================================
+//==================================================================================
+
+std::vector< std::size_t > utl::dA2D_DD ( const std::vector< float > & RA,
+					  const std::vector< float > & Dec,
+					  const std::vector< float > & thetabin ) {
+  
+  std::size_t size = RA.size();
+  
+  std::vector< std::size_t > NDD ( thetabin.size() );
+  float thetamin = thetabin.front(), thetamax = thetabin.back();
+  float delta = std::log10(thetamax/thetamin)/thetabin.size();
+
+  for ( std::size_t ii = 0; ii < size; ++ii ) {
+    float dra, ddec, tt;
+    std::size_t ib;
+    for ( std::size_t jj = ii+1; jj < size; ++jj ) {
+      dra = ( RA[ii]-RA[jj] ) * std::cos( Dec[ii] );
+      ddec = Dec[ii]-Dec[jj];
+      tt = std::sqrt( dra*dra + ddec*ddec );
+
+      if ( thetamin <= tt && tt <= thetamax ) {
+	ib = int( std::log10( tt / thetamin ) / delta );
+	NDD[ ib ] += 1;
+      }
+      
+    } // endfor jj
+  } // endfor ii
+  
+  return NDD;
+  
+}
+
+std::vector< std::size_t > utl::dA2D_DD_omp ( const std::vector< float > & RA,
+					      const std::vector< float > & Dec,
+					      const std::vector< float > & thetabin ) {
+  
+  std::size_t size = RA.size();
+  
+  std::vector< std::size_t > NDD ( thetabin.size() );
+  float thetamin = thetabin.front(), thetamax = thetabin.back();
+  float delta = std::log10(thetamax/thetamin)/thetabin.size();
+
+#pragma omp parallel for shared(NDD)
+  for ( std::size_t ii = 0; ii < size; ++ii ) {
+    float dra, ddec, tt;
+    std::size_t ib;
+    for ( std::size_t jj = ii+1; jj < size; ++jj ) {
+      dra = ( RA[ii]-RA[jj] ) * std::cos( Dec[ii] );
+      ddec = Dec[ii]-Dec[jj];
+      tt = std::sqrt( dra*dra + ddec*ddec );
+
+      if ( thetamin <= tt && tt <= thetamax ) {
+	ib = int( std::log10( tt / thetamin ) / delta );
+#pragma omp atomic
+	NDD[ ib ] += 1;
+      }
+      
+    } // endfor jj
+  } // endfor ii
+  
+  return NDD;
+  
+}
+
+std::vector< std::size_t > utl::dA2D_DR ( const std::vector< float > & RA1,
+					  const std::vector< float > & Dec1,
+					  const std::vector< float > & RA2,
+					  const std::vector< float > & Dec2,
+					  const std::vector< float > & thetabin ) {
+  
+  std::size_t size1 = RA1.size();
+  std::size_t size2 = RA2.size();
+  
+  std::vector< std::size_t > NDR ( thetabin.size() );
+  float thetamin = thetabin.front(), thetamax = thetabin.back();
+  float delta = std::log10(thetamax/thetamin)/thetabin.size();
+
+  for ( std::size_t ii = 0; ii < size1; ++ii ) {
+    float dra, ddec, tt;
+    std::size_t ib;
+    for ( std::size_t jj = 0; jj < size2; ++jj ) {
+      dra = ( RA1[ii]-RA2[jj] ) * std::cos( Dec1[ii] );
+      ddec = Dec1[ii]-Dec2[jj];
+      tt = std::sqrt( dra*dra + ddec*ddec );
+
+      if ( thetamin <= tt && tt <= thetamax ) {
+	ib = int( std::log10( tt / thetamin ) / delta );
+	NDR[ ib ] += 1;
+      }
+      
+    } // endfor jj
+  } // endfor ii
+  
+  return NDR;
+  
+}
+
+std::vector< std::size_t > utl::dA2D_DR_omp ( const std::vector< float > & RA1,
+					      const std::vector< float > & Dec1,
+					      const std::vector< float > & RA2,
+					      const std::vector< float > & Dec2,
+					      const std::vector< float > & thetabin ) {
+  
+  std::size_t size1 = RA1.size();
+  std::size_t size2 = RA2.size();
+  
+  std::vector< std::size_t > NDR ( thetabin.size() );
+  float thetamin = thetabin.front(), thetamax = thetabin.back();
+  float delta = std::log10(thetamax/thetamin)/thetabin.size();
+
+#pragma omp parallel for shared(NDR)
+  for ( std::size_t ii = 0; ii < size1; ++ii ) {
+    float dra, ddec, tt;
+    std::size_t ib;
+    for ( std::size_t jj = 0; jj < size2; ++jj ) {
+      dra = ( RA1[ii]-RA2[jj] ) * std::cos( Dec1[ii] );
+      ddec = Dec1[ii]-Dec2[jj];
+      tt = std::sqrt( dra*dra + ddec*ddec );
+
+      if ( thetamin <= tt && tt <= thetamax ) {
+	ib = int( std::log10( tt / thetamin ) / delta );
+#pragma omp atomic
+	NDR[ ib ] += 1;
+      }
+      
+    } // endfor jj
+  } // endfor ii
+  
+  return NDR;
+  
+}
+
+//==================================================================================
 //======================================= 3D =======================================
 //==================================================================================
 

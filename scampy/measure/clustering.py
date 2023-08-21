@@ -7,30 +7,38 @@ import scampy.measure.clustering_core as cc
 
 ##################################################################################
 
-def _kernel_DD (data, Nd, rbins, omp = True) :
+def _kernel_DD (data, Nd, rbins, omp = True, angular = False) :
     
     if omp :
         if Nd == 2 :
+            if angular :
+                return numpy.array( cc.dA2D_DD_omp( *data, rbins ) )
             return numpy.array( cc.d2D_DD_omp( *data, rbins ) )
         if Nd == 3 :
             return numpy.array( cc.d3D_DD_omp( *data, rbins ) )
     else :
         if Nd == 2 :
+            if angular :
+                return numpy.array( cc.dA2D_DD( *data, rbins ) )
             return numpy.array( cc.d2D_DD( *data, rbins ) )
         if Nd == 3 :
             return numpy.array( cc.d3D_DD( *data, rbins ) )
             
     return None
 
-def _kernel_DR (data1, data2, Nd, rbins, omp = True) :
+def _kernel_DR (data1, data2, Nd, rbins, omp = True, angular = False) :
     
     if omp :
         if Nd == 2 :
+            if angular :
+                return numpy.array( cc.dA2D_DR_omp( *data1, *data2, rbins ) )
             return numpy.array( cc.d2D_DR_omp( *data1, *data2, rbins ) )
         if Nd == 3 :
             return numpy.array( cc.d3D_DR_omp( *data1, *data2, rbins ) )
     else :
         if Nd == 2 :
+            if angular :
+                return numpy.array( cc.dA2D_DR( *data1, *data2, rbins ) )
             return numpy.array( cc.d2D_DR( *data1, *data2, rbins ) )
         if Nd == 3 :
             return numpy.array( cc.d3D_DR( *data1, *data2, rbins ) )
@@ -52,7 +60,7 @@ def _kernel_standard ( DD, RR ) :
 
 ##################################################################################
 
-def two_point_standard ( data, rand, rbins, omp = True ) :
+def two_point_standard ( data, rand, rbins, omp = True, angular = False ) :
     """
     """
 
@@ -68,8 +76,8 @@ def two_point_standard ( data, rand, rbins, omp = True ) :
     normDD = 2.0 / ( NobjD * ( NobjD - 1 ) )
     normRR = 2.0 / ( NobjR * ( NobjR - 1 ) )
 
-    DD = _kernel_DD( data, NdimD, rbins, omp ) * normDD
-    RR = _kernel_DD( rand, NdimD, rbins, omp ) * normRR
+    DD = _kernel_DD( data, NdimD, rbins, omp, angular ) * normDD
+    RR = _kernel_DD( rand, NdimD, rbins, omp, angular ) * normRR
 
     return _kernel_standard( DD, RR )
     
@@ -93,7 +101,7 @@ def _kernel_error_landy_szalay () :
     
 ##################################################################################
 
-def two_point_landyszalay ( data, rand, rbins, omp = True, return_error = False ) :
+def two_point_landyszalay ( data, rand, rbins, omp = True, return_error = False, angular = False ) :
     """
     """
 
@@ -110,11 +118,11 @@ def two_point_landyszalay ( data, rand, rbins, omp = True, return_error = False 
     normRR = 2.0 / ( NobjR * ( NobjR - 1 ) )
     normDR = 1.0 / ( NobjD * NobjR )
 
-    DD = _kernel_DD( data, NdimD, rbins, omp )
+    DD = _kernel_DD( data, NdimD, rbins, omp, angular )
     DDn = DD * normDD
-    RR = _kernel_DD( rand, NdimD, rbins, omp )
+    RR = _kernel_DD( rand, NdimD, rbins, omp, angular )
     RRn = RR * normRR
-    DR = _kernel_DR( data, rand, NdimD, rbins, omp )
+    DR = _kernel_DR( data, rand, NdimD, rbins, omp, angular )
     DRn = DR * normDR
 
     # compute baseline clustering
@@ -136,7 +144,7 @@ def two_point_landyszalay ( data, rand, rbins, omp = True, return_error = False 
 def bootstrap_two_point ( data, rand, rbins,
                           standard = True,
                           Nboots = 10, return_boots = False,
-                          omp = True, verbose = True,
+                          omp = True, verbose = True, angular = False,
                           rng = None, kw_rng = { 'seed' : 555 } ) :
     """
     """
@@ -158,16 +166,16 @@ def bootstrap_two_point ( data, rand, rbins,
     normDR = 1.0 / ( NobjD * NobjR )
     
     if verbose : print( 'Computing RR ...' )
-    RR = _kernel_DD( rand, NdimR, rbins, omp ) * normRR
+    RR = _kernel_DD( rand, NdimR, rbins, omp, angular ) * normRR
     if verbose : print( '... done RR.' )
 
     # get the baseline estimate
     if verbose : print( 'Computing baseline ...' )
-    DD = _kernel_DD( data, NdimD, rbins, omp ) * normDD
+    DD = _kernel_DD( data, NdimD, rbins, omp, angular ) * normDD
     if standard :
         tpt = _kernel_standard( DD, RR )
     else :
-        DR = _kernel_DR( data, rand, NdimD, rbins, omp ) * normDR
+        DR = _kernel_DR( data, rand, NdimD, rbins, omp, angular ) * normDR
         tpt = _kernel_landy_szalay( DD, RR, DR )
     if verbose : print( '... done baseline.' )
 
@@ -176,11 +184,11 @@ def bootstrap_two_point ( data, rand, rbins,
     for ii in range( Nboots ):
         if verbose : print( f'Computing bootstrap {ii+1:d} of {Nboots} ...', end='\r' )
         iD = rng.integers( NobjD, size = NobjD )
-        DD = _kernel_DD( data[:,iD], NdimD, rbins, omp ) * normDD
+        DD = _kernel_DD( data[:,iD], NdimD, rbins, omp, angular ) * normDD
         if standard :
             boots[ii] = _kernel_standard( DD, RR )
         else :
-            DR = _kernel_DR( data[:,iD], rand, NdimD, rbins, omp ) * normDR
+            DR = _kernel_DR( data[:,iD], rand, NdimD, rbins, omp, angular ) * normDR
             boots[ii] = _kernel_landy_szalay( DD, RR, DR )
     if verbose : print( '\n... done bootstraps.' )
 
