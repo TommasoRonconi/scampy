@@ -44,9 +44,9 @@ def main () :
               os.path.join( 'c++', 'utilities', 'src', 'clustering_core.cpp' ) ]
         ),
         include_dirs = sorted( [ os.path.join( 'c++', 'utilities', 'include' ) ] ),
-        libraries = [ "m", "gomp" ],
+        libraries = [ "m", "omp" ],
         extra_compile_args=['-fopenmp'],
-        extra_link_args=['-lgomp'],
+        extra_link_args=['-lomp'],
     )
 
     ####################################################################################
