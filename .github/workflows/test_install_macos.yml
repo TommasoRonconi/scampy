@@ -31,10 +31,10 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        CXX=g++ CC=g++ python -m pip install --upgrade pip
-        CXX=g++ CC=g++ python -m pip install pybind11
+        python -m pip install --upgrade pip
+        python -m pip install pybind11
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Install library
       run: |
-        CXX=g++ CC=g++ python -m pip install .
+        python -m pip install .
         # CXX=g++ CC=g++ python setup.py install
