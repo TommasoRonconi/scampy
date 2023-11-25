@@ -195,8 +195,7 @@ def coords_to_cone ( coords, cosmo,
 
 #########################################################################################
 
-# New name shortly:
-# def box_to_cone 
+# Shortly outdated: 
 def to_cone ( box, zbox, Lbox, cosmo,
               funcs = None, theta = None,
               zmin = None, zmax = None,
@@ -528,7 +527,7 @@ def box_to_cone ( box, Lbox, cosmo,
         raise
 
     # Find comoving distance of box centre
-    dcen = z2d( central_redshift )
+    dcen = cosmo.dC( central_redshift )
 
     # Centre the box 
     x, y, z = centre_box( box, Lbox ).T
