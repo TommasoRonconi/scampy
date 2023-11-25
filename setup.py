@@ -10,9 +10,11 @@ from pybind11.setup_helpers import Pybind11Extension
 def main () :
 
     extra_OMP_compile_args = []
+    extra_OMP_link_args = []
     if sys.platform == 'darwin' :
         print( '------------------> Running on MacOS' )
-        extra_OMP_compile_args = [ '-Xpreprocessor', '-fopenmp' ] + extra_OMP_compile_args
+        extra_OMP_compile_args = [  '-I/usr/local/opt/libomp/include', '-Xpreprocessor', '-fopenmp' ] + extra_OMP_compile_args
+        extra_OMP_link_args += [ '-L/usr/local/opt/libomp/lib' ]
 
     ####################################################################################
     # Interpolation extension, currently providing the linear interpolator
