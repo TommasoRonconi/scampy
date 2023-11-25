@@ -20,6 +20,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Install Xcode Command Line Tools
+      run: sudo xcode-select --install || true
     - name: Install LLVM
       run: |
         brew install gcc
