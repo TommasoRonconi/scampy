@@ -18,6 +18,7 @@ def main () :
         ),
         include_dirs = sorted( [ os.path.join( 'c++', 'utilities', 'include' ),
                                  os.path.join( 'c++', 'interpolator', 'include' ) ] ),
+        extra_compile_args=[ '-std=c++14' ]
     )
 
     ####################################################################################
@@ -32,6 +33,7 @@ def main () :
         include_dirs = sorted( [ os.path.join( 'c++', 'utilities', 'include' ),
                                  os.path.join( 'c++', 'interpolator', 'include' ),
                                  os.path.join( 'c++', 'cosmology', 'include' ) ] ),
+        extra_compile_args=[ '-std=c++14' ]
     )
 
     ####################################################################################
@@ -45,7 +47,7 @@ def main () :
         ),
         include_dirs = sorted( [ os.path.join( 'c++', 'utilities', 'include' ) ] ),
         libraries = [ "m", "omp" ],
-        extra_compile_args=['-fopenmp'],
+        extra_compile_args=['-std=c++14', '-fopenmp'],
         extra_link_args=['-lomp'],
     )
 
