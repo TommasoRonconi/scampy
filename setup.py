@@ -79,6 +79,7 @@ def main () :
            ],
            cmdclass={"build_ext": build_ext},
            ext_modules = [ intrp_ext, cosmo_ext, clust_ext ],
+           setup_requires = [ 'setuptools', 'pybind11' ],
            install_requires = [ 'numpy', 'scipy', 'matplotlib', 'h5py' ]
     )
 
