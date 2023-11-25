@@ -61,6 +61,7 @@ def main () :
     ####################################################################################
     # Run setup
     setup( name = "scampy",
+           version='0.0.0',
            package_dir = {
                'scampy' : 'scampy',
                'scampy.io' : os.path.join( 'scampy', 'io' ),
