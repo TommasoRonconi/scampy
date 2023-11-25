@@ -36,4 +36,5 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Install library
       run: |
-        CXX=g++ CC=g++ python setup.py install
+        CXX=g++ CC=g++ python -m pip install .
+        # CXX=g++ CC=g++ python setup.py install
