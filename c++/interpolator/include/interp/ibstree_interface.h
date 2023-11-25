@@ -448,7 +448,7 @@ namespace utl {
 
     double integrate ( const double aa, const double bb ) const noexcept override {
 
-      double la = std::log( aa ), lb = std::log( lb );
+      double la = std::log( aa ), lb = std::log( bb );
       
       // find iterator to interval containing the lower integral limit
       auto it = _T.find( la );
