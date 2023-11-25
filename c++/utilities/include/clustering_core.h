@@ -49,6 +49,9 @@ namespace utl {
   //   return NDD;
   
   // }
+
+  float haversine_th ( const float & RA1, const float Dec1,
+		       const float & RA2, const float Dec2 ); 
   
   //==================================================================================
   //======================================= 2D =======================================
