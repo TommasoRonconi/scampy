@@ -13,7 +13,7 @@ def main () :
     extra_OMP_link_args = []
     if sys.platform == 'darwin' :
         print( '------------------> Running on MacOS' )
-        extra_OMP_compile_args = [  '-I/usr/local/opt/libomp/include', '-Xpreprocessor', '-fopenmp' ] + extra_OMP_compile_args
+        extra_OMP_compile_args += [  '-I/usr/local/opt/libomp/include', '-Xpreprocessor', '-fopenmp' ]
         extra_OMP_link_args += [ '-L/usr/local/opt/libomp/lib' ]
 
     ####################################################################################
@@ -55,7 +55,7 @@ def main () :
         include_dirs = sorted( [ os.path.join( 'c++', 'utilities', 'include' ) ] ),
         libraries = [ "m", "gomp" ],
         extra_compile_args=['-std=c++17'] + extra_OMP_compile_args, # , '-fopenmp'],
-        extra_link_args=['-lomp']
+        extra_link_args=extra_link_args+['-lomp']
     )
 
     ####################################################################################
