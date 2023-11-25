@@ -247,7 +247,29 @@ class halo_model () :
         rp = th * self.pk.cosmo.dC( zz )
         return self.Wr( rp, hod, zz, fact )
 
-    def Wt_zdist ( self, th, hod, zbins, Nzdist, fact = -1, valid_rp = (1.e-2, 8.e+1) ) :
+    def Nz ( self, hod, zbins, solid_angle = 4 * numpy.pi ) :
+        """Normalised redshift distribution
+        
+        N(z) = Number of sources in z-bin / ( width of z-bin * total number of sources )
+        
+        Parameters
+        ----------
+        hod :
+        zbins : array of floats
+        solid_angle : float
+        """
+
+        dz = numpy.diff(zbins)
+        zz = 0.5*(zbins[1:]+zbins[:-1])
+        zhist = self.ng(hod, zz) * self.pk.cosmo.comoving_volume_unit( zz ) * solid_angle * dz
+        
+        return zhist / dz / zhist.sum()
+
+    def Wt_zdist ( self, th, hod, zbins,
+                   Nzdist = None, fact = -1,
+                   valid_rp = (1.e-2, 8.e+1),
+                   solid_angle = 4 * numpy.pi,
+                   component = 'total' ) :
         """
         Parameters
         ----------
@@ -261,6 +283,14 @@ class halo_model () :
         valid_rp : tuple
             interval of projected radii valid for interpolation of the
             angular 2pt at fixed redshift (change at own risk)
+        solid_angle : float
+            solid angle sub-tended the field of view 
+        component : str
+            (Optional, default = 'total') which component of the correlation function to combine
+            Available options are: 
+            'total' compute the sum of 1-halo and 2-halo term, 
+            '1halo' compute the 1-halo term only, 
+            '2halo' compute the 2-halo term only.
         
         Returns
         -------
@@ -270,13 +300,22 @@ class halo_model () :
         th = numpy.array( th )
         zmed = 0.5 * ( zbins[1:] + zbins[:-1] )
         fact = numpy.array( fact )
+        if Nzdist is None :
+            Nzdist = self.Nz( hod, zbins, solid_angle )
         if zbins.size - 1 != Nzdist.size :
             raise RuntimeError(
                 'argument ``zbins`` should have one element more than argument ``Nzdist``'
             )
     
         # compute power spectrum
-        pks = self.Pk(self.kh_grid, hod, zmed, fact = fact)
+        if component == 'total' :
+            pks = self.Pk(self.kh_grid, hod, zmed, fact = fact)
+        elif component == '1halo' :
+            pks = self.Pk_1halo(self.kh_grid, hod, zmed, fact = fact)
+        elif component == '2halo' :
+            pks = self.Pk_2halo(self.kh_grid, hod, zmed, fact = fact)
+        else :
+            raise RuntimeError( 'Chosen component invalid, valid options are "total", "1halo", "2halo"' )
         
         # fourier-transform to projected
         rint, wtint = fpstl(
@@ -299,14 +338,7 @@ class halo_model () :
             for _t, _w in zip( thint.T, wtint.T ) ] 
         ).T
         
-        # derivative of the comoving distance
-        ddC = self.pk.cosmo.ddC( zbins )
-        
-        # compute approximated averaged 2pt angular
-        return numpy.sum( ( 
-            ( zbins[1:] - zbins[:-1] ) * 
-            Nzdist**2 / 
-            numpy.abs( ddC[1:] - ddC[:-1] )
-        ) * wt, axis = 1 )
+        integrand = ( Nzdist**2 / self.pk.cosmo.ddC(zmed) ) * wt
+        return trap_int( zmed[:,numpy.newaxis], integrand.T )
     
 #############################################################################################
