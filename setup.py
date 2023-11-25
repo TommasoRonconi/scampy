@@ -3,7 +3,7 @@
 import os, sys
 from glob import glob
 from setuptools import setup
-from pybind11.setup_helpers import Pybind11Extension
+from pybind11.setup_helpers import Pybind11Extension, build_ext
 
 ########################################################################################
 
@@ -76,6 +76,7 @@ def main () :
                         'scampy.plot',
                         'scampy.utilities'
            ],
+           cmdclass={"build_ext": build_ext},
            ext_modules = [ intrp_ext, cosmo_ext, clust_ext ],
            install_requires = [ 'numpy', 'scipy', 'matplotlib', 'h5py' ]
     )
