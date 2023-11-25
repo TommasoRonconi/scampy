@@ -225,4 +225,60 @@ def equatorial_to_cartesian ( coords, centre = (0.0,0.0,0.0) ) :
     
     return x+x0, y+y0, z+z0
 
+def angular_to_euclidean_dist ( d, r = 1.0 ) :
+    """Converts an angular distance to an euclidean distance, 
+    projected on a sphere of given radius.
+    
+    Parameters
+    ----------
+    d : float or array-like of floats
+        angular distances to convert
+    r : float or array-like of floats
+        (Optional, default=1.0) radius of the sphere.
+        If an array is given, it should be broadcastable
+        to the shape of d
+    
+    Returns
+    -------
+    : float or ndarray
+        the projected euclidean distances
+    """
+    return 2 * r * numpy.sin( 0.5 * d )
+
+def random_projection ( RA_lim, Dec_lim, size = 1, rng = None ) :
+    """Produce random equatorial coordinates, projected in the unit-sphere
+        
+    Parameters
+    ----------
+    RA_lim : tuple
+    Dec_lim : tuple
+    size : int
+    rng : random number generator or int
+        (Optional, default = None) a random number generator with a
+        ``uniform`` function.
+        
+    Returns
+    -------
+    RA : float or ndarray
+        random values of Right-Ascension (in radians). 
+        if size=1 this will be a float
+    Dec : float or ndarray
+        random values of Declination (in radians). 
+        if size=1 this will be a float
+    """
+    
+    RA_lim = numpy.asarray(RA_lim)
+    Dec_lim = numpy.asarray(Dec_lim)
+    if rng is None :
+        rng = numpy.random.default_rng()
+    if isinstance(rng, int) :
+        rng = numpy.random.default_rng(seed=rng)
+        
+    zlim = numpy.sin( Dec_lim )
+    z = rng.uniform( *zlim, size = size )
+    Dec = numpy.arcsin( z )
+    RA = rng.uniform( *RA_lim, size = size )
+    
+    return RA, Dec
+
 ##############################################################################
