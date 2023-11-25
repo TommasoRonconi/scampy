@@ -11,6 +11,7 @@ def main () :
 
     extra_OMP_link_args = ['-lomp']
     if sys.platform == 'darwin' :
+        print( '------------------> Running on MacOS' )
         extra_OMP_link_args = [ '-Xpreprocessor', '-fopenmp' ] + extra_OMP_link_args
 
     ####################################################################################
