@@ -36,6 +36,7 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Install library
       run: |
-        CXX=g++ CC=g++ python setup.py sdist bdist_wheel
+        CXX=g++ CC=g++ python setup.py sdist
+        CXX=g++ CC=g++ python setup.py bdist_wheel
         pip install dist/scampy2-0.0.1.tar.gz
         # CXX=g++ CC=g++ python setup.py install
