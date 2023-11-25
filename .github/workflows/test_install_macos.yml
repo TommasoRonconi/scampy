@@ -27,7 +27,7 @@ jobs:
     - name: Install dependencies
       run: |
         brew reinstall llvm
-	export LDFLAGS="${LDFLAGS} -L$HOMEBREW_PREFIX/opt/llvm/lib/c++ -Wl,-rpath,$HOMEBREW_PREFIX/opt/llvm/lib/c++"
+        export LDFLAGS="${LDFLAGS} -L$HOMEBREW_PREFIX/opt/llvm/lib/c++ -Wl,-rpath,$HOMEBREW_PREFIX/opt/llvm/lib/c++"
         python -m pip install --upgrade pip
         python -m pip install pybind11
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
