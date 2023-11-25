@@ -22,8 +22,9 @@ jobs:
     - uses: actions/checkout@v3
     - name: Install LLVM
       run: |
-        brew install llvm libomp
-        export LDFLAGS="${LDFLAGS} -L$HOMEBREW_PREFIX/opt/llvm/lib/c++ -Wl,-rpath,$HOMEBREW_PREFIX/opt/llvm/lib/c++"
+        brew install gcc
+        # brew install llvm libomp
+        # export LDFLAGS="${LDFLAGS} -L$HOMEBREW_PREFIX/opt/llvm/lib/c++ -Wl,-rpath,$HOMEBREW_PREFIX/opt/llvm/lib/c++"
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
       with:
