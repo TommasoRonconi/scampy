@@ -1,6 +1,6 @@
 ########################################################################################
 
-import os
+import os, sys
 from glob import glob
 from setuptools import setup
 from pybind11.setup_helpers import Pybind11Extension
@@ -8,6 +8,10 @@ from pybind11.setup_helpers import Pybind11Extension
 ########################################################################################
 
 def main () :
+
+    extra_OMP_link_args = ['-lomp']
+    if sys.platform == 'darwin' :
+        extra_OMP_link_args = [ '-Xpreprocessor', '-fopenmp' ] + extra_OMP_link_args
 
     ####################################################################################
     # Interpolation extension, currently providing the linear interpolator
@@ -48,7 +52,7 @@ def main () :
         include_dirs = sorted( [ os.path.join( 'c++', 'utilities', 'include' ) ] ),
         libraries = [ "m", "gomp" ],
         extra_compile_args=['-std=c++17'], # , '-fopenmp'],
-        extra_link_args=['-lomp'],
+        extra_link_args=extra_OMP_link_args,
     )
 
     ####################################################################################
