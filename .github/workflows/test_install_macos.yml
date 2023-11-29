@@ -20,26 +20,19 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Install Xcode Command Line Tools
-      run: sudo xcode-select --install || true
-    - name: Install LLVM
-      run: |
-        brew install gcc
-        # brew install llvm libomp
-        # export LDFLAGS="${LDFLAGS} -L$HOMEBREW_PREFIX/opt/llvm/lib/c++ -Wl,-rpath,$HOMEBREW_PREFIX/opt/llvm/lib/c++"
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        python -m pip install wheel
-        python -m pip install --upgrade pip
+        python -m pip install gcc7
         python -m pip install pybind11
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Install library
       run: |
-        CXX=g++ CC=g++ python setup.py sdist
-        CXX=g++ CC=g++ python setup.py bdist_wheel
-        pip install dist/scampy2-0.0.1.tar.gz
+        pip install .
+        #CXX=g++ CC=g++ python setup.py sdist
+        #CXX=g++ CC=g++ python setup.py bdist_wheel
+        #pip install dist/scampy2-0.0.1.tar.gz
         # CXX=g++ CC=g++ python setup.py install
