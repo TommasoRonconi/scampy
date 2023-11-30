@@ -1,7 +1,9 @@
 name: scampy
 
 channels:
+  - anaconda
   - conda-forge
+  - conda-forge/label/cf201901
   - defaults
 
 dependencies:
