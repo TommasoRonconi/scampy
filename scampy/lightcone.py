@@ -571,12 +571,144 @@ def box_to_cone ( box, Lbox, cosmo,
 
     # Build cone
     cone = numpy.array( [
-        dd[view], ra[view], dec[view]
+        dd, ra, dec
     ] ).T
 
     # Return
     if return_indices :
         return cone, view
-    return cone
+    return cone[view]
+
+# def box_to_cone ( box, Lbox, cosmo,
+#                   central_redshift,
+#                   redshift_limits,
+#                   observer = (0.,0.,0.),
+#                   funcs = None, FoV = None,
+#                   return_indices = False ) :
+#     """Converts the coordinates of particles in a comoving cubic box 
+#     to coordinates in the lightcone.
+    
+#     Paramters
+#     ---------
+#     box : 3d-array
+#         Input comoving coordinates of particles in the box.
+#         Expects an array with with shape (Nparticles, 3).
+#         It will assume the coordinates are expressed in units 
+#         of [Mpc/h] and belong to the interval (0,Lbox)
+#     Lbox : scalar
+#         box side lenght in [Mpc/h]
+#     cosmo : scampy.cosmology.model
+#         Instance of an object of type scampy.cosmology.model
+#     central_redshift : scalar
+#         Redshift associated to the centre of the box
+#     redshift_limits : iterable
+#         an iterable with two values for the minimum and maximum redshift to include in
+#         the light-cone
+#     funcs : tuple
+#         (Optional, default = None) tuple (function,inverse) computing comoving distance
+#         from redshift and vice-versa. The functions should be vectorizable
+#         and returning scalar of numpy.ndarray. If the tuple is not provided
+#         attribute ```cosmo``` will be used to allocate a couple 
+#         of interpolators serving this purpose.
+#     FoV : scalar
+#         (Optional, default = None) viewing angle in radians.
+#         If None is passed (default behaviour), the largest possible viewing angle
+#         associated with the provided Lbox and central redshift is assumed.
+#     return_indices : bool
+#         (Optional, default = False) when True, also return the mask that, applied to
+#         the input ``box`` argument, selects only coordinates within the light-cone
+    
+#     Returns
+#     -------
+#     cone_coords : 3d-array
+#         Spherical coordinates of the generated lightcone with shape (Nview, 3),
+#         where Nview <= Nparticles is the number of particles within the field of view.
+#         The light-cone provides, for each particle within the field of view, 
+#         a (radians, radians, redshift) array.
+#     cone_indices : bool 1d-array
+#         the boolean mask that, applied to the input ``box`` argument, selects only
+#         coordinates within the light cone. Only provided if ``return_indices`` is True.
+
+#     Warning
+#     -------
+#     This will just compute the radial coordinates of objects WITHOUT the effect of
+#     gravitational lensing, no light rays will be computed. 
+#     """
+
+#     # Preparatory steps, checking inputs and generating grids if necessary
+#     if not isinstance( cosmo, c.model ) :
+#         raise TypeError( "Attribute cosmo should be an instance of class scampy.cosmology.model" )
+#     if funcs is None :
+#         zz = numpy.arange(0.0, 20.0, 1.e-2)
+#         dC = cosmo.dC(zz)
+#         z2d = lint( zz, dC )
+#         d2z = lint( dC, zz )
+#     else :
+#         try :
+#             z2d, d2z = funcs
+#         except :
+#             raise
+#         if not hasattr( z2d, "__call__" ) :
+#             raise TypeError( "First element of argument funcs should be callable" )
+#         if not hasattr( d2z, "__call__" ) :
+#             raise TypeError( "Second element of argument funcs should be callable" )
+#     # unpack the observer's coordinates
+#     try :
+#         x0, y0, z0 = observer
+#     except Exception :
+#         raise
+
+#     # Find comoving distance of box centre
+#     dcen = cosmo.dC( central_redshift )
+
+#     # Centre the box 
+#     x, y, z = centre_box( box, Lbox ).T
+
+#     # Put box at the required distance
+#     z += dcen
+
+#     # Compute the maximum FoV allowed by the box
+#     # and check if the FoV required (if provided)
+#     # is small enough
+#     zmax = cosmo.dC( redshift_limits[-1] )
+#     if not zmax <= dcen + 0.5 * Lbox :
+#         raise RuntimeError(
+#             f"required upper redshift limit is higher than maximum redshift allowed (zmax={zmax:.4f})"
+#         )
+#     dmax = zmax - z0
+#     FoVmax = max_fov( dmax, Lbox, Lbox )
+#     if FoV is None :
+#         FoV = FoVmax
+#     else :
+#         if FoV > FoVmax :
+#             raise RuntimeError(
+#                 f"Required FoV ({FoV:.5f} rad) is larger than "
+#                 f"maximum allowed by box ({FoVmax:.5f} rad)"
+#             )
+
+#     # Check that the redshift limits required are contained within the box
+#     dmin = cosmo.dC( redshift_limits[0] )
+#     zmin = dmin * numpy.cos( FoV * 0.5 )
+#     if zmin <= dcen - 0.5 * Lbox :
+#         raise RuntimeError(
+#             f"the box lower limit ({dcen - 0.5 * Lbox:.5f} cMpc/h) is closer "
+#             f"than the minimum distance required ({zmin:.5f} cMpc/h)."
+#         )
+
+#     # Compute equatorial coordinates coordinates
+#     dd, ra, dec = cartesian_to_equatorial( (x, y, z), centre = observer )
+
+#     # Compute mask for objects within cone 
+#     view = ( dmin < dd ) & ( dd <= dmax ) & ( 0.5 * numpy.pi - dec <= 0.5 * FoV )
+
+#     # Build cone
+#     cone = numpy.array( [
+#         dd[view], ra[view], dec[view]
+#     ] ).T
+
+#     # Return
+#     if return_indices :
+#         return cone, view
+#     return cone
 
 #########################################################################################
