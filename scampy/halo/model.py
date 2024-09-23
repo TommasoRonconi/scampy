@@ -5,6 +5,7 @@
 
 # External imports
 import numpy
+from scipy.special import erf
 
 # Internal imports
 from scampy.power_spectrum import power_spectrum
@@ -37,7 +38,9 @@ class halo_model () :
         self.Mh_min, self.Mh_max = Mlim
         self.k_min, self.k_max = klim
         self.Mh_grid = numpy.logspace( *Mlim, thin )
-        self.kh_grid = numpy.logspace( *klim, thin ) 
+        self.kh_grid = numpy.logspace( *klim, thin )
+        self._lkhdamp = numpy.log10( self.pk.kh[ self.pk.pk0.argmax() ] )
+        self._sigmalk = 0.25
         
     def ng ( self, hod, zz = 0.0 ) :
         zz = numpy.asarray( zz )
@@ -84,19 +87,24 @@ class halo_model () :
     
     ####################################################################################
     # Power spectrum
+
+    def _damp_1halo ( self, kk ) :
+        return 0.5 * ( 1. + erf( ( numpy.log10(kk) - self._lkhdamp ) / self._sigmalk ) )
     
     def Pk_1halo ( self, kk, hod, zz = 0.0, fact = -1.0 ) :
         zz = numpy.asarray( zz )
         mgrid = self.Mh_grid
         intshape = [1,0]
+        damp = self._damp_1halo(kk)
         if zz.size > 1 :
             mgrid = mgrid[:, numpy.newaxis]
+            damp  = damp[:, numpy.newaxis]
             intshape += [2]
         if numpy.all( fact > 0.0 ) :
             pass
         else :
             fact = 1. / self.ng( hod, zz )**2
-        return fact * trap_int(
+        return fact * damp * trap_int(
             mgrid[:,numpy.newaxis],
             numpy.transpose(
                 ( ( 2 * hod.Pcen( mgrid ) + 
@@ -333,7 +341,10 @@ class halo_model () :
                 linear_interpolation(
                     numpy.log( th ),
                     numpy.log( _t[vr] ),
-                    numpy.log( _w[vr] ) ) 
+                    numpy.log( _w[vr],
+                               out = -30 * numpy.ones_like(_w[vr]),
+                               where = (_w[vr]>0.0) )
+                ) 
             ) 
             for _t, _w in zip( thint.T, wtint.T ) ] 
         ).T
