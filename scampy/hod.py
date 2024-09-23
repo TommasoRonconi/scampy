@@ -2,13 +2,16 @@ import numpy
 from scipy.special import erf
 
 from scampy.catalogue import catalogue
+from scampy.utilities.functions import repeated_mask
 
-def get_hosts ( cat, Pcen, Psat, 
+def get_hosts ( cat, Pcen, Psat,
+                method = 'binomial',
                 kw_pcen = {}, 
                 kw_psat = {}, 
                 rng = None, kw_rng = {} ) :
     """
     """
+    from scampy.catalogue import catalogue
 
     # Check input validity
     if not isinstance( cat, catalogue ) :
@@ -16,44 +19,106 @@ def get_hosts ( cat, Pcen, Psat,
     
     # Build random number generator
     if rng is None :
-        rng = np.random.default_rng(**kw_rng)
+        rng = numpy.random.default_rng(**kw_rng)
         
     # Central probability
-    pcg = np.ones(self.haloes.size)
+    pcg = numpy.ones(cat.haloes.size)
     if hasattr(Pcen, '__call__') :
-        pcg = Pcen( self.haloes.Mhalo, **kw_pcen )
+        pcg = Pcen( cat.haloes.Mhalo, **kw_pcen )
     elif hasattr( Pcen, '__len__' ) :
-        if len(Pcen) != self.haloes.size :
+        if len(Pcen) != cat.haloes.size :
             raise ValueError( 'len(Pcen) != haloes.size' )
         pcg = Pcen
     else :
         raise ValueError( 'wrong value passed to argument Pcen' )
+        
+    # Find centrals mask
+    cen_idx = cat.haloes.centrals()
+    cen_gxy = numpy.zeros(cat.subhaloes.size, dtype=bool)
+    cen_gxy[cen_idx] = rng.binomial(1, pcg[cat.subhaloes.Parent[cen_idx]])
     
     # Satellites probability
-    psg = np.ones(self.haloes.size)
+    psg = numpy.ones(cat.haloes.size)
+    Nsh = cat.Nsat()
+    Nsg = numpy.array(Nsh) # copy the array
     if hasattr(Psat, '__call__') :
-        Nsg = Psat( self.haloes.Mhalo, **kw_psat, **kw_pcen )
-        Nsh = self.Nsat()
+        Nsg = Psat( cat.haloes.Mhalo, **kw_psat, **kw_pcen )
+        if method == 'rankorder' :
+            Nsg = rng.poisson(Nsg)
         wws = ( 0.0 < Nsh ) & ( Nsh > Nsg )
-        psg[wws] = Nsg[wws] / Nsh[wws]
+        if method == 'binomial' :
+            psg[wws] = Nsg[wws] / Nsh[wws]
     elif hasattr( Psat, '__len__' ) :
-        if len(Psat) != self.haloes.size :
+        if len(Psat) != cat.haloes.size :
             raise ValueError( 'len(Psat) != haloes.size' )
-        psg = Psat
+        if method == 'binomial' :
+            psg = Psat
+        if method == 'rankorder' :
+            Nsg = rng.poisson(Psat*Nsh)
     else :
         raise ValueError( 'wrong value passed to argument Psat' )
         
-    # Find centrals mask
-    cen_idx = self.haloes.centrals()
-    cen_gxy = np.zeros(self.subhaloes.size, dtype=bool)
-    cen_gxy[cen_idx] = rng.binomial(1, pcg[self.subhaloes.Parent[cen_idx]])
-        
     # Find satellites mask
-    sat_idx = self.haloes.satellites()
-    sat_gxy = np.zeros(self.subhaloes.size, dtype=bool)
-    sat_gxy[sat_idx] = rng.binomial(1, psg[self.subhaloes.Parent[sat_idx]])
+    sat_idx = cat.haloes.satellites()
+    sat_gxy = numpy.zeros(cat.subhaloes.size, dtype=bool)
+    if method == 'binomial' :
+        sat_gxy[sat_idx] = rng.binomial(1, psg[cat.subhaloes.Parent[sat_idx]])
+    if method == 'rankorder' :
+        sat_gxy[sat_idx] = repeated_mask(Nsg.astype(int), (Nsh-Nsg).astype(int))
     
     return cen_gxy, sat_gxy
+
+# def get_hosts ( cat, Pcen, Psat, 
+#                 kw_pcen = {}, 
+#                 kw_psat = {}, 
+#                 rng = None, kw_rng = {} ) :
+#     """
+#     """
+
+#     # Check input validity
+#     if not isinstance( cat, catalogue ) :
+#         raise ValueError( 'Argument cat should be an instance of type scampy.catalogue' )
+    
+#     # Build random number generator
+#     if rng is None :
+#         rng = np.random.default_rng(**kw_rng)
+        
+#     # Central probability
+#     pcg = np.ones(self.haloes.size)
+#     if hasattr(Pcen, '__call__') :
+#         pcg = Pcen( self.haloes.Mhalo, **kw_pcen )
+#     elif hasattr( Pcen, '__len__' ) :
+#         if len(Pcen) != self.haloes.size :
+#             raise ValueError( 'len(Pcen) != haloes.size' )
+#         pcg = Pcen
+#     else :
+#         raise ValueError( 'wrong value passed to argument Pcen' )
+    
+#     # Satellites probability
+#     psg = np.ones(self.haloes.size)
+#     if hasattr(Psat, '__call__') :
+#         Nsg = Psat( self.haloes.Mhalo, **kw_psat, **kw_pcen )
+#         Nsh = self.Nsat()
+#         wws = ( 0.0 < Nsh ) & ( Nsh > Nsg )
+#         psg[wws] = Nsg[wws] / Nsh[wws]
+#     elif hasattr( Psat, '__len__' ) :
+#         if len(Psat) != self.haloes.size :
+#             raise ValueError( 'len(Psat) != haloes.size' )
+#         psg = Psat
+#     else :
+#         raise ValueError( 'wrong value passed to argument Psat' )
+        
+#     # Find centrals mask
+#     cen_idx = self.haloes.centrals()
+#     cen_gxy = np.zeros(self.subhaloes.size, dtype=bool)
+#     cen_gxy[cen_idx] = rng.binomial(1, pcg[self.subhaloes.Parent[cen_idx]])
+        
+#     # Find satellites mask
+#     sat_idx = self.haloes.satellites()
+#     sat_gxy = np.zeros(self.subhaloes.size, dtype=bool)
+#     sat_gxy[sat_idx] = rng.binomial(1, psg[self.subhaloes.Parent[sat_idx]])
+    
+#     return cen_gxy, sat_gxy
 
 
 class HOD () :
@@ -154,14 +219,23 @@ class HOD () :
         ret[ww] = self.Pcen( Mh[ww] ) * psat[ww]**self.alpha 
         return ret
 
-    def get_hosts ( self, cat, rng = None, kw_rng = {}, **kwargs ) :
+    def get_hosts ( self, cat, method = 'binomial', rng = None, kw_rng = {}, **kwargs ) :
         """Applies the HOD parameterisation to find hosts among the
         subhaloes of a catalogues.
         
         Patameters
         ----------
         cat : scampy.catalogue.catalogue instance
-        rng : 
+        method : str
+           method for galaxy assignment:
+           'binomial' = centrals are extracted from a binomial 
+                        distribution and satellites from a Poisson distribution
+           'rankorder' = centrals are extracted from a binomial distribution
+                         while satellites are obtained by keeping the first Nsat
+                         objects in the list, it assumes the satellites array is
+                         ordered based on some property
+                         (assumes the input array of satellites is mass-ordered)
+        rng :  
         kw_rng : dict
         
         Keyword arguments
@@ -192,25 +266,45 @@ class HOD () :
         
         # Central probability
         pcg = self.Pcen( cat.haloes.Mhalo )
-    
-        # Satellites probability
-        psg = numpy.ones(cat.haloes.size)
-        Nsg = self.Psat( cat.haloes.Mhalo )
-        Nsh = cat.Nsat()
-        wws = ( 0.0 < Nsh ) & ( Nsh >= Nsg )
-        psg[wws] = Nsg[wws] / Nsh[wws]
         
         # Find centrals mask
         cen_idx = cat.haloes.centrals()
         cen_gxy = numpy.zeros(cat.subhaloes.size, dtype=bool)
         cen_gxy[cen_idx] = rng.binomial(1, pcg[cat.subhaloes.Parent[cen_idx]])
-        
+
+        # Satellites probability
+        psg = numpy.ones(cat.haloes.size)
+        Nsh = cat.Nsat()
+        Nsg = self.Psat( cat.haloes.Mhalo )
+        if method == 'binomial' :
+            wws = ( 0.0 < Nsh ) & ( Nsh >= Nsg )
+            psg[wws] = Nsg[wws] / Nsh[wws]
+        if method == 'rankorder' :
+            Nsg = rng.poisson(Nsg)
+
         # Find satellites mask
         sat_idx = cat.haloes.satellites()
         sat_gxy = numpy.zeros(cat.subhaloes.size, dtype=bool)
-        sat_gxy[sat_idx] = rng.binomial(1, psg[cat.subhaloes.Parent[sat_idx]])
-    
+        if method == 'binomial' :
+            sat_gxy[sat_idx] = rng.binomial(1, psg[cat.subhaloes.Parent[sat_idx]])
+        if method == 'rankorder' :
+            sat_gxy[sat_idx] = repeated_mask(Nsg.astype(int), (Nsh-Nsg).astype(int))
+
         return cen_gxy, sat_gxy
+    
+        # # Satellites probability
+        # psg = numpy.ones(cat.haloes.size)
+        # Nsg = self.Psat( cat.haloes.Mhalo )
+        # Nsh = cat.Nsat()
+        # wws = ( 0.0 < Nsh ) & ( Nsh >= Nsg )
+        # psg[wws] = Nsg[wws] / Nsh[wws]
+        
+        # # Find satellites mask
+        # sat_idx = cat.haloes.satellites()
+        # sat_gxy = numpy.zeros(cat.subhaloes.size, dtype=bool)
+        # sat_gxy[sat_idx] = rng.binomial(1, psg[cat.subhaloes.Parent[sat_idx]])
+    
+        # return cen_gxy, sat_gxy
 
 
 class HOD_unconditioned_sat () :
@@ -311,13 +405,22 @@ class HOD_unconditioned_sat () :
         ret[ww] = psat[ww]**self.alpha 
         return ret
 
-    def get_hosts ( self, cat, rng = None, kw_rng = {}, **kwargs ) :
+    def get_hosts ( self, cat, method = 'binomial', rng = None, kw_rng = {}, **kwargs ) :
         """Applies the HOD parameterisation to find hosts among the
         subhaloes of a catalogues.
         
         Patameters
         ----------
         cat : scampy.catalogue.catalogue instance
+        method : str
+           method for galaxy assignment:
+           'binomial' = centrals are extracted from a binomial 
+                        distribution and satellites from a Poisson distribution
+           'rankorder' = centrals are extracted from a binomial distribution
+                         while satellites are obtained by keeping the first Nsat
+                         objects in the list, it assumes the satellites array is
+                         ordered based on some property
+                         (assumes the input array of satellites is mass-ordered)
         rng : 
         kw_rng : dict
         
@@ -349,25 +452,45 @@ class HOD_unconditioned_sat () :
         
         # Central probability
         pcg = self.Pcen( cat.haloes.Mhalo )
-    
-        # Satellites probability
-        psg = numpy.ones(cat.haloes.size)
-        Nsg = self.Psat( cat.haloes.Mhalo )
-        Nsh = cat.Nsat()
-        wws = ( 0.0 < Nsh ) & ( Nsh >= Nsg )
-        psg[wws] = Nsg[wws] / Nsh[wws]
         
         # Find centrals mask
         cen_idx = cat.haloes.centrals()
         cen_gxy = numpy.zeros(cat.subhaloes.size, dtype=bool)
         cen_gxy[cen_idx] = rng.binomial(1, pcg[cat.subhaloes.Parent[cen_idx]])
-        
+
+        # Satellites probability
+        psg = numpy.ones(cat.haloes.size)
+        Nsh = cat.Nsat()
+        Nsg = self.Psat( cat.haloes.Mhalo )
+        if method == 'binomial' :
+            wws = ( 0.0 < Nsh ) & ( Nsh >= Nsg )
+            psg[wws] = Nsg[wws] / Nsh[wws]
+        if method == 'rankorder' :
+            Nsg = rng.poisson(Nsg)
+
         # Find satellites mask
         sat_idx = cat.haloes.satellites()
         sat_gxy = numpy.zeros(cat.subhaloes.size, dtype=bool)
-        sat_gxy[sat_idx] = rng.binomial(1, psg[cat.subhaloes.Parent[sat_idx]])
-    
+        if method == 'binomial' :
+            sat_gxy[sat_idx] = rng.binomial(1, psg[cat.subhaloes.Parent[sat_idx]])
+        if method == 'rankorder' :
+            sat_gxy[sat_idx] = repeated_mask(Nsg.astype(int), (Nsh-Nsg).astype(int))
+
         return cen_gxy, sat_gxy
+    
+        # # Satellites probability
+        # psg = numpy.ones(cat.haloes.size)
+        # Nsh = cat.Nsat()
+        # Nsg = self.Psat( cat.haloes.Mhalo )
+        # wws = ( 0.0 < Nsh ) & ( Nsh >= Nsg )
+        # psg[wws] = Nsg[wws] / Nsh[wws]
+        
+        # # Find satellites mask
+        # sat_idx = cat.haloes.satellites()
+        # sat_gxy = numpy.zeros(cat.subhaloes.size, dtype=bool)
+        # sat_gxy[sat_idx] = rng.binomial(1, psg[cat.subhaloes.Parent[sat_idx]])
+    
+        # return cen_gxy, sat_gxy
 
 
 class HOD_zdep () :

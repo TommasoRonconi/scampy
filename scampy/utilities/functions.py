@@ -240,3 +240,41 @@ def linear_interpolation ( x, xgrid, ygrid ) :
     )
 
 ############################################################################################
+
+def repeated_mask ( trues, falses ) :
+    """Generate a boolean mask with repetitions
+    (equivalent to numpy.repeat with alternating sequences of booleans)
+    
+    Parameters
+    ----------
+    trues : ndarray of int
+        number of true values
+    false : ndarray of int
+        number of false values
+    
+    Returns
+    -------
+    mask : ndarray of bool
+    
+    Examples
+    --------
+    >>> from scampy.utilities.functions import repeated_mask
+    >>> repeated_mask( [1,2], [2,3] )
+    [ True False False True True False False False ]
+    """
+
+    trues  = numpy.array(trues)
+    falses = numpy.array(falses)
+    if trues.shape != falses.shape :
+        raise RuntimeError( 'the two input arrays should have the same shape' )
+
+    output = numpy.empty( numpy.sum(trues)+numpy.sum(falses), dtype = bool )
+    index = 0
+    for t, f in zip( trues, falses ) :
+        output[index:index+t] = True
+        index += t
+        output[index:index+f] = False
+        index += f
+    return output
+
+############################################################################################
