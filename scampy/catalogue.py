@@ -47,10 +47,10 @@ class haloCat ( kernelCat ) :
         ---------
         satellites : same for satellite sub-haloes
         """
-
+        
         return self['firstSub'][self['numSubs'] > 0]
-    
 
+    
     def satellites ( self ) :
         """ Return list of indices in the sub-halo table locating the satellite
         sub-haloes of each halo. (takes no arguments)
