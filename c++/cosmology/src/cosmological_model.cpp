@@ -100,9 +100,9 @@ double scam::cosmo_model::Ea2 ( const double zz ) {
 double scam::cosmo_model::Ez2 ( const double zz ) {
 
   const double red = 1 + zz;
-  double sum =				  \
-    ( ( param["Om_r"] + param["Om_n"] ) * red \
-      * red + param["Om_M"] )		  \
+  double sum =				      \
+    ( ( param["Om_r"] + param["Om_n"] )	      \
+      * red + param["Om_M"] )		      \
     * red + param["Om_K"];
 
   return red * red * sum + param["Om_L"];
