@@ -99,3 +99,61 @@ def Behroozi13 ( mm, zz, pk, comoving = True ) :
     ) * Tinker08( mm, zz, pk, comoving )
 
 #############################################################################################
+
+def Bhattacharya11 ( mm, zz, pk, comoving = True ) :
+    from scipy.special import gamma as Gamma
+        
+    mm = numpy.asarray(mm)
+    if mm.ndim == 0 :
+        mm = mm[None]
+    zz = numpy.asarray(zz)
+    if zz.ndim == 0 :
+        zz = zz[None]
+    h_1 = 1.0
+    if not comoving :
+        h_1 /= self.h0
+    
+    s20 = pk.sigma2M( mm, 0.0 )
+    nu = pk.cosmo.deltac( 0.0 ) / pk.D( zz ) / numpy.sqrt( s20 )[:,numpy.newaxis]
+    #gfact = pk.D( zz )
+    rho0  = pk.cosmo.param['Om_M'] * pk.cosmo.critical_density_comoving( 0.0 )
+
+    rr = (0.75 * mm / ( rho0 * numpy.pi ))**(1/3)
+    ds20dr = pk.dsigma2RdR( rr, 0.0 )
+    ds20dm = ( rr / ( 3. * mm ) ) * ds20dr
+    dlns0dlnr = 0.5 * ds20dr * rr / s20 #numpy.sqrt( s20 ) / rr
+
+    # Euclid SUBFIND fit from Castro+23 Tab.4
+    a1 = 0.7953; a2 = 0.1667; az = -0.0642;
+    p1 = -0.6265; p2 = -0.4907;
+    q1 = 0.3215; q2 = -0.2993; qz = 0.0330;
+    
+    aR = a1 + a2 * ( dlns0dlnr + 0.6125 )**2 # Eq. (12)
+    aR = aR[:, numpy.newaxis]
+    qR = q1 + q2 * ( dlns0dlnr + 0.5 )       # Eq. (13)
+    qR = qR[:, numpy.newaxis]
+    a = aR * pk.cosmo.OmegaM( zz )**az       # Eq. (14)
+    p = p1 + p2 * ( dlns0dlnr + 0.5 )        # Eq. (15)
+    p = p[:,numpy.newaxis]
+    q = qR * pk.cosmo.OmegaM( zz )**qz       # Eq. (16)
+
+    # Eq. (4)
+    Apq = 1. / (
+        2**(-0.5-p+0.5*q) *
+        ( 2**p * Gamma( 0.5*q ) + Gamma( -p + 0.5*q ) ) /
+        numpy.sqrt( numpy.pi )
+    )
+    # Eq. (3)
+    nufnu = (
+        Apq * numpy.sqrt( 2 * a * nu * nu / numpy.pi ) *
+        numpy.exp( - 0.5 * a * nu * nu ) *
+        ( 1 + 1 / ( a * nu * nu )**p ) *
+        ( nu * numpy.sqrt( a ) )**( q - 1 )
+    )
+    
+    # Eq. (1)
+    return numpy.squeeze( 
+        0.5 * rho0 * numpy.abs( ds20dm )[:,numpy.newaxis] * 
+        nufnu / s20[:,numpy.newaxis] / mm[:,numpy.newaxis] )
+
+#############################################################################################
