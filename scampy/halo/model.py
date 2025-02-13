@@ -9,8 +9,8 @@ from scipy.special import erf
 
 # Internal imports
 from scampy.power_spectrum import power_spectrum
-from scampy.halo.mass_function import Tinker08
-from scampy.halo.bias import Tinker10
+from scampy.halo import mass_function
+from scampy.halo import bias
 from scampy.halo.density_profile import density_profile_FT
 from scampy.hod import HOD
 from scampy.utilities.functions import trap_int, linear_interpolation
@@ -23,8 +23,8 @@ class halo_model () :
     
     def __init__ ( self, pk, comoving = True, Mlim = ( 5, 17 ), 
                    klim = ( -3, +3 ), thin = 256,
-                   # these strings are just placeholders for now
                    hmf = 'Tinker08', hbias = 'Tinker10', 
+                   # these strings are just placeholders for now
                    density = 'NFW' 
                  ) :
         if not isinstance( pk, power_spectrum ) :
@@ -32,8 +32,8 @@ class halo_model () :
                 'argument pk should be an instance of type scampy.power_spectrum' 
             )
         self.pk = pk
-        self.hmf = Tinker08
-        self.hbs = Tinker10
+        self.hmf = getattr( mass_function, hmf )
+        self.hbs = getattr( bias, hbias )
         self.hdp = density_profile_FT
         self.Mh_min, self.Mh_max = Mlim
         self.k_min, self.k_max = klim
