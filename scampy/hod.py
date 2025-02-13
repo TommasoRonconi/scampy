@@ -219,25 +219,26 @@ class HOD () :
         ret[ww] = self.Pcen( Mh[ww] ) * psat[ww]**self.alpha 
         return ret
 
-    def get_hosts ( self, cat, method = 'binomial', rng = None, kw_rng = {}, **kwargs ) :
+    def get_hosts ( self, cat, smask = None, method = 'binomial', rng = None, kw_rng = {}, **kwargs ) :
         """Applies the HOD parameterisation to find hosts among the
         subhaloes of a catalogues.
-        
+
         Patameters
         ----------
         cat : scampy.catalogue.catalogue instance
+        smask :
         method : str
-           method for galaxy assignment:
-           'binomial' = centrals are extracted from a binomial 
-                        distribution and satellites from a Poisson distribution
-           'rankorder' = centrals are extracted from a binomial distribution
-                         while satellites are obtained by keeping the first Nsat
-                         objects in the list, it assumes the satellites array is
-                         ordered based on some property
-                         (assumes the input array of satellites is mass-ordered)
+        method for galaxy assignment:
+        'binomial' = centrals are extracted from a binomial 
+                    distribution and satellites from a Poisson distribution
+        'rankorder' = centrals are extracted from a binomial distribution
+                     while satellites are obtained by keeping the first Nsat
+                     objects in the list, it assumes the satellites array is
+                     ordered based on some property
+                     (assumes the input array of satellites is mass-ordered)
         rng :  
         kw_rng : dict
-        
+
         Keyword arguments
         -----------------
         Mmin : float
@@ -245,12 +246,14 @@ class HOD () :
         M0 : float
         M1 : float
         alpha : float
-        
+
         Returns
         -------
         cen_gxy : int 1d-array
         sat_gxy : int 1d-array
         """
+        from scampy.catalogue import catalogue
+        from scampy.utilities.functions import repeated_mask
 
         # Check input validity
         if not isinstance( cat, catalogue ) :
@@ -263,12 +266,24 @@ class HOD () :
         # Build random number generator
         if rng is None :
             rng = numpy.random.default_rng(**kw_rng)
+
+        # Sub-halo mask
+        if smask is not None and smask.size != cat.subhaloes.size :
+            raise RuntimeError('subhalo mask should have the same size '
+                               'of the subhalo catalogue')
+        if smask is None :
+            smask = numpy.ones(cat.subhaloes.size, dtype = bool)
+        
+        # divide mask between centrals and satellites 
+        cen_mask = numpy.zeros_like(smask)
+        cen_mask[cat.centrals()] = True
+        sat_mask = (~cen_mask)
         
         # Central probability
         pcg = self.Pcen( cat.haloes.Mhalo )
         
         # Find centrals mask
-        cen_idx = cat.haloes.centrals()
+        cen_idx = cat.centrals(smask=smask)
         cen_gxy = numpy.zeros(cat.subhaloes.size, dtype=bool)
         cen_gxy[cen_idx] = rng.binomial(1, pcg[cat.subhaloes.Parent[cen_idx]])
 
@@ -283,30 +298,20 @@ class HOD () :
             Nsg = rng.poisson(Nsg)
 
         # Find satellites mask
-        sat_idx = cat.haloes.satellites()
+        sat_idx = cat.satellites()
         sat_gxy = numpy.zeros(cat.subhaloes.size, dtype=bool)
         if method == 'binomial' :
             sat_gxy[sat_idx] = rng.binomial(1, psg[cat.subhaloes.Parent[sat_idx]])
         if method == 'rankorder' :
-            sat_gxy[sat_idx] = repeated_mask(Nsg.astype(int), (Nsh-Nsg).astype(int))
+            Nsg_mask = numpy.zeros_like(Nsg)
+            if any((~smask)&sat_mask) :
+                idmask, countsmask = numpy.unique(cat.subhaloes.Parent[(~smask)&sat_mask], return_counts=True)
+                Nsg_mask[idmask] += countsmask
+            sat_gxy[sat_idx] = repeated_mask((Nsg+Nsg_mask).astype(int), (Nsh-Nsg-Nsg_mask).astype(int))
+            sat_gxy &= smask
 
         return cen_gxy, sat_gxy
-    
-        # # Satellites probability
-        # psg = numpy.ones(cat.haloes.size)
-        # Nsg = self.Psat( cat.haloes.Mhalo )
-        # Nsh = cat.Nsat()
-        # wws = ( 0.0 < Nsh ) & ( Nsh >= Nsg )
-        # psg[wws] = Nsg[wws] / Nsh[wws]
         
-        # # Find satellites mask
-        # sat_idx = cat.haloes.satellites()
-        # sat_gxy = numpy.zeros(cat.subhaloes.size, dtype=bool)
-        # sat_gxy[sat_idx] = rng.binomial(1, psg[cat.subhaloes.Parent[sat_idx]])
-    
-        # return cen_gxy, sat_gxy
-
-
 class HOD_unconditioned_sat () :
     """Halo Occupation Distribution class, given a set of parameters
     computes the average number of central and satellite galaxies hosted by 
