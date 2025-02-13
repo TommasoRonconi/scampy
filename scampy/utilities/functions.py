@@ -267,6 +267,10 @@ def repeated_mask ( trues, falses ) :
     falses = numpy.array(falses)
     if trues.shape != falses.shape :
         raise RuntimeError( 'the two input arrays should have the same shape' )
+    if numpy.any(trues<0) :
+        raise RuntimeError( 'negative values in trues array' )
+    if numpy.any(falses<0) :
+        raise RuntimeError( 'negative values in falses array' )
 
     output = numpy.empty( numpy.sum(trues)+numpy.sum(falses), dtype = bool )
     index = 0
