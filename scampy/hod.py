@@ -219,7 +219,11 @@ class HOD () :
         ret[ww] = self.Pcen( Mh[ww] ) * psat[ww]**self.alpha 
         return ret
 
-    def get_hosts ( self, cat, smask = None, method = 'binomial', rng = None, kw_rng = {}, **kwargs ) :
+    def get_hosts (
+            self, cat,
+            smask = None, method = 'binomial',
+            rng = None, kw_rng = {}, **kwargs
+    ) :
         """Applies the HOD parameterisation to find hosts among the
         subhaloes of a catalogues.
 
@@ -289,7 +293,7 @@ class HOD () :
 
         # Satellites probability
         psg = numpy.ones(cat.haloes.size)
-        Nsh = cat.Nsat()
+        Nsh = cat.Nsat().astype(int)
         Nsg = self.Psat( cat.haloes.Mhalo )
         if method == 'binomial' :
             wws = ( 0.0 < Nsh ) & ( Nsh >= Nsg )
@@ -305,9 +309,14 @@ class HOD () :
         if method == 'rankorder' :
             Nsg_mask = numpy.zeros_like(Nsg)
             if any((~smask)&sat_mask) :
-                idmask, countsmask = numpy.unique(cat.subhaloes.Parent[(~smask)&sat_mask], return_counts=True)
+                idmask, countsmask = numpy.unique(
+                    cat.subhaloes.Parent[(~smask)&sat_mask], return_counts=True
+                )
                 Nsg_mask[idmask] += countsmask
-            sat_gxy[sat_idx] = repeated_mask((Nsg+Nsg_mask).astype(int), (Nsh-Nsg-Nsg_mask).astype(int))
+            # Guarantee not more than the total available number of satellites is chosen:
+            Nsg_tot = numpy.min([Nsg+Nsg_mask, Nsh], axis=0).astype(int)
+            # Generate new mask accounting for availability of satellite hosts
+            sat_gxy[sat_idx] = repeated_mask( Nsg_tot, Nsh-Nsg_tot )
             sat_gxy &= smask
 
         return cen_gxy, sat_gxy
