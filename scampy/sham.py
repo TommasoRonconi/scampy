@@ -5,6 +5,7 @@ import numpy
 import warnings
 
 # Internal imports
+from scampy.utilities.functions import mod_erf, truncated_gaussian
 from scampy.utilities.interpolation import lin_interp as lint
 from scampy.measure.abundances import cumulative_counts, cumulative_from_differential
 
@@ -41,9 +42,9 @@ def scatter_array ( arr, method = 'normal', log = False,
         
     * method = ``'normal'``:
        scale : float or iterable
-          (Optional, default = ``1.0``) scattering magnitude (in dex). The default value is ``1.0``
+          (Optional, default = ``1.0``) scattering magnitude (in dex). The default value is ``0.0``
        loc : float or iterable
-          if not zero, adds a bias to the relation. The default value is ``0.0``will 
+          if not zero, adds a bias to the relation. The default value is ``0.0``.
 
     Returns
     -------
@@ -59,11 +60,23 @@ def scatter_array ( arr, method = 'normal', log = False,
         
     # Add scatter
     if method == 'normal' :
-        arr += rng.normal(size = arr.size, **kwargs)
+        arr *= 1.0+rng.normal(size = arr.size, **kwargs)
+        
+    if method == 'normal_decaying' :
+        scale = (1-mod_erf( arr, kwargs.get( 'factor', 1.0 ) )) * kwargs.get( 'scale', 0.0 )
+        arr *= 1.0+rng.normal(size = arr.size, scale = scale)
+        
     if method == 'uniform' :
-        pass
+        scale = kwargs.get( 'scale', 0.0 )
+        arr *= 1.0+scale*rng.uniform(low = -1., high = 1., size = arr.size)
+        
+    if method == 'uniform_decaying' :
+        scale = (1-mod_erf( arr, kwargs.get( 'factor', 1.0 ) )) * kwargs.get( 'scale', 0.0 )
+        arr *= 1.0+scale*rng.uniform(low = -1., high = 1., size = arr.size)
+        
     if method == 'rank_ordering' :
-        pass
+        from warnings import warn
+        warn('`rank_ordering` method not implemented yet, passing without adding any scatter')
 
     if log :
         return 10**arr
@@ -333,6 +346,12 @@ def match_cross ( X, Y,
     X = numpy.array( X )
     Y = numpy.array( Y )
 
+    # Add scatter to input arrays
+    if Xscatter is not None :
+        X = scatter_array( X, method = Xscatter, log = logX, rng = rng, **kw_Xscatter ) 
+    if Yscatter is not None :
+        Y = scatter_array( Y, method = Yscatter, log = logY, rng = rng, **kw_Yscatter )
+
     # manage input X limits
     if Xlim is None :
         Xmin = X.min(); Xmin -= 0.01 * Xmin
@@ -382,12 +401,6 @@ def match_cross ( X, Y,
     # Compute probability object-by-object
     Px = f_Px(X)
     Py = f_Py(Y)
-
-    # Add scatter to probabilities
-    if Xscatter is not None :
-        Px = scatter_array( Px, method = Xscatter, log = logX, rng = rng, **kw_Xscatter ) 
-    if Yscatter is not None :
-        Py = scatter_array( Py, method = Yscatter, log = logY, rng = rng, **kw_Yscatter )
 
     # find mask for counterparts
     wx = (Pmin <= Px)&(Px <=Pmax)

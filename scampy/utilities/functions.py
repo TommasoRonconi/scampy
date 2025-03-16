@@ -64,9 +64,31 @@ def FT_tophat ( kR ) :
 def FT_tophat_D1 ( kR ) :
     """Fourier space transform of a top-hat filter function, first order derivative
     """
-    return ( 3 * ( kR**2 - 3. ) * numpy.sin( kR ) + 9 * kR * numpy.cos( kR ) ) / kR**4 
+    return ( 3 * ( kR**2 - 3. ) * numpy.sin( kR ) + 9 * kR * numpy.cos( kR ) ) / kR**4
+
+def mod_erf ( x, factor=1.0 ) :
+    """Modified error function
+    """
+    from scipy.special import erf
+    x = numpy.array( x )
+    xM = 0.5*(x.min()+x.max())
+    sigma = factor*x.std()
+    t = (x-xM)/sigma
+    return 0.5*(1+erf(t))
+
+def truncated_gaussian(mean, std, lower, upper, size, rng = None, kw_rng = {'seed' : 555}):
+    """Truncated gaussian: 
+    a Gaussian distribution function that keeps 
+    the samples constrained within [lower, upper)
+    """
+    from scipy.stats import truncnorm
+    if rng is None :
+        rng = numpy.random.default_rng(**kw_rng)
+    a, b = (lower - mean) / std, (upper - mean) / std  # Convert to standard normal space
+    return truncnorm.rvs(a, b, loc=mean, scale=std, size=size, random_state=rng)
 
 ############################################################################################
+# integration 
 
 def trap_int ( xx, yy ) :
     """ Trapezoid integration
