@@ -1,0 +1,33 @@
+# pyproject.toml
+
+[build-system]
+requires = [
+    "setuptools",
+    "wheel",
+    "pybind11>=2.10.0",
+    'numpy'
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "scampy"
+authors = [{ name = "Tommaso Ronconi", email = "tronconi@sissa.it" }]
+readme = "README.rst"
+version = "0.0.1"
+# license = { file = "LICENSE" }
+classifiers = [
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: C++",
+]
+dependencies = [
+    'numpy',
+    'scipy',
+    'matplotlib>=3.6',
+    'h5py'
+]
+requires-python = ">=3.7"
+
