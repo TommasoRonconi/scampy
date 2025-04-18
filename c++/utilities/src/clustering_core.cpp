@@ -13,6 +13,16 @@ float utl::haversine_th ( const float & RA1, const float Dec1,
     
 }
 
+// float utl::haversine_th ( const float & RA1, const float Dec1,
+// 			  const float & RA2, const float Dec2 ) {
+
+//   float ddec =  Dec2 - Dec1;
+//   float dra   = RA2 - RA1;
+//   float cosdec = std::cos( 0.5 * ( Dec1 + Dec2 ) );
+//   return std::sqrt( ddec * ddec + cosdec * cosdec * dra * dra );
+    
+// }
+
 //==================================================================================
 //======================================= 2D =======================================
 //==================================================================================
@@ -165,11 +175,11 @@ std::vector< std::size_t > utl::dA2D_DD ( const std::vector< float > & RA,
     float dra, ddec, tt;
     std::size_t ib;
     for ( std::size_t jj = ii+1; jj < size; ++jj ) {
-      // dra = ( RA[ii]-RA[jj] ) * std::cos( Dec[ii] );
-      // ddec = Dec[ii]-Dec[jj];
+      dra = ( RA[ii]-RA[jj] ) * std::cos( 0.5 * (Dec[ii]+Dec[jj]) );
+      ddec = Dec[ii]-Dec[jj];
       // tt = std::sqrt( dra*dra + ddec*ddec );
-      tt = utl::haversine_th( RA[ ii ], Dec[ ii ],
-			      RA[ jj ], Dec[ jj ] );
+      // tt = utl::haversine_th( RA[ ii ], Dec[ ii ],
+      // 			      RA[ jj ], Dec[ jj ] );
 
       if ( thetamin <= tt && tt <= thetamax ) {
 	ib = int( std::log10( tt / thetamin ) / delta );
@@ -198,11 +208,11 @@ std::vector< std::size_t > utl::dA2D_DD_omp ( const std::vector< float > & RA,
     float dra, ddec, tt;
     std::size_t ib;
     for ( std::size_t jj = ii+1; jj < size; ++jj ) {
-      // dra = ( RA[ii]-RA[jj] ) * std::cos( Dec[ii] );
-      // ddec = Dec[ii]-Dec[jj];
-      // tt = std::sqrt( dra*dra + ddec*ddec );
-      tt = utl::haversine_th( RA[ ii ], Dec[ ii ],
-			      RA[ jj ], Dec[ jj ] );
+      dra = ( RA[ii]-RA[jj] ) * std::cos( 0.5 * (Dec[ii]+Dec[jj]) );
+      ddec = Dec[ii]-Dec[jj];
+      tt = std::sqrt( dra*dra + ddec*ddec );
+      // tt = utl::haversine_th( RA[ ii ], Dec[ ii ],
+      // 			      RA[ jj ], Dec[ jj ] );
 
       if ( thetamin <= tt && tt <= thetamax ) {
 	ib = int( std::log10( tt / thetamin ) / delta );
@@ -234,11 +244,11 @@ std::vector< std::size_t > utl::dA2D_DR ( const std::vector< float > & RA1,
     float dra, ddec, tt;
     std::size_t ib;
     for ( std::size_t jj = 0; jj < size2; ++jj ) {
-      // dra = ( RA1[ii]-RA2[jj] ) * std::cos( Dec1[ii] );
-      // ddec = Dec1[ii]-Dec2[jj];
-      // tt = std::sqrt( dra*dra + ddec*ddec );
-      tt = utl::haversine_th( RA1[ ii ], Dec1[ ii ],
-			      RA2[ jj ], Dec2[ jj ] );
+      dra = ( RA1[ii]-RA2[jj] ) * std::cos( 0.5*(Dec1[ii]+Dec2[jj]) );
+      ddec = Dec1[ii]-Dec2[jj];
+      tt = std::sqrt( dra*dra + ddec*ddec );
+      // tt = utl::haversine_th( RA1[ ii ], Dec1[ ii ],
+      // 			      RA2[ jj ], Dec2[ jj ] );
 
       if ( thetamin <= tt && tt <= thetamax ) {
 	ib = int( std::log10( tt / thetamin ) / delta );
@@ -270,11 +280,11 @@ std::vector< std::size_t > utl::dA2D_DR_omp ( const std::vector< float > & RA1,
     float dra, ddec, tt;
     std::size_t ib;
     for ( std::size_t jj = 0; jj < size2; ++jj ) {
-      // dra = ( RA1[ii]-RA2[jj] ) * std::cos( Dec1[ii] );
-      // ddec = Dec1[ii]-Dec2[jj];
-      // tt = std::sqrt( dra*dra + ddec*ddec );
-      tt = utl::haversine_th( RA1[ ii ], Dec1[ ii ],
-			      RA2[ jj ], Dec2[ jj ] );
+      dra = ( RA1[ii]-RA2[jj] ) * std::cos( 0.5*(Dec1[ii]+Dec2[jj]) );
+      ddec = Dec1[ii]-Dec2[jj];
+      tt = std::sqrt( dra*dra + ddec*ddec );
+      // tt = utl::haversine_th( RA1[ ii ], Dec1[ ii ],
+      // 			      RA2[ jj ], Dec2[ jj ] );
 
       if ( thetamin <= tt && tt <= thetamax ) {
 	ib = int( std::log10( tt / thetamin ) / delta );

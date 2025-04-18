@@ -8,40 +8,40 @@ from scampy.boxes import equatorial_to_cartesian, angular_to_euclidean_dist
 
 ##################################################################################
 
-def _kernel_DD (data, Nd, rbins, omp = True#, angular = False
+def _kernel_DD (data, Nd, rbins, omp = True, angular = False
                 ) :
     
     if omp :
         if Nd == 2 :
-            # if angular :
-            #     return numpy.array( cc.dA2D_DD_omp( *data, rbins ) )
+            if angular :
+                return numpy.array( cc.dA2D_DD_omp( *data, rbins ) )
             return numpy.array( cc.d2D_DD_omp( *data, rbins ) )
         if Nd == 3 :
             return numpy.array( cc.d3D_DD_omp( *data, rbins ) )
     else :
         if Nd == 2 :
-            # if angular :
-            #     return numpy.array( cc.dA2D_DD( *data, rbins ) )
+            if angular :
+                return numpy.array( cc.dA2D_DD( *data, rbins ) )
             return numpy.array( cc.d2D_DD( *data, rbins ) )
         if Nd == 3 :
             return numpy.array( cc.d3D_DD( *data, rbins ) )
             
     return None
 
-def _kernel_DR (data1, data2, Nd, rbins, omp = True#, angular = False
+def _kernel_DR (data1, data2, Nd, rbins, omp = True, angular = False
                 ) :
     
     if omp :
         if Nd == 2 :
-            # if angular :
-            #     return numpy.array( cc.dA2D_DR_omp( *data1, *data2, rbins ) )
+            if angular :
+                return numpy.array( cc.dA2D_DR_omp( *data1, *data2, rbins ) )
             return numpy.array( cc.d2D_DR_omp( *data1, *data2, rbins ) )
         if Nd == 3 :
             return numpy.array( cc.d3D_DR_omp( *data1, *data2, rbins ) )
     else :
         if Nd == 2 :
-            # if angular :
-            #     return numpy.array( cc.dA2D_DR( *data1, *data2, rbins ) )
+            if angular :
+                return numpy.array( cc.dA2D_DR( *data1, *data2, rbins ) )
             return numpy.array( cc.d2D_DR( *data1, *data2, rbins ) )
         if Nd == 3 :
             return numpy.array( cc.d3D_DR( *data1, *data2, rbins ) )
@@ -80,10 +80,10 @@ def two_point_standard ( data, rand, rbins, omp = True, angular = False
     normDD = 2.0 / ( NobjD * ( NobjD - 1 ) )
     normRR = 2.0 / ( NobjR * ( NobjR - 1 ) )
 
-    # DD = _kernel_DD( data, NdimD, rbins, omp, angular ) * normDD
-    DD = _kernel_DD( data, NdimD, rbins, omp ) * normDD
-    # RR = _kernel_DD( rand, NdimD, rbins, omp, angular ) * normRR
-    RR = _kernel_DD( rand, NdimD, rbins, omp ) * normRR
+    DD = _kernel_DD( data, NdimD, rbins, omp, angular ) * normDD
+    # DD = _kernel_DD( data, NdimD, rbins, omp ) * normDD
+    RR = _kernel_DD( rand, NdimD, rbins, omp, angular ) * normRR
+    # RR = _kernel_DD( rand, NdimD, rbins, omp ) * normRR
 
     return _kernel_standard( DD, RR )
     
@@ -93,11 +93,11 @@ def _kernel_landy_szalay ( DD, RR, DR ) :
 
     if DD.size != RR.size or RR.size != DR.size :
         raise ValueError( 'distance vectors have different sizes' )
-
+    
     ww = RR > 0
     out = numpy.zeros_like( ww, dtype = float )
     out[ww] = ( DD[ww] - 2.0 * DR[ww] ) / RR[ww] + 1
-
+    
     return out
     
 ##################################################################################
@@ -119,19 +119,18 @@ def two_point_landyszalay ( data, rand, rbins, omp = True, return_error = False,
         raise ValueError(
             "Cannot compute clustering if one of the two catalogues does not have at least 2 elements"
         )
-
     normDD = 2.0 / ( NobjD * ( NobjD - 1 ) )
     normRR = 2.0 / ( NobjR * ( NobjR - 1 ) )
     normDR = 1.0 / ( NobjD * NobjR )
 
-    # DD = _kernel_DD( data, NdimD, rbins, omp, angular )
-    DD = _kernel_DD( data, NdimD, rbins, omp )
+    DD = _kernel_DD( data, NdimD, rbins, omp, angular )
+    # DD = _kernel_DD( data, NdimD, rbins, omp )
     DDn = DD * normDD
-    # RR = _kernel_DD( rand, NdimD, rbins, omp, angular )
-    RR = _kernel_DD( rand, NdimD, rbins, omp )
+    RR = _kernel_DD( rand, NdimD, rbins, omp, angular )
+    # RR = _kernel_DD( rand, NdimD, rbins, omp )
     RRn = RR * normRR
-    # DR = _kernel_DR( data, rand, NdimD, rbins, omp, angular )
-    DR = _kernel_DR( data, rand, NdimD, rbins, omp )
+    DR = _kernel_DR( data, rand, NdimD, rbins, omp, angular )
+    # DR = _kernel_DR( data, rand, NdimD, rbins, omp )
     DRn = DR * normDR
 
     # compute baseline clustering
