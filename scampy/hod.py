@@ -153,6 +153,18 @@ class HOD () :
         self.M1 = M1
         self.alpha = alpha
 
+    def __str__ ( self ) :
+        sstr = ''
+        for k, v in self.__dict__.items() :
+            sstr += f'\t{k:s} = {v:.6e},\n'
+        return f'{type(self).__name__}(\n{sstr})'
+
+    def __repr__ ( self ) :
+        sstr = ''
+        for k, v in self.__dict__.items() :
+            sstr += f'\t{k:s} = {v},\n'
+        return f'{type(self).__name__}(\n{sstr})'
+
     def Pcen ( self, Mh, **kwargs ) :
         """ Computes
 
