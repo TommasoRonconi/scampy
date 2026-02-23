@@ -60,7 +60,8 @@ def scatter_array ( arr, method = 'normal', log = False,
         
     # Add scatter
     if method == 'normal' :
-        arr *= 1.0+rng.normal(size = arr.size, **kwargs)
+        arr += rng.normal(size = arr.size, **kwargs)
+        #arr *= 1.0+rng.normal(size = arr.size, **kwargs)
         
     if method == 'normal_decaying' :
         scale = (1-mod_erf( arr, kwargs.get( 'factor', 1.0 ) )) * kwargs.get( 'scale', 0.0 )
@@ -346,12 +347,6 @@ def match_cross ( X, Y,
     X = numpy.array( X )
     Y = numpy.array( Y )
 
-    # Add scatter to input arrays
-    if Xscatter is not None :
-        X = scatter_array( X, method = Xscatter, log = logX, rng = rng, **kw_Xscatter ) 
-    if Yscatter is not None :
-        Y = scatter_array( Y, method = Yscatter, log = logY, rng = rng, **kw_Yscatter )
-
     # manage input X limits
     if Xlim is None :
         Xmin = X.min(); Xmin -= 0.01 * Xmin
@@ -401,6 +396,12 @@ def match_cross ( X, Y,
     # Compute probability object-by-object
     Px = f_Px(X)
     Py = f_Py(Y)
+
+    # Add scatter to input arrays
+    if Xscatter is not None :
+        Px = scatter_array( Px, method = Xscatter, log = logX, rng = rng, **kw_Xscatter ) 
+    if Yscatter is not None :
+        Py = scatter_array( Py, method = Yscatter, log = logY, rng = rng, **kw_Yscatter )
 
     # find mask for counterparts
     wx = (Pmin <= Px)&(Px <=Pmax)
