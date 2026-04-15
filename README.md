@@ -2,7 +2,7 @@
 
 A Python interface for Sub-halo Clustering and Abundance Matching.
 
-ScamPy is a highly-optimized and flexible library for "painting" an observed population of cosmological objects on top of the DM-halo/subhalo hierarchy obtained from DM-only simulations. The method combines the classical Halo Occupation Distribution (HOD) with sub-halo abundance matching (SHAM) — a synergy dubbed Sub-halo Clustering and Abundance Matching (SCAM).
+ScamPy is a highly-optimized and flexible library for "painting" an observed population of cosmological objects on top of the DM-halo/subhalo hierarchy obtained from DM-only simulations. The method combines the classical Halo Occupation Distribution (HOD) with sub-halo abundance matching (SHAM): a synergy dubbed Sub-halo Clustering and Abundance Matching (SCAM).
 
 ## Method
 
