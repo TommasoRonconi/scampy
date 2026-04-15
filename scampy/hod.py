@@ -1,13 +1,59 @@
+"""Halo Occupation Distribution (HOD) models.
+
+Provides classes for the 5-parameter HOD prescription of
+Zheng, Coil & Zehavi (2007) and Zheng et al. (2009), as described in
+Sec. 2.1 and Eqs. 19–20 of Ronconi et al. (2020), together with a
+redshift-dependent extension.  All classes expose ``Pcen(M)`` and
+``Psat(M)`` methods compatible with :class:`~scampy.halo.model.halo_model`.
+"""
+
 import numpy
 from scipy.special import erf
 
 from scampy.catalogue import catalogue
 
-def get_hosts ( cat, Pcen, Psat, 
-                kw_pcen = {}, 
-                kw_psat = {}, 
+def get_hosts ( cat, Pcen, Psat,
+                kw_pcen = {},
+                kw_psat = {},
                 rng = None, kw_rng = {} ) :
-    """
+    """Select host sub-haloes from a catalogue using arbitrary occupation functions.
+
+    Low-level helper that applies user-supplied central and satellite
+    occupation probabilities to a catalogue without requiring a full HOD
+    class instance.  For the standard HOD workflow prefer the
+    :meth:`~scampy.hod.HOD.get_hosts` method of :class:`HOD`.
+
+    Parameters
+    ----------
+    cat : scampy.catalogue.catalogue
+        Halo/sub-halo catalogue to populate.
+    Pcen : callable or array-like
+        Central occupation probability.  If callable it is called as
+        ``Pcen(Mhalo, **kw_pcen)`` and must return an array of
+        probabilities in ``[0, 1]``.  If array-like it must have length
+        ``cat.haloes.size``.
+    Psat : callable or array-like
+        Desired mean number of satellites per halo.  If callable it is
+        called as ``Psat(Mhalo, **kw_psat, **kw_pcen)`` and must return
+        an array of non-negative values.  If array-like it must have
+        length ``cat.haloes.size``.
+    kw_pcen : dict, optional
+        Keyword arguments forwarded to ``Pcen`` when callable.
+    kw_psat : dict, optional
+        Keyword arguments forwarded to ``Psat`` when callable.
+    rng : numpy.random.Generator or None, optional
+        Random number generator.  If ``None`` (default) a new generator
+        is created via ``numpy.random.default_rng(**kw_rng)``.
+    kw_rng : dict, optional
+        Keyword arguments forwarded to ``numpy.random.default_rng`` when
+        ``rng`` is ``None``.
+
+    Returns
+    -------
+    cen_gxy : ndarray of bool
+        Boolean mask over ``cat.subhaloes`` selecting central galaxies.
+    sat_gxy : ndarray of bool
+        Boolean mask over ``cat.subhaloes`` selecting satellite galaxies.
     """
 
     # Check input validity
@@ -57,22 +103,42 @@ def get_hosts ( cat, Pcen, Psat,
 
 
 class HOD () :
-    """Halo Occupation Distribution class, given a set of parameters
-    computes the average number of central and satellite galaxies hosted by 
-    a halo of a given mass.
+    """5-parameter Halo Occupation Distribution (Zheng et al. 2007).
+
+    Computes the average number of central and satellite galaxies hosted
+    by a halo of mass :math:`M_h` (Eqs. 19–20 of Ronconi et al. 2020):
 
     .. math::
-      
-      <N_\\text{cen}(M_h)> = 
-      <N_\\text{sat}(M_h)> = 
-    
+
+        \\langle N_\\mathrm{cen}(M_h)\\rangle =
+        \\frac{1}{2}\\left[1 + \\mathrm{erf}\\!
+        \\left(\\frac{\\log M_h - \\log M_\\mathrm{min}}{\\sigma}
+        \\right)\\right],
+
+    .. math::
+
+        \\langle N_\\mathrm{sat}(M_h)\\rangle =
+        \\langle N_\\mathrm{cen}(M_h)\\rangle
+        \\left(\\frac{M_h - M_0}{M_1}\\right)^\\alpha.
+
+    The satellite term is conditioned on the central (i.e. a halo must
+    host a central to host satellites).  For the unconditioned variant
+    see :class:`HOD_unconditioned_sat`.
+
     Parameters
     ----------
-    Mmin : float
-    sigma : float
-    M0 : float
-    M1 : float
-    alpha : float
+    Mmin : float, optional
+        Characteristic minimum halo mass :math:`M_\\mathrm{min}` for
+        hosting a central galaxy (default: ``1e10``).
+    sigma : float, optional
+        Width :math:`\\sigma` of the central occupation transition in
+        :math:`\\log_{10} M` (default: ``1.0``).
+    M0 : float, optional
+        Satellite mass offset :math:`M_0` (default: ``1e10``).
+    M1 : float, optional
+        Satellite mass normalisation :math:`M_1` (default: ``1e10``).
+    alpha : float, optional
+        Satellite power-law slope :math:`\\alpha` (default: ``1.0``).
     """
 
     def __init__ ( self,
@@ -89,28 +155,29 @@ class HOD () :
         self.alpha = alpha
 
     def Pcen ( self, Mh, **kwargs ) :
-        """ Computes
+        """Average number of central galaxies per halo of mass :math:`M_h`.
 
         .. math::
-      
-          <N_\\text{cen}(M_h)> = 
+
+            \\langle N_\\mathrm{cen}(M_h)\\rangle =
+            \\frac{1}{2}\\left[1 + \\mathrm{erf}\\!
+            \\left(\\frac{\\log M_h - \\log M_\\mathrm{min}}{\\sigma}
+            \\right)\\right].
 
         Parameters
         ----------
         Mh : scalar or array-like
-          Mass of the halo
-    
+            Halo mass :math:`M_h` in :math:`[M_\\odot\\,h^{-1}]`.
+
         Keyword Arguments
         -----------------
-        Mmin : float
-        sigma : float
-        M0 : float
-        M1 : float
-        alpha : float
-        
+        Mmin, sigma, M0, M1, alpha : float
+            Override the instance parameters for this call.
+
         Returns
         -------
-        : scalar or array-like
+        ndarray
+            Values in :math:`[0, 1]`, same shape as ``Mh``.
         """
         self.__dict__.update( kwargs )
         ret = numpy.zeros_like( Mh )
@@ -124,34 +191,36 @@ class HOD () :
         return ret
 
     def Psat ( self, Mh, **kwargs ) :
-        """
+        """Average number of satellite galaxies per halo of mass :math:`M_h`.
 
         .. math::
-        
-          <N_\\text{sat}(M_h)> = 
-        
+
+            \\langle N_\\mathrm{sat}(M_h)\\rangle =
+            \\langle N_\\mathrm{cen}(M_h)\\rangle
+            \\left(\\frac{M_h - M_0}{M_1}\\right)^\\alpha.
+
+        Returns zero when :math:`M_h \\leq M_0`.
+
         Parameters
         ----------
         Mh : scalar or array-like
-          Mass of the halo
-        
+            Halo mass :math:`M_h` in :math:`[M_\\odot\\,h^{-1}]`.
+
         Keyword Arguments
         -----------------
-        Mmin : float
-        sigma : float
-        M0 : float
-        M1 : float
-        alpha : float
-        
+        Mmin, sigma, M0, M1, alpha : float
+            Override the instance parameters for this call.
+
         Returns
         -------
-        : scalar or array-like
+        ndarray
+            Non-negative values, same shape as ``Mh``.
         """
         self.__dict__.update( kwargs )
         psat = ( ( Mh - self.M0 ) / self.M1 )
         ret = numpy.zeros_like(Mh)
         ww = (psat>0.0)
-        ret[ww] = self.Pcen( Mh[ww] ) * psat[ww]**self.alpha 
+        ret[ww] = self.Pcen( Mh[ww] ) * psat[ww]**self.alpha
         return ret
 
     def get_hosts ( self, cat, rng = None, kw_rng = {}, **kwargs ) :
@@ -214,22 +283,37 @@ class HOD () :
 
 
 class HOD_unconditioned_sat () :
-    """Halo Occupation Distribution class, given a set of parameters
-    computes the average number of central and satellite galaxies hosted by 
-    a halo of a given mass.
+    """5-parameter HOD with unconditioned satellite occupation.
+
+    Identical to :class:`HOD` except that the satellite term is *not*
+    conditioned on the central:
 
     .. math::
-      
-      <N_\\text{cen}(M_h)> = 
-      <N_\\text{sat}(M_h)> = 
-    
+
+        \\langle N_\\mathrm{cen}(M_h)\\rangle =
+        \\frac{1}{2}\\left[1 + \\mathrm{erf}\\!
+        \\left(\\frac{\\log M_h - \\log M_\\mathrm{min}}{\\sigma}
+        \\right)\\right],
+
+    .. math::
+
+        \\langle N_\\mathrm{sat}(M_h)\\rangle =
+        \\left(\\frac{M_h - M_0}{M_1}\\right)^\\alpha.
+
     Parameters
     ----------
-    Mmin : float
-    sigma : float
-    M0 : float
-    M1 : float
-    alpha : float
+    Mmin : float, optional
+        Characteristic minimum halo mass :math:`M_\\mathrm{min}`
+        (default: ``1e10``).
+    sigma : float, optional
+        Width of the central occupation transition in
+        :math:`\\log_{10} M` (default: ``1.0``).
+    M0 : float, optional
+        Satellite mass offset :math:`M_0` (default: ``1e10``).
+    M1 : float, optional
+        Satellite mass normalisation :math:`M_1` (default: ``1e10``).
+    alpha : float, optional
+        Satellite power-law slope :math:`\\alpha` (default: ``1.0``).
     """
 
     def __init__ ( self,
@@ -246,28 +330,24 @@ class HOD_unconditioned_sat () :
         self.alpha = alpha
 
     def Pcen ( self, Mh, **kwargs ) :
-        """ Computes
+        """Average number of central galaxies per halo of mass :math:`M_h`.
 
-        .. math::
-      
-          <N_\\text{cen}(M_h)> = 
+        Same formula as :meth:`HOD.Pcen`.
 
         Parameters
         ----------
         Mh : scalar or array-like
-          Mass of the halo
-    
+            Halo mass in :math:`[M_\\odot\\,h^{-1}]`.
+
         Keyword Arguments
         -----------------
-        Mmin : float
-        sigma : float
-        M0 : float
-        M1 : float
-        alpha : float
-        
+        Mmin, sigma, M0, M1, alpha : float
+            Override the instance parameters for this call.
+
         Returns
         -------
-        : scalar or array-like
+        ndarray
+            Values in :math:`[0, 1]`, same shape as ``Mh``.
         """
         self.__dict__.update( kwargs )
         ret = numpy.zeros_like( Mh )
@@ -281,34 +361,36 @@ class HOD_unconditioned_sat () :
         return ret
 
     def Psat ( self, Mh, **kwargs ) :
-        """
+        """Average number of satellite galaxies per halo of mass :math:`M_h`.
 
         .. math::
-        
-          <N_\\text{sat}(M_h)> = 
-        
+
+            \\langle N_\\mathrm{sat}(M_h)\\rangle =
+            \\left(\\frac{M_h - M_0}{M_1}\\right)^\\alpha.
+
+        Unlike :meth:`HOD.Psat`, this is *not* conditioned on the central
+        occupation.  Returns zero when :math:`M_h \\leq M_0`.
+
         Parameters
         ----------
         Mh : scalar or array-like
-          Mass of the halo
-        
+            Halo mass in :math:`[M_\\odot\\,h^{-1}]`.
+
         Keyword Arguments
         -----------------
-        Mmin : float
-        sigma : float
-        M0 : float
-        M1 : float
-        alpha : float
-        
+        Mmin, sigma, M0, M1, alpha : float
+            Override the instance parameters for this call.
+
         Returns
         -------
-        : scalar or array-like
+        ndarray
+            Non-negative values, same shape as ``Mh``.
         """
         self.__dict__.update( kwargs )
         psat = ( ( Mh - self.M0 ) / self.M1 )
         ret = numpy.zeros_like(Mh)
         ww = (psat>0.0)
-        ret[ww] = psat[ww]**self.alpha 
+        ret[ww] = psat[ww]**self.alpha
         return ret
 
     def get_hosts ( self, cat, rng = None, kw_rng = {}, **kwargs ) :
@@ -371,7 +453,50 @@ class HOD_unconditioned_sat () :
 
 
 class HOD_zdep () :
-    
+    """Redshift-dependent 5-parameter HOD.
+
+    Extends :class:`HOD` by allowing each parameter to evolve linearly
+    with redshift in log-space:
+
+    .. math::
+
+        \\log_{10} X(z) = \\ell_X + \\ell_{X,b}\\,z,
+
+    so that :math:`X(z) = 10^{\\ell_X + \\ell_{X,b}\\,z}`.
+    Setting all :math:`\\ell_{X,b} = 0` recovers a redshift-independent
+    :class:`HOD`.
+
+    The occupation functions follow the same :class:`HOD` formulae with
+    the redshift-evaluated parameters.
+
+    Parameters
+    ----------
+    redshift : float or array-like
+        Redshift(s) at which to evaluate the HOD parameters.
+    lMmin : float, optional
+        :math:`\\log_{10} M_\\mathrm{min}` at :math:`z=0`
+        (default: ``10``).
+    lMmin_b : float, optional
+        Redshift slope of :math:`\\log_{10} M_\\mathrm{min}`
+        (default: ``0.0``).
+    lsigma : float, optional
+        :math:`\\log_{10} \\sigma` at :math:`z=0` (default: ``0.0``).
+    lsigma_b : float, optional
+        Redshift slope of :math:`\\log_{10} \\sigma` (default: ``0.0``).
+    lM0 : float, optional
+        :math:`\\log_{10} M_0` at :math:`z=0` (default: ``10``).
+    lM0_b : float, optional
+        Redshift slope of :math:`\\log_{10} M_0` (default: ``0.0``).
+    lM1 : float, optional
+        :math:`\\log_{10} M_1` at :math:`z=0` (default: ``10``).
+    lM1_b : float, optional
+        Redshift slope of :math:`\\log_{10} M_1` (default: ``0.0``).
+    lalpha : float, optional
+        :math:`\\log_{10} \\alpha` at :math:`z=0` (default: ``0.0``).
+    lalpha_b : float, optional
+        Redshift slope of :math:`\\log_{10} \\alpha` (default: ``0.0``).
+    """
+
     zdep_parameters = ['Mmin', 'sigma', 'M0', 'M1', 'alpha']
     free_parameters = set([ 
         'lMmin', 'lMmin_b', 
@@ -418,6 +543,19 @@ class HOD_zdep () :
         return;
         
     def set ( self, redshift = None, **kwargs ) :
+        """Update redshift and/or free parameters, then recompute ``self.params``.
+
+        Parameters
+        ----------
+        redshift : float or array-like or None, optional
+            New redshift(s).  If ``None`` the current redshift is kept.
+        **kwargs
+            Any subset of the free parameters
+            (``lMmin``, ``lMmin_b``, ``lsigma``, ``lsigma_b``,
+            ``lM0``, ``lM0_b``, ``lM1``, ``lM1_b``,
+            ``lalpha``, ``lalpha_b``).
+            Unknown keys are silently ignored.
+        """
         
         if redshift is not None :
             self._set_z( redshift )
