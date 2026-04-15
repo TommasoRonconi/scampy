@@ -3,8 +3,7 @@
 Welcome to ScamPy's documentation!
 ==================================
 
-.. include:: ../README.md
-   :parser: myst_parser.sphinx_
+.. include:: ../README.rst
 
 .. toctree::
    :maxdepth: 2
