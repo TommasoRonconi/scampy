@@ -1,4 +1,8 @@
-""" 
+"""NFW halo density profile and halo concentration models.
+
+Provides the Fourier transform of the NFW density profile and several
+empirical fitting functions for the halo concentration–mass relation
+:math:`c(M_h, z)`.
 """
 
 #############################################################################################
@@ -37,17 +41,54 @@ from scampy.power_spectrum import power_spectrum
 #############################################################################################
 
 def concentration_giocoli12 ( mm, zz, pk, comoving = True ) :
+    """Giocoli et al. (2012) halo concentration–mass relation.
+
+    .. note::
+        Not yet implemented; returns ``None``.
+    """
     pass
 
 #############################################################################################
 
 def concentration_zhao09 ( mm, zz, pk, comoving = True ) :
+    """Zhao et al. (2009) halo concentration–mass relation.
+
+    .. note::
+        Not yet implemented; returns ``None``.
+    """
     pass
 
 #############################################################################################
 
-# Eq. 4 from Shimizu et al. 2003
 def concentration_shimizu03 ( mm, zz, pk, comoving = True ) :
+    """Shimizu et al. (2003) halo concentration–mass relation.
+
+    Implements Eq. 4 of Shimizu et al. (2003):
+
+    .. math::
+
+        c(M_h, z) = \\frac{8}{1+z}\\,
+        \\left(1.0204\\times10^{-14}\\,M_h\\,h\\right)^{-0.13}.
+
+    Parameters
+    ----------
+    mm : scalar or array-like
+        Halo masses :math:`M_h` in :math:`[M_\\odot\\,h^{-1}]`.
+    zz : scalar or array-like
+        Redshift(s).  The output is broadcast over ``(mm, zz)``.
+    pk : scampy.power_spectrum.power_spectrum
+        Power-spectrum object; used to retrieve :math:`h` when
+        ``comoving=False``.
+    comoving : bool, optional
+        If ``True`` (default) masses are already in
+        :math:`M_\\odot\\,h^{-1}` and no :math:`h`-conversion is applied.
+
+    Returns
+    -------
+    ndarray
+        Array of shape ``(mm.size,)`` or ``(mm.size, zz.size)`` containing
+        the dimensionless concentration :math:`c = r_\\mathrm{vir}/r_s`.
+    """
         
     mm = numpy.asarray(mm)
     if mm.ndim == 0 :
@@ -66,8 +107,49 @@ def concentration_shimizu03 ( mm, zz, pk, comoving = True ) :
 
 #############################################################################################
 
-# NFW Fourier Transform
 def density_profile_FT ( kk, mm, zz, pk, comoving = True ) :
+    """Fourier transform of the NFW density profile.
+
+    Returns the normalised Fourier transform :math:`\\tilde{u}(k,z|M_h)`
+    of the NFW profile for a halo of mass :math:`M_h`, as given by
+    Eqs. 8–9 of Ronconi et al. (2020):
+
+    .. math::
+
+        \\tilde{u}(k, z|M_h) =
+        \\frac{
+            \\cos(\\mu)\\,[\\mathrm{Ci}(\\mu(1+c)) - \\mathrm{Ci}(\\mu)]
+            + \\sin(\\mu)\\,[\\mathrm{Si}(\\mu(1+c)) - \\mathrm{Si}(\\mu)]
+            - \\dfrac{\\sin(c\\mu)}{\\mu(1+c)}
+        }{\\ln(1+c) - c/(1+c)},
+
+    where :math:`\\mu = k\\,r_s`, :math:`c = c(M_h, z)` is the halo
+    concentration, :math:`r_s = r_\\mathrm{vir}/c` is the NFW scale radius,
+    and :math:`\\mathrm{Si}`, :math:`\\mathrm{Ci}` are the sine and cosine
+    integrals.  The concentration is computed via
+    :func:`concentration_shimizu03`.
+
+    Parameters
+    ----------
+    kk : scalar or array-like
+        Wavenumbers in :math:`[h\\,\\mathrm{Mpc}^{-1}]`.
+    mm : scalar or array-like
+        Halo masses :math:`M_h` in :math:`[M_\\odot\\,h^{-1}]`.
+    zz : scalar or array-like
+        Redshift(s).  The output is broadcast over ``(kk, mm, zz)``.
+    pk : scampy.power_spectrum.power_spectrum
+        Power-spectrum object; used to retrieve the cosmological model
+        (critical density, :math:`\\Delta_c`).
+    comoving : bool, optional
+        If ``True`` (default) the virial volume uses the comoving critical
+        density; otherwise the physical critical density is used.
+
+    Returns
+    -------
+    ndarray
+        Normalised profile transform :math:`\\tilde{u}(k,z|M_h)`,
+        dimensionless and in the range :math:`[0, 1]`.
+    """
     
     kk = numpy.asarray(kk)
     if kk.ndim == 0 :

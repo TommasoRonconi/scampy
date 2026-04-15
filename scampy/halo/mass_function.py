@@ -1,4 +1,11 @@
-""" 
+"""Halo mass functions.
+
+Provides fitting functions for the halo mass function :math:`n(M_h, z)`,
+i.e. the comoving number density of dark matter haloes per unit mass interval.
+All functions share the same call signature and return
+:math:`\\mathrm{d}n/\\mathrm{d}M_h` in units of
+:math:`[M_\\odot^{-1}\\,h^3\\,\\mathrm{Mpc}^{-3}]` (comoving) or
+:math:`[M_\\odot^{-1}\\,\\mathrm{Mpc}^{-3}]` (physical).
 """
 
 #############################################################################################
@@ -12,7 +19,48 @@ from scampy.power_spectrum import power_spectrum
 #############################################################################################
 
 def ShethTormen01 ( mm, zz, pk, comoving = True ) :
-        
+    """Sheth & Tormen (2001) halo mass function.
+
+    Implements the fitting formula
+
+    .. math::
+
+        \\frac{\\mathrm{d}n}{\\mathrm{d}M} =
+        \\rho_0 \\left|\\frac{\\mathrm{d}\\ln\\sigma}{\\mathrm{d}M}\\right|
+        f(\\nu)\\,/\\,M
+
+    where
+
+    .. math::
+
+        f(\\nu) = A\\sqrt{\\frac{2}{\pi}}\\,0.3222
+        \\left(1 + (a\\nu^2)^{-0.3}\\right)\\nu\\,
+        e^{-a\\nu^2/2},
+        \\quad a = 0.707,\\quad A \\approx 0.8409,
+
+    and :math:`\\nu = \\delta_c(z)\\,/\\,[D(z)\\,\\sigma(M)]` is the
+    peak-height parameter.
+
+    Parameters
+    ----------
+    mm : scalar or array-like
+        Halo masses :math:`M_h` in :math:`[M_\\odot\\,h^{-1}]`.
+    zz : scalar or array-like
+        Redshift(s) at which to evaluate the mass function.
+        The output is broadcast over ``(mm, zz)``.
+    pk : scampy.power_spectrum.power_spectrum
+        Power-spectrum object carrying the cosmological model and the
+        normalised growth factor.
+    comoving : bool, optional
+        If ``True`` (default) masses and densities are in comoving units.
+
+    Returns
+    -------
+    ndarray
+        Array of shape ``(mm.size,)`` or ``(mm.size, zz.size)`` containing
+        :math:`\\mathrm{d}n/\\mathrm{d}M_h`.
+    """
+
     mm = numpy.asarray(mm)
     if mm.ndim == 0 :
         mm = mm[None]
@@ -43,7 +91,54 @@ def ShethTormen01 ( mm, zz, pk, comoving = True ) :
 #############################################################################################
 
 def Tinker08 ( mm, zz, pk, comoving = True ) :
-        
+    """Tinker et al. (2008) halo mass function.
+
+    Implements the fitting formula
+
+    .. math::
+
+        \\frac{\\mathrm{d}n}{\\mathrm{d}M} =
+        \\rho_0 \\left|\\frac{\\mathrm{d}\\ln\\sigma}{\\mathrm{d}M}\\right|
+        f(\\sigma)\\,/\\,M,
+
+    where
+
+    .. math::
+
+        f(\\sigma) = A_z
+        \\left[\\left(\\frac{\\sigma}{b_z}\\right)^{-a_z} + 1\\right]
+        e^{-c_0/\\sigma^2}
+
+    with redshift-dependent coefficients
+
+    .. math::
+
+        A_z = A_0\\,(1+z)^{-0.14},\\quad
+        a_z = a_0\\,(1+z)^{-0.06},\\quad
+        b_z = b_0\\,(1+z)^{-\\alpha},
+
+    calibrated for a :math:`\\Delta = 200` overdensity threshold
+    (:math:`A_0=0.186,\\,a_0=1.47,\\,b_0=2.57,\\,c_0=1.19`).
+
+    Parameters
+    ----------
+    mm : scalar or array-like
+        Halo masses :math:`M_h` in :math:`[M_\\odot\\,h^{-1}]`.
+    zz : scalar or array-like
+        Redshift(s) at which to evaluate the mass function.
+        The output is broadcast over ``(mm, zz)``.
+    pk : scampy.power_spectrum.power_spectrum
+        Power-spectrum object carrying the cosmological model and growth factor.
+    comoving : bool, optional
+        If ``True`` (default) masses and densities are in comoving units.
+
+    Returns
+    -------
+    ndarray
+        Array of shape ``(mm.size,)`` or ``(mm.size, zz.size)`` containing
+        :math:`\\mathrm{d}n/\\mathrm{d}M_h`.
+    """
+
     mm = numpy.asarray(mm)
     if mm.ndim == 0 :
         mm = mm[None]
@@ -83,7 +178,45 @@ def Tinker08 ( mm, zz, pk, comoving = True ) :
 #############################################################################################
 
 def Behroozi13 ( mm, zz, pk, comoving = True ) :
-    
+    """Behroozi, Wechsler & Conroy (2013) halo mass function.
+
+    Applies a high-redshift correction on top of :func:`Tinker08`:
+
+    .. math::
+
+        n_\\text{B13}(M,z) =
+        10^{N(a)}\\cdot\\left(3.16\\times10^{-12}\\,M\\right)^{p(a)}
+        \\cdot n_\\text{T08}(M,z),
+
+    where :math:`a = 1/(1+z)` is the scale factor,
+
+    .. math::
+
+        N(a) = \\frac{0.144}{1 + e^{14.79\\,(a - 0.213)}},\\quad
+        p(a) = \\frac{0.5}{1 + e^{6.5\\,a}}.
+
+    The correction is negligible at low redshift and boosts the abundance
+    of low-mass haloes at high redshift.
+
+    Parameters
+    ----------
+    mm : scalar or array-like
+        Halo masses :math:`M_h` in :math:`[M_\\odot\\,h^{-1}]`.
+    zz : scalar or array-like
+        Redshift(s) at which to evaluate the mass function.
+        The output is broadcast over ``(mm, zz)``.
+    pk : scampy.power_spectrum.power_spectrum
+        Power-spectrum object carrying the cosmological model and growth factor.
+    comoving : bool, optional
+        If ``True`` (default) masses and densities are in comoving units.
+
+    Returns
+    -------
+    ndarray
+        Array of shape ``(mm.size,)`` or ``(mm.size, zz.size)`` containing
+        :math:`\\mathrm{d}n/\\mathrm{d}M_h`.
+    """
+
     zz = numpy.asarray(zz)
     if zz.ndim == 0 :
         zz = zz[None]
