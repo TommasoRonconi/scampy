@@ -29,7 +29,7 @@ The simulation has been obtained with the non-public code GADGET-3, following th
 For each different redshift we have fixed the parameter values for the HOD and matched the
 UV-luminosity function of star-forming galaxies.
 
-.. image:: https://raw.githubusercontent.com/TommasoRonconi/scampy/main/images/evolving_slice.gif
+.. image:: https://raw.githubusercontent.com/TommasoRonconi/scampy/refs/heads/main/images/evolving_slice.gif
    :width: 100%
    :alt: If the image is not directly shown in the text, it can be found in the subdirectory `images/evolving_slice.gif`
 
