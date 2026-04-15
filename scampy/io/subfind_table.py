@@ -1,3 +1,10 @@
+"""Reader for GADGET SUBFIND binary subgroup table files.
+
+Provides :class:`subfind_table`, which parses the binary format written
+by the GADGET SUBFIND halo-finder and exposes halo and sub-halo
+properties as plain NumPy arrays.
+"""
+
 import numpy
 
 class subfind_table () :
@@ -71,10 +78,38 @@ class subfind_table () :
               f"{self.glob['tot_subs']}\tsubhaloes\n")
 
     def generate_content_dict ( self ) :
+        """Allocate an empty content dictionary for all catalogue fields.
+
+        Returns
+        -------
+        dict
+            A dictionary mapping each field name in ``fields`` to an empty
+            :class:`numpy.ndarray` with the shape and dtype specified in
+            ``values``.
+        """
         return dict( zip( self.fields, ( numpy.empty(**v) for v in self.values ) ) )
         
     def _read_header ( self, stream ) :
-        
+        """Parse the binary header block from an open file stream.
+
+        Reads 7 consecutive integer fields from the current stream position
+        (4+4+4+8+4+4+4 bytes) and returns them split into per-file
+        (local) and global counts.
+
+        Parameters
+        ----------
+        stream : file-like object
+            An open binary file positioned at the start of a header block.
+
+        Returns
+        -------
+        local : tuple of int
+            ``(Ngroups, Nids, Nsubs)`` — counts local to this file.
+        global_ : tuple of int
+            ``(totNgroups, totNids, Nfiles, totNsubs)`` — totals across all
+            files in the set.
+        """
+
         Ngroups = int.from_bytes( stream.read( 4 ), byteorder = self.byteorder )
         totNgroups = int.from_bytes( stream.read( 4 ), byteorder = self.byteorder )
         Nids = int.from_bytes( stream.read( 4 ), byteorder = self.byteorder )
@@ -296,6 +331,25 @@ class subfind_table () :
         return;
         
     def read_all_files ( self, reset = True, **kwargs ) :
+        """Read all files in the set and accumulate their data.
+
+        Resets ``content`` to an empty dictionary, then iterates over
+        all ``Nfiles`` files calling :meth:`read_file` with
+        ``add_to_content=True`` so that each file's data is appended to
+        the shared arrays.
+
+        Parameters
+        ----------
+        reset : bool, optional
+            Reserved for future use; currently ignored (default: ``True``).
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`read_file`
+            (e.g. ``scale_mass``, ``scale_lenght``, ``verbose``).
+
+        Returns
+        -------
+        None
+        """
 
         self.content = self.generate_content_dict()
         kwargs.update( add_to_content = True )

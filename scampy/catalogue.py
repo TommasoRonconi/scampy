@@ -11,7 +11,20 @@ from .utilities.base_classes import fixedSizeDict
 # Kernel Catalogue class, inheriting from maskedDict
 
 class kernelCat ( fixedSizeDict ) :
-    
+    """Base catalogue container enforcing mandatory coordinate fields.
+
+    Extends :class:`~scampy.utilities.base_classes.fixedSizeDict` by
+    requiring that the fields listed in the class attribute ``fields``
+    (``'X'``, ``'Y'``, ``'Z'``) are always present.  Subclasses extend
+    this list with additional mandatory fields.
+
+    Parameters
+    ----------
+    *args, **kwargs
+        Forwarded to :class:`~scampy.utilities.base_classes.fixedSizeDict`.
+        Must include at least the mandatory fields in ``fields``.
+    """
+
     fields = [ 'X', 'Y', 'Z' ]
     _internal = fixedSizeDict._internal + [ 'fields' ]
 
@@ -22,10 +35,24 @@ class kernelCat ( fixedSizeDict ) :
                 raise AttributeError( f"Mandatory field '{key}' not provided." )
 
     def coord ( self ) :
-
+        """Return the 3D Cartesian coordinates as a ``(Nobj, 3)`` array."""
         return numpy.array( [ self.X, self.Y, self.Z ] ).T
 
     def return_sample ( self, X_fields = [], Y_fields = [] ) :
+        """Return two arrays built from selected fields.
+
+        Parameters
+        ----------
+        X_fields : list of str, optional
+            Field names to stack into the first output array.
+        Y_fields : list of str, optional
+            Field names to stack into the second output array.
+
+        Returns
+        -------
+        X : ndarray, shape ``(Nobj, len(X_fields))``
+        Y : ndarray, shape ``(Nobj, len(Y_fields))``
+        """
 
         return ( numpy.array( [ self[ f ] for f in X_fields ] ).T,
                  numpy.array( [ self[ f ] for f in Y_fields ] ).T )
@@ -37,6 +64,16 @@ class kernelCat ( fixedSizeDict ) :
 # Halo Catalogue class, inheriting from kernelCat
 
 class haloCat ( kernelCat ) :
+    """Catalogue of host haloes.
+
+    Extends :class:`kernelCat` with the mandatory halo-specific fields:
+
+    * ``Mhalo`` — halo mass :math:`[M_\\odot\\,h^{-1}]`
+    * ``Rhalo`` — halo radius :math:`[h^{-1}\\,\\mathrm{Mpc}]`
+    * ``firstSub`` — index of the first sub-halo in the sub-halo table
+    * ``numSubs`` — total number of sub-haloes in the halo
+    """
+
     fields = kernelCat.fields + [ 'Mhalo', 'Rhalo', 'firstSub', 'numSubs' ]
 
     def centrals ( self ) :
@@ -85,6 +122,14 @@ class haloCat ( kernelCat ) :
 # Sub-Halo Catalogue class, inheriting from kernelCat
         
 class subhaloCat ( kernelCat ) :
+    """Catalogue of sub-haloes.
+
+    Extends :class:`kernelCat` with the mandatory sub-halo-specific fields:
+
+    * ``Msubh`` — sub-halo mass :math:`[M_\\odot\\,h^{-1}]`
+    * ``Parent`` — index of the parent halo in the :class:`haloCat` table
+    """
+
     fields = kernelCat.fields + [ 'Msubh', 'Parent' ]
 
     def Nsub ( self, mask = None ) :
@@ -368,11 +413,28 @@ class catalogue () :
         return Nc, Ns
 
     def centrals ( self, hmask = None, smask = None ) :
-        """ Return list of indices in the sub-halo table locating the central 
-        sub-halo of each halo. (takes no arguments)
+        """Return indices in the sub-halo table locating the central sub-halo
+        of each halo.
+
+        Parameters
+        ----------
+        hmask : ndarray of bool or None, optional
+            Boolean mask of length ``haloes.size``; only centrals whose
+            parent halo passes this mask are returned.  If ``None``
+            (default) all haloes are included.
+        smask : ndarray of bool or None, optional
+            Boolean mask of length ``subhaloes.size``; only sub-haloes
+            passing this mask are considered as centrals.  If ``None``
+            (default) all sub-haloes are included.
+
+        Returns
+        -------
+        cen : ndarray of int
+            Indices into the sub-halo catalogue of the selected central
+            sub-haloes.
 
         See Also
-        ---------
+        --------
         satellites : same for satellite sub-haloes
         """
         
@@ -405,15 +467,32 @@ class catalogue () :
         return cen    
 
     def satellites ( self, hmask = None, smask = None ) :
-        """ Return list of indices in the sub-halo table locating the satellite
-        sub-haloes of each halo. (takes no arguments)
+        """Return indices in the sub-halo table locating the satellite
+        sub-haloes of each halo.
+
+        Parameters
+        ----------
+        hmask : ndarray of bool or None, optional
+            Boolean mask of length ``haloes.size``; only satellites whose
+            parent halo passes this mask are returned.  If ``None``
+            (default) all haloes are included.
+        smask : ndarray of bool or None, optional
+            Boolean mask of length ``subhaloes.size``; only sub-haloes
+            passing this mask are considered as satellites.  If ``None``
+            (default) all sub-haloes are included.
+
+        Returns
+        -------
+        sat : ndarray of int
+            Indices into the sub-halo catalogue of the selected satellite
+            sub-haloes.
 
         Warning
         -------
-        Computes the slices only for un-masked haloes
+        Computes the slices only for un-masked haloes.
 
         See Also
-        ---------
+        --------
         centrals : same for central sub-haloes
         """
         

@@ -1,3 +1,11 @@
+"""Two-point correlation function estimators.
+
+Provides standard and Landy–Szalay estimators for the two-point
+correlation function :math:`\\xi(r)` (Eq. 23 of Ronconi et al. 2020),
+together with a bootstrap error estimator.  Pair counting is delegated
+to the compiled C++ extension :mod:`scampy.measure.clustering_core`.
+"""
+
 ##################################################################################
 # External imports
 import numpy
@@ -10,6 +18,7 @@ from scampy.boxes import equatorial_to_cartesian, angular_to_euclidean_dist
 
 def _kernel_DD (data, Nd, rbins, omp = True, angular = False
                 ) :
+    """Count data–data pairs in each separation bin."""
     
     if omp :
         if Nd == 2 :
@@ -30,6 +39,7 @@ def _kernel_DD (data, Nd, rbins, omp = True, angular = False
 
 def _kernel_DR (data1, data2, Nd, rbins, omp = True, angular = False
                 ) :
+    """Count data–random cross-pairs in each separation bin."""
     
     if omp :
         if Nd == 2 :
@@ -51,6 +61,7 @@ def _kernel_DR (data1, data2, Nd, rbins, omp = True, angular = False
 ##################################################################################
 
 def _kernel_standard ( DD, RR ) :
+    """Apply the standard estimator: :math:`\\xi = DD/RR - 1`."""
 
     if DD.size != RR.size :
         raise ValueError( 'distance vectors have different sizes' )
@@ -65,7 +76,31 @@ def _kernel_standard ( DD, RR ) :
 
 def two_point_standard ( data, rand, rbins, omp = True, angular = False
                         ) :
-    """
+    """Two-point correlation function with the standard estimator.
+
+    Computes :math:`\\xi(r) = DD/RR - 1`, where :math:`DD` and
+    :math:`RR` are the normalised data–data and random–random pair
+    counts in each separation bin.
+
+    Parameters
+    ----------
+    data : ndarray, shape ``(Ndim, Nobj)``
+        Coordinates of the data catalogue.  ``Ndim`` must be 2 or 3.
+    rand : ndarray, shape ``(Ndim, Nrand)``
+        Coordinates of the random catalogue, same dimensionality as
+        ``data``.
+    rbins : array-like
+        Bin edges for the separation :math:`r`.
+    omp : bool, optional
+        Use the OpenMP-parallel pair counter (default: ``True``).
+    angular : bool, optional
+        Reserved for future angular-space counting (currently unused).
+
+    Returns
+    -------
+    ndarray
+        Correlation function :math:`\\xi(r)` in each bin, shape
+        ``(rbins.size - 1,)``.
     """
 
     NdimD, NobjD = data.shape
@@ -90,6 +125,7 @@ def two_point_standard ( data, rand, rbins, omp = True, angular = False
 ##################################################################################
 
 def _kernel_landy_szalay ( DD, RR, DR ) :
+    """Apply the Landy–Szalay estimator: :math:`\\xi = (DD - 2DR)/RR + 1`."""
 
     if DD.size != RR.size or RR.size != DR.size :
         raise ValueError( 'distance vectors have different sizes' )
@@ -103,12 +139,46 @@ def _kernel_landy_szalay ( DD, RR, DR ) :
 ##################################################################################
 
 def _kernel_error_landy_szalay () :
+    """Analytical error on the Landy–Szalay estimator (not yet implemented)."""
     pass
     
 ##################################################################################
 
 def two_point_landyszalay ( data, rand, rbins, omp = True, return_error = False, angular = False ) :
-    """
+    """Two-point correlation function with the Landy–Szalay estimator.
+
+    Implements Eq. 23 of Ronconi et al. (2020):
+
+    .. math::
+
+        \\xi(r) = \\frac{DD(r) - 2\\,DR(r) + RR(r)}{RR(r)},
+
+    where :math:`DD`, :math:`DR`, and :math:`RR` are the normalised
+    data–data, data–random, and random–random pair counts.  This is the
+    preferred estimator used in the paper's validation tests.
+
+    Parameters
+    ----------
+    data : ndarray, shape ``(Ndim, Nobj)``
+        Coordinates of the data catalogue.  ``Ndim`` must be 2 or 3.
+    rand : ndarray, shape ``(Ndim, Nrand)``
+        Coordinates of the random catalogue.
+    rbins : array-like
+        Bin edges for the separation :math:`r`.
+    omp : bool, optional
+        Use the OpenMP-parallel pair counter (default: ``True``).
+    return_error : bool, optional
+        If ``True``, also return a per-bin error estimate derived from
+        the Poisson fluctuations of the pair counts (default: ``False``).
+    angular : bool, optional
+        Reserved for future angular-space counting (currently unused).
+
+    Returns
+    -------
+    xi : ndarray
+        Correlation function :math:`\\xi(r)`, shape ``(rbins.size - 1,)``.
+    exi : ndarray
+        Per-bin error estimate, only returned when ``return_error=True``.
     """
 
     NdimD, NobjD = data.shape
@@ -154,7 +224,57 @@ def bootstrap_two_point ( data, rand, rbins,
                           Nboots = 10, return_boots = False,
                           omp = True, verbose = True, angular = False,
                           rng = None, kw_rng = { 'seed' : 555 } ) :
-    """
+    """Two-point correlation function with bootstrap error estimate.
+
+    Computes a baseline :math:`\\xi(r)` and estimates its uncertainty by
+    resampling the data catalogue with replacement ``Nboots`` times.  The
+    random catalogue is fixed across all resamples (only :math:`RR` is
+    computed once).  Either the standard or the Landy–Szalay estimator
+    can be used for each resample.
+
+    Parameters
+    ----------
+    data : ndarray, shape ``(Ndim, Nobj)``
+        Coordinates of the data catalogue.  ``Ndim`` must be 2 or 3,
+        or 2 when ``angular=True``.
+    rand : ndarray, shape ``(Ndim, Nrand)``
+        Coordinates of the random catalogue.
+    rbins : array-like
+        Bin edges for the separation :math:`r` (or angular separation
+        in radians when ``angular=True``).
+    standard : bool, optional
+        If ``True`` (default) use the standard estimator; otherwise use
+        the Landy–Szalay estimator.
+    Nboots : int, optional
+        Number of bootstrap resamples (default: ``10``).
+    return_boots : bool, optional
+        If ``True``, also return the full array of bootstrap realisations
+        (default: ``False``).
+    omp : bool, optional
+        Use the OpenMP-parallel pair counter (default: ``True``).
+    verbose : bool, optional
+        Print progress messages (default: ``True``).
+    angular : bool, optional
+        If ``True``, interpret ``data`` and ``rand`` as equatorial
+        coordinates ``(ra, dec)`` in radians, convert to 3D Cartesian
+        unit vectors, and convert ``rbins`` from angular to chord
+        distances (default: ``False``).
+    rng : numpy.random.Generator or None, optional
+        Random number generator.  If ``None`` (default) one is created
+        via ``numpy.random.default_rng(**kw_rng)``.
+    kw_rng : dict, optional
+        Keyword arguments forwarded to ``numpy.random.default_rng``
+        (default: ``{'seed': 555}``).
+
+    Returns
+    -------
+    xi : ndarray
+        Baseline correlation function, shape ``(rbins.size - 1,)``.
+    sigma : ndarray
+        Bootstrap standard deviation per bin, same shape as ``xi``.
+    boots : ndarray, shape ``(Nboots, rbins.size - 1)``
+        Individual bootstrap realisations; only returned when
+        ``return_boots=True``.
     """
 
     if rng is None :

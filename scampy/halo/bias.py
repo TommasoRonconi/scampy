@@ -1,4 +1,8 @@
-""" 
+"""Halo bias functions.
+
+Provides fitting functions for the large-scale linear halo bias
+:math:`b(M_h, z)`, defined such that the halo–matter power spectrum
+equals :math:`b^2(M_h)\\,P_\\mathrm{lin}(k,z)` on large scales.
 """
 
 #############################################################################################
@@ -12,7 +16,42 @@ from scampy.power_spectrum import power_spectrum
 #############################################################################################
 
 def ShethMoTormen01 ( mm, zz, pk, comoving = True ) :
-        
+    """Sheth, Mo & Tormen (2001) halo bias.
+
+    Implements the fitting formula
+
+    .. math::
+
+        b(M_h, z) = 1 + \\frac{1}{\\delta_c}
+        \\left[
+            a\\nu^2 + \\frac{a\\nu^2}{(a\\nu^2)^{0.6}} -
+            \\frac{(a\\nu^2)^{0.6}}{(a\\nu^2)^{0.6} + 0.14}
+        \\right],\\quad a = 0.707,
+
+    where :math:`\\nu = \\delta_c(z)\\,/\\,[D(z)\\,\\sigma(M_h)]`
+    is the peak-height parameter and :math:`\\delta_c(z)` is the linear
+    collapse threshold.
+
+    Parameters
+    ----------
+    mm : scalar or array-like
+        Halo masses :math:`M_h` in :math:`[M_\\odot\\,h^{-1}]`.
+    zz : scalar or array-like
+        Redshift(s) at which to evaluate the bias.
+        The output is broadcast over ``(mm, zz)``.
+    pk : scampy.power_spectrum.power_spectrum
+        Power-spectrum object carrying the cosmological model and growth factor.
+    comoving : bool, optional
+        If ``True`` (default) masses are in comoving units (currently unused,
+        reserved for future physical-unit support).
+
+    Returns
+    -------
+    ndarray
+        Array of shape ``(mm.size,)`` or ``(mm.size, zz.size)`` containing
+        :math:`b(M_h, z)`.
+    """
+
     mm = numpy.asarray(mm)
     if mm.ndim == 0 :
         mm = mm[None]
@@ -37,7 +76,50 @@ def ShethMoTormen01 ( mm, zz, pk, comoving = True ) :
 #############################################################################################
 
 def Tinker10 ( mm, zz, pk, Delta = 200, comoving = True ) :
-        
+    """Tinker et al. (2010) halo bias.
+
+    Implements the fitting formula
+
+    .. math::
+
+        b(M_h, z) = 1
+        - A\\,\\frac{\\nu^a}{\\nu^a + \\delta_c^a}
+        + B\\,\\nu^b
+        + C\\,\\nu^c,
+
+    with coefficients depending on the overdensity threshold
+    :math:`\\Delta` via :math:`y = \\log_{10}\\Delta`:
+
+    .. math::
+
+        A = 1 + 0.24\\,y\\,e^{-(4/y)^4},\\quad
+        a = 0.44\\,y - 0.88,\\quad
+        B = 0.183,\\quad b = 1.5,\\quad
+        C = 0.019 + 0.107\\,y + 0.19\\,e^{-(4/y)^4},\\quad c = 2.4.
+
+    Parameters
+    ----------
+    mm : scalar or array-like
+        Halo masses :math:`M_h` in :math:`[M_\\odot\\,h^{-1}]`.
+    zz : scalar or array-like
+        Redshift(s) at which to evaluate the bias.
+        The output is broadcast over ``(mm, zz)``.
+    pk : scampy.power_spectrum.power_spectrum
+        Power-spectrum object carrying the cosmological model and growth factor.
+    Delta : float, optional
+        Overdensity threshold with respect to the mean matter density
+        (default: 200).
+    comoving : bool, optional
+        If ``True`` (default) masses are in comoving units (currently unused,
+        reserved for future physical-unit support).
+
+    Returns
+    -------
+    ndarray
+        Array of shape ``(mm.size,)`` or ``(mm.size, zz.size)`` containing
+        :math:`b(M_h, z)`.
+    """
+
     mm = numpy.asarray(mm)
     if mm.ndim == 0 :
         mm = mm[None]
