@@ -67,7 +67,7 @@ def centre_box ( box, Lbox ) :
 
 def cartesian_to_polar ( coords, centre = (0.0,0.0,0.0) ) :
     """Converts cartesian coordinates (x,y,z) to polar coordinates (rho, theta, phi) 
-    with physics convention (https://en.wikipedia.org/wiki/Spherical_coordinate_system).
+    with physics convention.
     
     Parameters
     ----------
@@ -89,6 +89,7 @@ def cartesian_to_polar ( coords, centre = (0.0,0.0,0.0) ) :
     --------
     polar_to_cartesian : inverse transform
     """
+    # physics convention: https://en.wikipedia.org/wiki/Spherical_coordinate_system
 
     try :
         x, y, z = numpy.asarray(coords)
@@ -107,7 +108,7 @@ def cartesian_to_polar ( coords, centre = (0.0,0.0,0.0) ) :
 
 def polar_to_cartesian ( coords, centre = (0.0,0.0,0.0) ) :
     """Converts polar coordinates (rho, theta, phi) to cartesian coordinates (x,y,z)
-    with physics convention (https://en.wikipedia.org/wiki/Spherical_coordinate_system).
+    with physics convention.
     
     Parameters
     ----------
@@ -128,6 +129,7 @@ def polar_to_cartesian ( coords, centre = (0.0,0.0,0.0) ) :
     --------
     cartesian_to_polar : inverse transform
     """
+    # physics convention: https://en.wikipedia.org/wiki/Spherical_coordinate_system
     
     try :
         rho, theta, phi = coords
