@@ -1,6 +1,6 @@
 .. ScamPy documentation master file.
 
-Welcome to ScamPy's documentation!
+SCAMPy's documentation!
 ==================================
 
 .. include:: ../README.rst
@@ -9,7 +9,7 @@ Welcome to ScamPy's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   python_doc
+   python_docs
 
 .. toctree::
    :maxdepth: 1
