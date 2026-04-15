@@ -1,4 +1,12 @@
-""" 
+"""Linear matter power spectrum and related statistics.
+
+Provides the :class:`power_spectrum` class, which wraps a tabulated
+linear :math:`P(k)` at :math:`z=0`, normalises it to the cosmological
+:math:`\\sigma_8`, evolves it to arbitrary redshift via the linear growth
+factor, and exposes derived quantities used by the halo model: the
+variance :math:`\\sigma^2(R,z)`, its mass-keyed counterpart
+:math:`\\sigma^2(M,z)`, and the real-space two-point correlation function
+:math:`\\xi(r,z)`.
 """
 
 #############################################################################################
@@ -17,7 +25,37 @@ from scampy.utilities.fft import fstl
 # Classes
 
 class power_spectrum () :
-    
+    """Container for the linear matter power spectrum and its derived statistics.
+
+    On construction the input tabulated :math:`P(k)` is interpolated onto
+    a uniform log-spaced grid, normalised so that
+    :math:`\\sigma_8` matches the value stored in the cosmological model,
+    and the linear growth factor :math:`D(z)/D(0)` is pre-computed on a
+    redshift grid for fast evaluation.
+
+    Parameters
+    ----------
+    kh : array-like
+        Wavenumbers of the input power spectrum in
+        :math:`[h\\,\\mathrm{Mpc}^{-1}]`.
+    pk0 : array-like
+        Linear power spectrum at :math:`z=0` in
+        :math:`[h^{-3}\\,\\mathrm{Mpc}^3]`, evaluated at the wavenumbers
+        ``kh``.
+    kmin : float, optional
+        Minimum wavenumber of the internal interpolation grid
+        (default: ``1e-4``).
+    kmax : float, optional
+        Maximum wavenumber of the internal interpolation grid
+        (default: ``100``).
+    cosmo : scampy.cosmology.model or None, optional
+        Cosmological model instance.  If ``None`` a default model is
+        constructed.
+    thinness : int, optional
+        Number of redshift points used to pre-compute the growth factor
+        (default: ``1000``).
+    """
+
     def __init__ ( self,  kh, pk0,
                    kmin = 1.e-4, kmax = 100,
                    cosmo = None, thinness = 1000 ) :
@@ -57,6 +95,29 @@ class power_spectrum () :
         self.D = lin_interp( self.zz, self.cosmo.D(self.zz)/self.cosmo.D(0.0) )
         
     def compute_sigma8 ( self ) :
+        """Compute and store :math:`\\sigma_8` from the input power spectrum.
+
+        Evaluates
+
+        .. math::
+
+            \\sigma_8^2 = \\frac{1}{2\\pi^2}
+            \\int_0^\\infty k^2\\,P(k)\\,
+            \\tilde{W}^2(8\\,h^{-1}\\,\\mathrm{Mpc}\\cdot k)\\,
+            \\mathrm{d}k,
+
+        where :math:`\\tilde{W}` is the Fourier transform of a top-hat
+        window of radius :math:`8\\,h^{-1}\\,\\mathrm{Mpc}`.
+        The result is stored as ``self.sigma8`` and a correction factor
+        ``self.sigma8correction = cosmo.sigma8 / sigma8`` is set so that
+        subsequent calls to :meth:`Pz` return correctly normalised spectra.
+
+        Returns
+        -------
+        float
+            The unnormalised :math:`\\sigma_8` computed from the raw input
+            ``pk0``.
+        """
         if self.sigma8 < 0.0 :
             integrand = self.kh**2 * self.pk0 * FT_tophat( 8.0*self.kh )**2
             self.sigma8 = 0.5 * trap_int(self.kh, integrand ) / numpy.pi**2
@@ -64,11 +125,33 @@ class power_spectrum () :
         return self.sigma8
     
     def Pz ( self, kk, zz = 0.0, comoving = True ) :
-        """
+        """Linear matter power spectrum evolved to redshift :math:`z`.
+
+        .. math::
+
+            P(k, z) = \\sigma_8^{\\mathrm{cosmo},2}\\,
+            \\frac{D^2(z)}{D^2(0)}\\,
+            \\frac{P_0(k)}{\\sigma_8^2},
+
+        where :math:`P_0(k)` is the input spectrum at :math:`z=0` and
+        :math:`D(z)` is the linear growth factor.
+
+        Parameters
+        ----------
+        kk : scalar or array-like
+            Wavenumbers in :math:`[h\\,\\mathrm{Mpc}^{-1}]` (comoving)
+            or :math:`[\\mathrm{Mpc}^{-1}]` (physical).
+        zz : scalar or array-like, optional
+            Redshift(s) (default: ``0.0``).
+        comoving : bool, optional
+            If ``True`` (default) wavenumbers and the output are in comoving
+            units; if ``False`` a factor of :math:`h` is applied.
+
         Returns
         -------
-        : ndarray
-            array with shape (kk.size, zz.size)
+        ndarray
+            Power spectrum values with shape ``(kk.size,)`` or
+            ``(kk.size, zz.size)``.
         """
         
         kk = numpy.asarray(kk)
@@ -90,11 +173,30 @@ class power_spectrum () :
         return fact * self.P0( kk * h_1 )
     
     def sigma2R ( self, rr, zz, comoving = True ) :
-        """
+        """Variance of the linear density field smoothed on scale :math:`R`.
+
+        .. math::
+
+            \\sigma^2(R, z) = \\frac{1}{2\\pi^2}
+            \\int_0^\\infty k^2\\,P(k,z)\\,
+            \\tilde{W}^2(kR)\\,\\mathrm{d}k,
+
+        where :math:`\\tilde{W}(x) = 3(\\sin x - x\\cos x)/x^3` is the
+        Fourier transform of a spherical top-hat of radius :math:`R`.
+
+        Parameters
+        ----------
+        rr : scalar or array-like
+            Smoothing radii in :math:`[h^{-1}\\,\\mathrm{Mpc}]`.
+        zz : scalar or array-like
+            Redshift(s).  The output is broadcast over ``(rr, zz)``.
+        comoving : bool, optional
+            Passed to :meth:`Pz` (default: ``True``).
+
         Returns
         -------
-        : ndarray
-            array with shape (rr.size, zz.size)
+        ndarray
+            Variance with shape ``(rr.size,)`` or ``(rr.size, zz.size)``.
         """
         
         rr = numpy.asarray(rr)
@@ -117,11 +219,32 @@ class power_spectrum () :
         )
     
     def dsigma2RdR ( self, rr, zz, comoving = True ) :
-        """
+        """Derivative of :math:`\\sigma^2(R,z)` with respect to :math:`R`.
+
+        .. math::
+
+            \\frac{\\mathrm{d}\\sigma^2}{\\mathrm{d}R}(R, z) =
+            \\frac{1}{\\pi^2}
+            \\int_0^\\infty k^3\\,P(k,z)\\,
+            \\tilde{W}(kR)\\,\\tilde{W}'(kR)\\,\\mathrm{d}k,
+
+        where :math:`\\tilde{W}'` denotes the derivative of the top-hat
+        window with respect to its argument.
+        Used by :meth:`sigma2M` and :meth:`dsigma2MdM` via the chain rule.
+
+        Parameters
+        ----------
+        rr : scalar or array-like
+            Smoothing radii in :math:`[h^{-1}\\,\\mathrm{Mpc}]`.
+        zz : scalar or array-like
+            Redshift(s).  The output is broadcast over ``(rr, zz)``.
+        comoving : bool, optional
+            Passed to :meth:`Pz` (default: ``True``).
+
         Returns
         -------
-        : ndarray
-            array with shape (rr.size, zz.size)
+        ndarray
+            Derivative with shape ``(rr.size,)`` or ``(rr.size, zz.size)``.
         """
         
         rr = numpy.asarray(rr)
@@ -144,7 +267,33 @@ class power_spectrum () :
         )        
     
     def sigma2M ( self, mm, zz, comoving = True ) :
-        
+        """Variance of the density field on the mass scale :math:`M`.
+
+        Converts a halo mass to the radius of an equivalent sphere of mean
+        matter density,
+
+        .. math::
+
+            R(M) = \\left(\\frac{3M}{4\\pi\\rho_0}\\right)^{1/3},
+
+        and returns :math:`\\sigma^2(R(M), z)` via :meth:`sigma2R`.
+
+        Parameters
+        ----------
+        mm : scalar or array-like
+            Halo masses in :math:`[M_\\odot\\,h^{-1}]`.
+        zz : scalar or array-like
+            Redshift(s).  The output is broadcast over ``(mm, zz)``.
+        comoving : bool, optional
+            If ``True`` (default) the mean density :math:`\\rho_0` is the
+            comoving matter density; otherwise the physical value is used.
+
+        Returns
+        -------
+        ndarray
+            Variance with shape ``(mm.size,)`` or ``(mm.size, zz.size)``.
+        """
+
         mm = numpy.asarray(mm)
         if mm.ndim == 0 :
             mm = mm[None]
@@ -165,7 +314,32 @@ class power_spectrum () :
         return self.sigma2R( rr, zz, comoving = comoving )
         
     def dsigma2MdM ( self, mm, zz, comoving = True ) :
-        
+        """Derivative of :math:`\\sigma^2(M,z)` with respect to :math:`M`.
+
+        Applies the chain rule through the :math:`R(M)` relation:
+
+        .. math::
+
+            \\frac{\\mathrm{d}\\sigma^2}{\\mathrm{d}M} =
+            \\frac{R}{3M}\\,\\frac{\\mathrm{d}\\sigma^2}{\\mathrm{d}R}.
+
+        Used internally by halo mass function routines.
+
+        Parameters
+        ----------
+        mm : scalar or array-like
+            Halo masses in :math:`[M_\\odot\\,h^{-1}]`.
+        zz : scalar or array-like
+            Redshift(s).  The output is broadcast over ``(mm, zz)``.
+        comoving : bool, optional
+            If ``True`` (default) uses the comoving matter density.
+
+        Returns
+        -------
+        ndarray
+            Derivative with shape ``(mm.size,)`` or ``(mm.size, zz.size)``.
+        """
+
         # at redshift z = 0.0 because 
         # the redshift dependence is in the sigma2R function:
         if comoving :
@@ -182,8 +356,33 @@ class power_spectrum () :
         ).T
 
     def Xi ( self, rr, zz = 0.0, comoving = True ) :
-        """Linear 2-point correlation function
-        obtained by Fourier-Transforming the linear power spectrum
+        """Linear two-point correlation function.
+
+        Obtained by Fourier-transforming the linear power spectrum
+        (Eq. 6 of Ronconi et al. 2020):
+
+        .. math::
+
+            \\xi(r, z) = \\frac{1}{2\\pi^2}
+            \\int_0^\\infty k^2\\,P(k,z)\\,
+            \\frac{\\sin(kr)}{kr}\\,\\mathrm{d}k.
+
+        The integral is evaluated via a Fast Spherical Transform.
+
+        Parameters
+        ----------
+        rr : scalar or array-like
+            Comoving separations in :math:`[h^{-1}\\,\\mathrm{Mpc}]`.
+        zz : float, optional
+            Redshift (default: ``0.0``).  Broadcasting over ``zz`` is not
+            yet supported.
+        comoving : bool, optional
+            Passed to :meth:`Pz` (default: ``True``).
+
+        Returns
+        -------
+        ndarray
+            Correlation function :math:`\\xi(r,z)` evaluated at ``rr``.
         """
         if hasattr( zz, '__len__' ) :
             raise RuntimeError(
