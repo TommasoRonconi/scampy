@@ -1,3 +1,10 @@
+"""Mathematical and utility helper functions.
+
+Provides coordinate distance, angle formatting, Fourier-space window
+functions, trapezoidal integration, rejection sampling, and a
+simple linear interpolator used throughout the halo-model pipeline.
+"""
+
 import numpy
 
 ############################################################################################
@@ -57,14 +64,46 @@ def str_format_deg ( theta, rad = False ) :
 # Matemathical functions
 
 def FT_tophat ( kR ) :
-    """Fourier space transform of a top-hat filter function
+    """Fourier transform of a spherical top-hat window function.
+
+    .. math::
+
+        \\tilde{W}(kR) = \\frac{3\\,[\\sin(kR) - kR\\cos(kR)]}{(kR)^3}.
+
+    Parameters
+    ----------
+    kR : scalar or array-like
+        Dimensionless product of wavenumber and smoothing radius.
+
+    Returns
+    -------
+    ndarray
+        Window function values, same shape as ``kR``.
     """
     return 3 * ( numpy.sin(kR) - kR * numpy.cos(kR) ) / kR**3
 
 def FT_tophat_D1 ( kR ) :
-    """Fourier space transform of a top-hat filter function, first order derivative
+    """Derivative of the spherical top-hat window with respect to :math:`kR`.
+
+    .. math::
+
+        \\tilde{W}'(kR) = \\frac{3\\,[(kR)^2 - 3]\\sin(kR)
+        + 9\\,kR\\cos(kR)}{(kR)^4}.
+
+    Used by :func:`~scampy.power_spectrum.power_spectrum.dsigma2RdR`
+    to evaluate :math:`\\mathrm{d}\\sigma^2/\\mathrm{d}R`.
+
+    Parameters
+    ----------
+    kR : scalar or array-like
+        Dimensionless product of wavenumber and smoothing radius.
+
+    Returns
+    -------
+    ndarray
+        Derivative values, same shape as ``kR``.
     """
-    return ( 3 * ( kR**2 - 3. ) * numpy.sin( kR ) + 9 * kR * numpy.cos( kR ) ) / kR**4 
+    return ( 3 * ( kR**2 - 3. ) * numpy.sin( kR ) + 9 * kR * numpy.cos( kR ) ) / kR**4
 
 ############################################################################################
 

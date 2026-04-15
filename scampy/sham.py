@@ -1,3 +1,12 @@
+"""Sub-Halo Abundance Matching (SHAM) utilities.
+
+Provides functions implementing the abundance matching algorithm
+described in Sec. 3.1.2 of Ronconi et al. (2020): given a population
+of sub-haloes and an observed distribution of some observable property
+(e.g. UV luminosity), each sub-halo is assigned a value of that property
+by matching the two cumulative distributions.
+"""
+
 ##########################################################################################
 
 # External imports
@@ -143,25 +152,32 @@ def match_distribution ( var, func, minF = -20, maxF = -10,
         The corresponding cumulative distribution is computed in ``nbinF`` bins
         between ``minF`` and ``maxF`` using function ``cumulative_from_differential``
         of module ``scampy.measure.abundances``
-    minF : scalar
-
-    maxF : scalar
-
-    minP : scalar
-    
-    maxP : scalar
-    
-    nbinF : int
-    
-    factF : scalar
-    
-    minV : scalar or None
-    
-    maxV : scalar or None
-    
-    nbinV : int
-    
-    factV : scalar
+    minF : scalar, optional
+        Minimum value of the observable property grid (default: ``-20``).
+    maxF : scalar, optional
+        Maximum value of the observable property grid (default: ``-10``).
+    minP : scalar, optional
+        Minimum cumulative probability considered valid for inversion;
+        bins with :math:`P < \\text{minP}` are excluded (default: ``1e-20``).
+    maxP : scalar, optional
+        Maximum cumulative probability considered valid for inversion
+        (default: ``1.0``).
+    nbinF : int, optional
+        Number of bins for the observable property grid (default: ``200``).
+    factF : scalar, optional
+        Normalisation factor applied to ``func`` when computing its
+        cumulative distribution (default: ``1.0``).
+    minV : scalar or None, optional
+        Minimum value of the input variable range.  If ``None``
+        (default) it is set to ``var.min() * 0.99``.
+    maxV : scalar or None, optional
+        Maximum value of the input variable range.  If ``None``
+        (default) it is set to ``var.max() * 1.01``.
+    nbinV : int, optional
+        Number of bins for the input variable grid (default: ``100``).
+    factV : scalar, optional
+        Normalisation factor applied to ``var`` when computing its
+        cumulative distribution (default: ``1.0``).
     
     scatter_type : str
         (Optional, default = ``None``) Type of scatter to add to the output array of properties.
@@ -263,25 +279,34 @@ def match_cross ( X, Y,
 
     Parameters
     ----------
-    X : 1darray
-
-    Y : 1darray
-
-    Xlim : tuple
-
-    Xnbin : int
-
-    factX : float
-
-    logX : bool
-
-    Ylim : tuple
-
-    Ynbin : int
-
-    factY : float
-
-    logY : bool
+    X : array-like
+        First input property array (e.g. sub-halo masses).
+    Y : array-like
+        Second input property array (e.g. observed luminosities).
+    Xlim : tuple or None, optional
+        ``(Xmin, Xmax)`` range for ``X``.  If ``None`` (default) the
+        range is set automatically from the data.
+    Xnbin : int, optional
+        Number of bins for the ``X`` cumulative distribution
+        (default: ``100``).
+    factX : float, optional
+        Normalisation factor for the ``X`` cumulative distribution
+        (default: ``1.0``).
+    logX : bool, optional
+        If ``True`` bins ``X`` on a log scale and scatters in log-space
+        (default: ``False``).
+    Ylim : tuple or None, optional
+        ``(Ymin, Ymax)`` range for ``Y``.  If ``None`` (default) the
+        range is set automatically from the data.
+    Ynbin : int, optional
+        Number of bins for the ``Y`` cumulative distribution
+        (default: ``100``).
+    factY : float, optional
+        Normalisation factor for the ``Y`` cumulative distribution
+        (default: ``1.0``).
+    logY : bool, optional
+        If ``True`` bins ``Y`` on a log scale and scatters in log-space
+        (default: ``False``).
     
     Xscatter : str
         (Optional, default = ``None``) Type of scatter to add to the output array of properties.
