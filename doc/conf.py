@@ -50,17 +50,6 @@ source_suffix = ['.rst', '.md']
 
 master_doc = 'index'
 
-# -- Autodoc configuration ---------------------------------------------------
-
-# Mock C++ extension modules that require compilation
-autodoc_mock_imports = [
-    'numpy',
-    'scipy',
-    'scampy.cosmology',
-    'scampy.utilities.interpolation',
-    'scampy.measure.clustering_core',
-]
-
 # -- Options for HTML output -------------------------------------------------
 
 html_theme = 'sphinx_rtd_theme'

@@ -24,48 +24,102 @@ PYBIND11_MODULE( cosmology, m ) {
   	 py::arg("w_0") = -1.0, py::arg("w_a") = 0.0,
   	 py::arg("zmin") = 0.0, py::arg("zmax") = 100.,
   	 py::arg("thin") = 1000,
-  	 "Constructor of the class cosmology.model" )
+	 "Flat or curved FLRW cosmological model.\n"
+	 "\nParameters\n"
+	 "----------\n"
+	 "Om_M : float, optional\n"
+	 "    Total matter density parameter Omega_M (default: 0.3).\n"
+	 "Om_b : float, optional\n"
+	 "    Baryonic matter density parameter Omega_b (default: 0.045).\n"
+	 "Om_L : float, optional\n"
+	 "    Dark-energy density parameter Omega_Lambda (default: 0.7).\n"
+	 "Om_n : float, optional\n"
+	 "    Massive-neutrino density parameter (default: 0.0).\n"
+	 "Om_r : float, optional\n"
+	 "    Radiation density parameter (default: 0.0).\n"
+	 "Om_K : float, optional\n"
+	 "    Curvature density parameter (default: 0.0).\n"
+	 "hh : float, optional\n"
+	 "    Dimensionless Hubble constant h = H0/100 (default: 0.7).\n"
+	 "sigma8 : float, optional\n"
+	 "    RMS matter-fluctuation amplitude at 8 Mpc/h (default: 0.8).\n"
+	 "w_0 : float, optional\n"
+	 "    Dark-energy equation-of-state constant term (default: -1.0).\n"
+	 "w_a : float, optional\n"
+	 "    Dark-energy equation-of-state linear term w(a) = w_0 + w_a*(1-a) (default: 0.0).\n"
+	 "zmin : float, optional\n"
+	 "    Minimum redshift of the internal tabulation grid (default: 0.0).\n"
+	 "zmax : float, optional\n"
+	 "    Maximum redshift of the internal tabulation grid (default: 100.0).\n"
+	 "thin : int, optional\n"
+	 "    Number of points in the internal tabulation grid (default: 1000)." )
     .def("Hz", py::vectorize(&scam::cosmo_model::H_z),
-	 "Hubble parameter at given redshift", py::arg("zz") )
+	 "Hubble parameter H(z) in km/s/Mpc.\n"
+	 "\nParameters\n----------\nzz : float\n    Redshift.\n"
+	 "\nReturns\n-------\nfloat\n    H(z) [km/s/Mpc].", py::arg("zz") )
     .def("dH", py::vectorize(&scam::cosmo_model::d_H),
-	 "Hubble distance at given redshift", py::arg("zz") )
+	 "Hubble distance c/H(z) in Mpc.\n"
+	 "\nParameters\n----------\nzz : float\n    Redshift.\n"
+	 "\nReturns\n-------\nfloat\n    c/H(z) [Mpc].", py::arg("zz") )
     .def("dC", py::vectorize(&scam::cosmo_model::d_C),
-	 "Comoving distance at given redshift [Mpc]", py::arg("zz") )
+	 "Line-of-sight comoving distance in Mpc.\n"
+	 "\nParameters\n----------\nzz : float\n    Redshift.\n"
+	 "\nReturns\n-------\nfloat\n    d_C(z) [Mpc].", py::arg("zz") )
     .def("ddC", py::vectorize(&scam::cosmo_model::dd_C),
-	 "Derivative of the comoving distance at given redshift", py::arg("zz") )
+	 "Derivative of the comoving distance with respect to redshift, dd_C/dz.\n"
+	 "\nParameters\n----------\nzz : float\n    Redshift.\n"
+	 "\nReturns\n-------\nfloat\n    dd_C/dz [Mpc].", py::arg("zz") )
     .def("dA", py::vectorize(&scam::cosmo_model::d_A),
-	 "Angular diameter distance at given redshift [Mpc]", py::arg("zz") )
+	 "Angular diameter distance in Mpc.\n"
+	 "\nParameters\n----------\nzz : float\n    Redshift.\n"
+	 "\nReturns\n-------\nfloat\n    d_A(z) [Mpc].", py::arg("zz") )
     .def("comoving_volume_unit", py::vectorize(&scam::cosmo_model::comoving_volume_unit),
-	 "Comoving volume per redshift bin per unit steradian (dV/dzdOmega)",
+	 "Comoving volume element per unit redshift per unit steradian, dV/(dz dOmega).\n"
+	 "\nParameters\n----------\nzz : float\n    Redshift.\n"
+	 "\nReturns\n-------\nfloat\n    dV/(dz dOmega) [(Mpc/h)^3 / sr].",
 	 py::arg("zz") )
     .def("comoving_volume", py::vectorize(&scam::cosmo_model::comoving_volume),
-	 "Comoving volume at given redshift [(Mpc/h)^3]", py::arg("zz") )
+	 "Total comoving volume enclosed within redshift z in (Mpc/h)^3.\n"
+	 "\nParameters\n----------\nzz : float\n    Redshift.\n"
+	 "\nReturns\n-------\nfloat\n    V_C(z) [(Mpc/h)^3].", py::arg("zz") )
     .def("cosmic_time", py::vectorize(&scam::cosmo_model::cosmic_time),
-	 "Age of the Universe at given redshift (i.e. at the time photons were emitted)",
+	 "Age of the Universe at redshift z (lookback time from z to infinity) in yr.\n"
+	 "\nParameters\n----------\nzz : float\n    Redshift.\n"
+	 "\nReturns\n-------\nfloat\n    t(z) [yr].",
 	 py::arg("zz") )
     .def("critical_density_comoving", py::vectorize(&scam::cosmo_model::rho_crit_comoving),
-	 "Critical density at given redshift in units of [Msol Mpc^-3 h^2]",
+	 "Critical density in comoving units [Msol Mpc^-3 h^2].\n"
+	 "\nParameters\n----------\nzz : float\n    Redshift.\n"
+	 "\nReturns\n-------\nfloat\n    rho_crit(z) [Msol Mpc^-3 h^2].",
 	 py::arg("zz") )
     .def("critical_density", py::vectorize(&scam::cosmo_model::rho_crit),
-	 "Critical density at given redshift in units of [Msol Mpc^-3]",
+	 "Critical density in physical units [Msol Mpc^-3].\n"
+	 "\nParameters\n----------\nzz : float\n    Redshift.\n"
+	 "\nReturns\n-------\nfloat\n    rho_crit(z) [Msol Mpc^-3].",
 	 py::arg("zz") )
     .def("OmegaM", py::vectorize(&scam::cosmo_model::OmegaM),
-	 "Matter density parameter at given redshift",
-	 py::arg("zz") )
+	 "Total matter density parameter Omega_M(z) = rho_M(z)/rho_crit(z).\n"
+	 "\nParameters\n----------\nzz : float\n    Redshift.\n"
+	 "\nReturns\n-------\nfloat\n    Omega_M(z).", py::arg("zz") )
     .def("Omegab", py::vectorize(&scam::cosmo_model::Omegab),
-	 "Baryonic matter density parameter at given redshift",
-	 py::arg("zz") )
+	 "Baryonic matter density parameter Omega_b(z).\n"
+	 "\nParameters\n----------\nzz : float\n    Redshift.\n"
+	 "\nReturns\n-------\nfloat\n    Omega_b(z).", py::arg("zz") )
     .def("deltac", py::vectorize(&scam::cosmo_model::deltac),
-	 "Critical overdensity threshold for virial collapse at given redshift",
-	 py::arg("zz") )
+	 "Linear critical overdensity for spherical collapse delta_c(z).\n"
+	 "\nParameters\n----------\nzz : float\n    Redshift.\n"
+	 "\nReturns\n-------\nfloat\n    delta_c(z).", py::arg("zz") )
     .def("D", py::vectorize(&scam::cosmo_model::DD),
-	 "Amplitude of the growing solution of matter fluctuations at given redshift",
-	 py::arg("zz") )
+	 "Linear growth factor D(z), normalised to D(0) = 1.\n"
+	 "\nParameters\n----------\nzz : float\n    Redshift.\n"
+	 "\nReturns\n-------\nfloat\n    D(z).", py::arg("zz") )
     .def("gz", py::vectorize(&scam::cosmo_model::gz),
-	 "Growth factor at given redshift (i.e. (1+z)*D(z))",
-	 py::arg("zz") )
+	 "Unnormalised growth factor g(z) = (1+z)*D(z).\n"
+	 "\nParameters\n----------\nzz : float\n    Redshift.\n"
+	 "\nReturns\n-------\nfloat\n    (1+z)*D(z).", py::arg("zz") )
     .def("Delta_c", py::vectorize(&scam::cosmo_model::Delta_c_NakamuraSuto98),
-	 "Nakamura & Suto 1998" )
+	 "Virial overdensity Delta_c(z) from Nakamura & Suto (1998).\n"
+	 "\nReturns\n-------\nfloat\n    Delta_c(z)." )
     .def_readonly("H0", &scam::cosmo_model::H0,
 		  "Hubble constant at z=0 (defined as 100*h0 and expressed in km/s/Mpc)")
     .def_readonly("t_H0", &scam::cosmo_model::t_H0,

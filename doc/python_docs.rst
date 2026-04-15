@@ -43,6 +43,12 @@ Top-level modules
 .. automodule:: scampy.sham
    :members:
 
+`cosmology` extension module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: scampy.cosmology
+   :members:
+
 `halo` subpackage
 -----------------
 
@@ -100,6 +106,12 @@ Top-level modules
 .. automodule:: scampy.measure.clustering
    :members:
 
+`measure.clustering_core` extension module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: scampy.measure.clustering_core
+   :members:
+
 `utilities` subpackage
 ----------------------
 
@@ -125,4 +137,10 @@ Top-level modules
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: scampy.utilities.constants
+   :members:
+
+`utilities.interpolation` extension module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: scampy.utilities.interpolation
    :members:
