@@ -1,7 +1,7 @@
 .. ScamPy documentation master file.
 
 SCAMPy's documentation!
-==================================
+=======================
 
 .. include:: ../README.rst
 
