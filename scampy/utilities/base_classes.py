@@ -1,3 +1,11 @@
+"""Utility dictionary containers for fixed-size array fields.
+
+Provides :class:`fixedSizeDict` and :class:`maskedDict`, which enforce
+that all stored values are numpy arrays of the same fixed length.
+These classes underpin the catalogue data structures in
+:mod:`scampy.catalogue`.
+"""
+
 ############################################################################################
 # External includes
 
@@ -5,9 +13,30 @@ import numpy
 from collections.abc import MutableMapping as MM
 
 ############################################################################################
-# Custom dictionary class
 
 class fixedSizeDict ( MM ) :
+    """Dictionary-like container where all values have the same fixed length.
+
+    Inherits from :class:`collections.abc.MutableMapping`.  All values
+    are coerced to :class:`numpy.ndarray` on assignment and must have
+    exactly ``Nobj`` elements; attempts to store arrays of a different
+    length raise :exc:`TypeError`.  Deletion of keys is not allowed.
+
+    Parameters
+    ----------
+    Nobj : int
+        Fixed length that all stored arrays must have.
+    *args : MutableMapping, optional
+        Initial key-value pairs copied from another mapping.
+    **kwargs
+        Additional key-value pairs to store on construction.
+
+    Examples
+    --------
+    >>> d = fixedSizeDict(3, x=[1, 2, 3], y=[4, 5, 6])
+    >>> d['z'] = [7, 8, 9]   # OK
+    >>> d['w'] = [1, 2]      # raises TypeError
+    """
 
     _internal = []
     
@@ -111,6 +140,36 @@ class fixedSizeDict ( MM ) :
 ############################################################################################
 
 class maskedDict ( MM ) :
+    """Dictionary-like container with a shared boolean mask over all fields.
+
+    Extends the concept of :class:`fixedSizeDict` by storing every value
+    as a :class:`numpy.ma.MaskedArray` with a single shared hard mask of
+    length ``Nobj``.  Masking an element hides it across all fields
+    simultaneously, which is useful for applying selection cuts to
+    catalogue columns without copying data.
+
+    The effective length reported by :func:`len` is the number of
+    *unmasked* elements; use the ``size`` property for the full
+    (unmasked + masked) length.
+
+    Parameters
+    ----------
+    Nobj : int
+        Total number of elements (masked and unmasked).
+    *args : MutableMapping, optional
+        Initial key-value pairs copied from another mapping.
+    **kwargs
+        Additional key-value pairs to store on construction.
+
+    Examples
+    --------
+    >>> d = maskedDict(4, x=[1, 2, 3, 4])
+    >>> d.add_mask(numpy.array([False, True, False, False]))
+    >>> len(d)       # 3 unmasked elements
+    3
+    >>> d.size()     # 4 total elements
+    4
+    """
 
     _internal = [ 'mask' ]
     
@@ -215,16 +274,36 @@ class maskedDict ( MM ) :
         return True
 
     def reset_mask ( self ) :
+        """Set all mask entries to ``False``, making all elements visible."""
         import numpy as np
         self.mask *= np.zeros_like( self.mask )
         return;
 
     def add_mask ( self, mask ) :
+        """Apply an additional boolean mask (logical OR with the current mask).
+
+        Parameters
+        ----------
+        mask : array-like of bool
+            Boolean array of length ``Nobj``; ``True`` hides the element.
+        """
         self.mask += mask
         return;
 
     def iter_masked ( self, *keys ) :
+        """Iterate over unmasked rows for a subset of keys.
 
+        Parameters
+        ----------
+        *keys : str
+            Field names to include in each yielded tuple.
+
+        Yields
+        ------
+        tuple
+            One tuple per unmasked element containing the values of the
+            requested fields in the order given.
+        """
         for ii in zip( *[ self.__dict__[k][~self.mask] for k in keys ] ) :
             yield ii
     
