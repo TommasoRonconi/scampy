@@ -106,7 +106,32 @@ def FT_tophat_D1 ( kR ) :
     return ( 3 * ( kR**2 - 3. ) * numpy.sin( kR ) + 9 * kR * numpy.cos( kR ) ) / kR**4
 
 def mod_erf ( x, factor=1.0 ) :
-    """Modified error function
+    """Normalised cumulative-like transform of an array via the error function.
+
+    Centres ``x`` at its midpoint and rescales by ``factor * std(x)``,
+    then applies the standard CDF of the normal distribution:
+
+    .. math::
+
+        \\mathrm{mod\\_erf}(x) =
+        \\frac{1}{2}\\left[1 + \\mathrm{erf}\\!
+        \\left(\\frac{x - x_M}{\\mathrm{factor}\\cdot\\sigma_x}
+        \\right)\\right],
+
+    where :math:`x_M = (x_\\min + x_\\max)/2` and
+    :math:`\\sigma_x = \\mathrm{std}(x)`.
+
+    Parameters
+    ----------
+    x : array-like
+        Input array.
+    factor : float, optional
+        Scaling factor applied to the standard deviation (default: ``1.0``).
+
+    Returns
+    -------
+    ndarray
+        Values in :math:`[0, 1]`, same shape as ``x``.
     """
     from scipy.special import erf
     x = numpy.array( x )
@@ -116,9 +141,35 @@ def mod_erf ( x, factor=1.0 ) :
     return 0.5*(1+erf(t))
 
 def truncated_gaussian(mean, std, lower, upper, size, rng = None, kw_rng = {'seed' : 555}):
-    """Truncated gaussian: 
-    a Gaussian distribution function that keeps 
-    the samples constrained within [lower, upper)
+    """Draw samples from a Gaussian distribution truncated to ``[lower, upper)``.
+
+    Internally converts the bounds to the standard-normal parameterisation
+    and delegates to :func:`scipy.stats.truncnorm`.
+
+    Parameters
+    ----------
+    mean : float
+        Mean of the untruncated Gaussian.
+    std : float
+        Standard deviation of the untruncated Gaussian.
+    lower : float
+        Lower bound of the truncation interval.
+    upper : float
+        Upper bound of the truncation interval (exclusive).
+    size : int
+        Number of samples to draw.
+    rng : numpy.random.Generator or None, optional
+        Random number generator.  If ``None`` (default) one is created
+        via ``numpy.random.default_rng(**kw_rng)``.
+    kw_rng : dict, optional
+        Keyword arguments forwarded to ``numpy.random.default_rng``
+        (default: ``{'seed': 555}``).
+
+    Returns
+    -------
+    ndarray
+        1-D array of ``size`` samples drawn from
+        :math:`\\mathcal{N}(\\mu,\\sigma^2)` restricted to ``[lower, upper)``.
     """
     from scipy.stats import truncnorm
     if rng is None :

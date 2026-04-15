@@ -234,6 +234,44 @@ def Behroozi13 ( mm, zz, pk, comoving = True ) :
 #############################################################################################
 
 def Bhattacharya11 ( mm, zz, pk, comoving = True ) :
+    """Generalised halo mass function of Bhattacharya et al. (2011) with
+    scale- and redshift-dependent coefficients calibrated on the Euclid
+    SUBFIND catalogues by Castro et al. (2023, Tab. 4).
+
+    The multiplicity function is (Eq. 3 of Castro et al. 2023):
+
+    .. math::
+
+        \\nu f(\\nu) = A(p,q)
+        \\sqrt{\\frac{2a\\nu^2}{\\pi}}
+        e^{-a\\nu^2/2}
+        \\left[1 + \\frac{1}{(a\\nu^2)^p}\\right]
+        (\\nu\\sqrt{a})^{q-1},
+
+    where the normalisation :math:`A(p,q)` (Eq. 4) ensures
+    :math:`\\int f(\\nu)\\,\\mathrm{d}\\nu = 1`.
+    The parameters :math:`a`, :math:`p`, :math:`q` depend on both the
+    local logarithmic slope of :math:`\\sigma(R)` and :math:`\\Omega_M(z)`
+    via Eqs. 12–16.
+
+    Parameters
+    ----------
+    mm : scalar or array-like
+        Halo masses :math:`M_h` in :math:`[M_\\odot\\,h^{-1}]`.
+    zz : scalar or array-like
+        Redshift(s) at which to evaluate the mass function.
+        The output is broadcast over ``(mm, zz)``.
+    pk : scampy.power_spectrum.power_spectrum
+        Power-spectrum object carrying the cosmological model and growth factor.
+    comoving : bool, optional
+        If ``True`` (default) masses and densities are in comoving units.
+
+    Returns
+    -------
+    ndarray
+        Array of shape ``(mm.size,)`` or ``(mm.size, zz.size)`` containing
+        :math:`\\mathrm{d}n/\\mathrm{d}M_h`.
+    """
     from scipy.special import gamma as Gamma
         
     mm = numpy.asarray(mm)
