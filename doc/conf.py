@@ -38,24 +38,48 @@ read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
 # -- Project information -----------------------------------------------------
 
 project = 'SCAMPy'
-copyright = '2020, Tommaso Ronconi'
+copyright = f'{datetime.now().year}, Tommaso Ronconi'
 author = 'Tommaso Ronconi'
 
 # -- General configuration ---------------------------------------------------
 
+# Add any Sphinx extension module names here, as strings. They can be
+# extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
+# ones.
 extensions = [
     'myst_parser',
     'sphinx.ext.autodoc',
     'sphinx.ext.coverage',
     'sphinx.ext.napoleon',
+    'sphinx.ext.autosummary',
+    # 'sphinx.ext.graphviz'
 ]
 
+# Autosummary configuration commands:
+autodoc_member_order = 'bysource'
+autosummary_member_order = 'bysource'
+
+# GraphViz configuration commands:
+# graphviz_output_format = 'svg'
+
+# Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
+
+# List of patterns, relative to source directory, that match files and
+# directories to ignore when looking for source files.
+# This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
 
 source_suffix = ['.rst', '.md']
 
 master_doc = 'index'
+
+# -- Autodoc configuration ---------------------------------------------------
+
+autodoc_mock_imports = [ 'numpy', 'scipy' ]
+autodoc_default_options = {
+    'members': True
+    }
 
 # -- Options for HTML output -------------------------------------------------
 
