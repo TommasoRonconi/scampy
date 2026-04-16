@@ -10,7 +10,14 @@ import glob
 import os
 import subprocess
 import sys
-sys.path.insert(0, os.path.abspath('..'))
+from datetime import datetime
+# sys.path.insert(0, os.path.abspath('..'))
+import scampy
+import scampy.io
+import scampy.halo
+import scampy.utilities
+import scampy.measure
+import scampy.plot
 
 # -- Configuration for ReadTheDocs setup -------------------------------------
 
