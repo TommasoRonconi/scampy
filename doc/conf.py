@@ -31,7 +31,7 @@ read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
 # -- Project information -----------------------------------------------------
 
 project = 'SCAMPy'
-copyright = '2024, Tommaso Ronconi'
+copyright = '2020, Tommaso Ronconi'
 author = 'Tommaso Ronconi'
 
 # -- General configuration ---------------------------------------------------
