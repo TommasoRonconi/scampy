@@ -44,7 +44,7 @@ Top-level modules
    :members:
 
 `cosmology` extension module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: scampy.cosmology
    :members:
