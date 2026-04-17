@@ -10,6 +10,7 @@ SCAMPy's documentation!
    :caption: Contents:
 
    python_docs
+   catalogues
 
 .. toctree::
    :maxdepth: 1
