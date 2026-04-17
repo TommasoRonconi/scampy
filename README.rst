@@ -18,20 +18,17 @@ The procedure itself is quite easy since it only requires to apply the two metho
 1. by applying the HOD scheme, the host sub-haloes are selected;
 2. the SHAM algorithm associates to each sub-halo an observable property of choice.
 
-What can be achieved
-^^^^^^^^^^^^^^^^^^^^
-
-Here is an animation obtained by running SCAMPy on the halo/subhalo catalogues of 42 different
-snapshots, from redshift :math:`z=8` to redshift :math:`z=0`, of the same :math:`64\,\mathrm{Mpc}/h`
-DM-only N-body simulation.
-The simulation has been obtained with the non-public code GADGET-3, following the evolution of
-:math:`512^3` DM particles.
-For each different redshift we have fixed the parameter values for the HOD and matched the
-UV-luminosity function of star-forming galaxies.
-
 .. image:: https://raw.githubusercontent.com/TommasoRonconi/scampy/refs/heads/main/images/evolving_slice.gif
    :width: 100%
    :alt: If the image is not directly shown in the text, it can be found in the subdirectory `images/evolving_slice.gif`
+
+The animation is obtained running SCAMPy on the halo/subhalo catalogues of 42 different
+snapshots, from redshift :math:`z=8` to redshift :math:`z=0`, of a :math:`64\,\mathrm{Mpc}/h`
+DM-only N-body simulation.
+The simulation has been obtained with the GADGET-3 code, following the evolution of
+:math:`512^3` DM particles.
+For each different redshift we have fixed the parameter values for the HOD and matched the
+UV-luminosity function of star-forming galaxies.
 
 The background colour-code shows the underlying DM-density field computed by smoothing the
 contribution of DM-particles in a 10 Mpc/h thick slice of the simulation.
