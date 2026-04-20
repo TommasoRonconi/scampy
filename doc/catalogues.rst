@@ -134,68 +134,179 @@ Deep catalogue
 Data format
 ^^^^^^^^^^^
 
-Each redshift-slice file is an HDF5 file.  The table below lists the available
-fields.  All positions are in the simulation frame; sky coordinates are derived
-from the light-cone geometry described in the paper.
+Each redshift-slice file is an HDF5 file containing a single group ``galaxies/``
+with one dataset per field.  All entries in a slice file represent objects
+detected in at least one catalogue (CoG or HIG); the boolean flags ``catCoG``
+and ``catHIG`` indicate membership.  Comoving coordinates are in the simulation
+frame; sky coordinates are derived from the light-cone geometry described in the
+paper.
 
-**Continuum catalogue (CoG) fields**
+The files can be read with :func:`scampy.io.hdf5.load_from_hdf5`, which returns
+a nested dictionary keyed first by group name, then by field name:
 
-.. list-table::
-   :header-rows: 1
-   :widths: 25 15 60
+.. code-block:: python
 
-   * - Field name
-     - Unit
-     - Description
-   * - ``RA``
-     - deg
-     - *[placeholder — fill in]*
-   * - ``Dec``
-     - deg
-     - *[placeholder — fill in]*
-   * - ``redshift``
-     - —
-     - *[placeholder — fill in]*
-   * - ``S_1p4GHz``
-     - Jy
-     - *[placeholder — fill in]*
-   * - ``population``
-     - —
-     - *[placeholder — fill in (AGN/SFG flag)]*
-   * - ``M_halo``
-     - :math:`M_\odot\,h^{-1}`
-     - *[placeholder — fill in]*
-   * - ``M_subhalo``
-     - :math:`M_\odot\,h^{-1}`
-     - *[placeholder — fill in]*
+   from scampy.io.hdf5 import load_from_hdf5
 
-**HI catalogue (HIG) fields**
+   data = load_from_hdf5("Catalogue_FluxLim_z0.01.hdf5")
+   galaxies = data["galaxies"]
+
+   # sky coordinates (all objects)
+   ra, dec, z = galaxies["RA"], galaxies["Dec"], galaxies["Red"]
+
+   # select the continuum sub-catalogue
+   cog_mask = galaxies["catCoG"]
+   flux_1400 = galaxies["I1400"][cog_mask]   # µJy
+
+   # select the HI sub-catalogue
+   hig_mask = galaxies["catHIG"]
+   hi_flux = galaxies["HI flux"][hig_mask]   # mJy·Hz
 
 .. list-table::
    :header-rows: 1
-   :widths: 25 15 60
+   :widths: 20 12 15 53
 
-   * - Field name
+   * - Field
+     - dtype
      - Unit
      - Description
    * - ``RA``
+     - float64
      - deg
-     - *[placeholder — fill in]*
+     - Right ascension
    * - ``Dec``
+     - float64
      - deg
-     - *[placeholder — fill in]*
-   * - ``redshift``
+     - Declination
+   * - ``Red``
+     - float64
      - —
-     - *[placeholder — fill in]*
-   * - ``S_21``
-     - Jy·Hz
-     - *[placeholder — fill in]*
-   * - ``M_HI``
+     - Redshift
+   * - ``X``
+     - float64
+     - Mpc/h
+     - Comoving x-coordinate
+   * - ``Y``
+     - float64
+     - Mpc/h
+     - Comoving y-coordinate
+   * - ``Z``
+     - float64
+     - Mpc/h
+     - Comoving z-coordinate
+   * - ``Mhalo``
+     - float64
      - :math:`M_\odot\,h^{-1}`
-     - *[placeholder — fill in]*
-   * - ``M_halo``
+     - Host halo mass
+   * - ``Msubh``
+     - float64
      - :math:`M_\odot\,h^{-1}`
-     - *[placeholder — fill in]*
-   * - ``M_subhalo``
-     - :math:`M_\odot\,h^{-1}`
-     - *[placeholder — fill in]*
+     - Host subhalo mass
+   * - ``Parent``
+     - int64
+     - —
+     - Parent halo index
+   * - ``IDgadget``
+     - int64
+     - —
+     - GADGET particle ID
+   * - ``snapID``
+     - int64
+     - —
+     - Snapshot ID
+   * - ``Sect``
+     - int64
+     - —
+     - Sky sector index
+   * - ``OptClass``
+     - int64
+     - —
+     - Optical source classification
+   * - ``logSFR``
+     - float32
+     - :math:`\log(M_\odot\,\mathrm{yr}^{-1})`
+     - Log star-formation rate
+   * - ``catCoG``
+     - bool
+     - —
+     - Member of the continuum catalogue (CoG)
+   * - ``catHIG``
+     - bool
+     - —
+     - Member of the HI catalogue (HIG)
+   * - ``cenCoG``
+     - bool
+     - —
+     - Central galaxy in CoG
+   * - ``cenHIG``
+     - bool
+     - —
+     - Central galaxy in HIG
+   * - ``satCoG``
+     - bool
+     - —
+     - Satellite galaxy in CoG
+   * - ``satHIG``
+     - bool
+     - —
+     - Satellite galaxy in HIG
+   * - ``I1400`` *(CoG)*
+     - float32
+     - :math:`\mu\mathrm{Jy}`
+     - Flux density at 1.4 GHz
+   * - ``I150`` *(CoG)*
+     - float32
+     - :math:`\mu\mathrm{Jy}`
+     - Flux density at 150 MHz
+   * - ``I3000`` *(CoG)*
+     - float32
+     - :math:`\mu\mathrm{Jy}`
+     - Flux density at 3 GHz
+   * - ``L1400`` *(CoG)*
+     - float32
+     - :math:`\log(\mathrm{W\,Hz}^{-1})`
+     - Radio luminosity at 1.4 GHz
+   * - ``RadioClass`` *(CoG)*
+     - int64
+     - —
+     - Radio source classification (AGN/SFG)
+   * - ``size`` *(CoG)*
+     - float32
+     - arcsec
+     - Angular size
+   * - ``trecs_CoG_ID`` *(CoG)*
+     - int64
+     - —
+     - T-RECS continuum source ID
+   * - ``HI flux`` *(HIG)*
+     - float32
+     - :math:`\mathrm{mJy\cdot Hz}`
+     - HI line flux
+   * - ``HI size`` *(HIG)*
+     - float32
+     - arcsec
+     - HI disc angular size
+   * - ``MHI`` *(HIG)*
+     - float32
+     - :math:`\log(M_\odot)`
+     - HI mass
+   * - ``MHI_pred`` *(HIG)*
+     - float32
+     - :math:`\log(M_\odot)`
+     - Predicted HI mass (from SHAM)
+   * - ``w50`` *(HIG)*
+     - float32
+     - km/s
+     - Line width at 50% peak flux
+   * - ``v_max`` *(HIG)*
+     - float32
+     - km/s
+     - Maximum rotation velocity
+   * - ``inclination`` *(HIG)*
+     - float32
+     - deg
+     - Disc inclination angle
+   * - ``trecs_HIG_ID`` *(HIG)*
+     - int64
+     - —
+     - T-RECS HI source ID
