@@ -28,20 +28,17 @@ Summary
    :header-rows: 1
    :widths: 20 20 15 15 15 15
 
-   * - Release
-     - Paper
+   * - Paper
      - Catalogue
      - Populations
      - Total sources
      - :math:`z` range
-   * - :ref:`RadioMocks <catalogues-radiomocks>`
-     - Ronconi et al. (2026)
+   * - `[Ronconi et al. (2026)] https://ui.adsabs.harvard.edu/abs/2026arXiv260325650R/abstract`_
      - Shallow
      - CoG (AGN + SFG), HIG, cross
      - ~269M
      - CoG: :math:`0 < z \leq 5`; HIG: :math:`0 < z \leq 0.5`
-   * - :ref:`RadioMocks <catalogues-radiomocks>`
-     - Ronconi et al. (2026)
+   * - `[Ronconi et al. (2026)] https://ui.adsabs.harvard.edu/abs/2026arXiv260325650R/abstract`_
      - Deep
      - CoG (AGN + SFG), HIG, cross
      - ~1.1B
@@ -52,11 +49,10 @@ Summary
 .. _catalogues-radiomocks:
 
 RadioMocks — Ronconi et al. (2026)
-------------------------------------
+-----------------------------------
 
-These catalogues are described in Sec. 3.2 of Ronconi et al. (2026, MNRAS, in
-press).  They are built on a DEMNUni dark-matter light-cone simulation (Carbone
-et al. 2016, Parimbelli et al. 2022) using the full SCAMPy pipeline: a
+These catalogues are described in Sec. 3.2 of `[Ronconi et al. (2026)] https://ui.adsabs.harvard.edu/abs/2026arXiv260325650R/abstract`_.
+They are built on a DEMNUni dark-matter light-cone simulation (Carbone et al. 2016, Parimbelli et al. 2022) using the full SCAMPy pipeline: a
 probabilistic halo-occupation distribution (HOD) selects host sub-haloes, and
 sub-halo abundance matching (SHAM) assigns observed radio properties to each
 host.
@@ -69,7 +65,7 @@ Two catalogues are provided, differing in flux-limit depth:
 * the **deep catalogue** extends the calibrated model to the expected sensitivity
   limits of future SKA surveys.
 
-Each catalogue is distributed as a collection of **41 HDF5 files**, one per
+Each catalogue is distributed as a collection of **42 HDF5 files**, one per
 redshift slice, spanning :math:`0 < z \leq 5` for the continuum population and
 :math:`0 < z \leq 0.5` for the HI population.
 
