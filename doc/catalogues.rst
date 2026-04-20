@@ -87,7 +87,7 @@ Shallow catalogue
    * - **Simulation**
      - DEMNUni light-cone (Carbone et al. 2016)
    * - **Redshift slices**
-     - 41 slices, :math:`0 < z \leq 5`
+     - 42 slices, :math:`0 < z \leq 5`
    * - **Flux limit — continuum**
      - :math:`S^{\lim}_{1.4\,\mathrm{GHz}} \simeq 8 \times 10^{-5}` Jy
    * - **Flux limit — HI line**
@@ -99,7 +99,7 @@ Shallow catalogue
    * - **Cross-catalogue (CoG** :math:`\times` **HIG)**
      - 7 084 155
    * - **Download**
-     - `[Google Drive — shallow] <PLACEHOLDER_SHALLOW_URL>`_
+     - `[Google Drive — shallow] https://drive.google.com/drive/folders/17UlI0uvlIjzX0TwgDX2A1A7ECgF9FZI-?usp=sharing`_
 
 .. _catalogues-radiomocks-deep:
 
@@ -115,7 +115,7 @@ Deep catalogue
    * - **Simulation**
      - DEMNUni light-cone (Carbone et al. 2016)
    * - **Redshift slices**
-     - 41 slices, :math:`0 < z \leq 5`
+     - 42 slices, :math:`0 < z \leq 5`
    * - **Flux limit — continuum**
      - :math:`S^{\lim}_{1.4\,\mathrm{GHz}} \simeq 4 \times 10^{-5}` Jy
    * - **Flux limit — HI line**
@@ -127,7 +127,7 @@ Deep catalogue
    * - **Cross-catalogue (CoG** :math:`\times` **HIG)**
      - 32 531 743
    * - **Download**
-     - `[Google Drive — deep] <PLACEHOLDER_DEEP_URL>`_
+     - `[Google Drive — deep] https://drive.google.com/drive/folders/1FouNVty4qduCcBbZRg-YX9oudfGskDr1?usp=sharing`_
 
 .. _catalogues-radiomocks-format:
 
