@@ -26,7 +26,7 @@ Summary
 
 .. list-table::
    :header-rows: 1
-   :widths: 20 20 15 15 15 15
+   :widths: 20 15 15 15 15
 
    * - Paper
      - Catalogue
