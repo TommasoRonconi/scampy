@@ -233,19 +233,19 @@ a nested dictionary keyed first by group name, then by field name:
    * - ``cenCoG``
      - bool
      - —
-     - Central galaxy in CoG
+     - Central CoG
    * - ``cenHIG``
      - bool
      - —
-     - Central galaxy in HIG
+     - Central HIG
    * - ``satCoG``
      - bool
      - —
-     - Satellite galaxy in CoG
+     - Satellite CoG
    * - ``satHIG``
      - bool
      - —
-     - Satellite galaxy in HIG
+     - Satellite HIG
    * - ``I1400`` *(CoG)*
      - float32
      - :math:`\mu\mathrm{Jy}`
