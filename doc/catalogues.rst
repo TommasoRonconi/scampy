@@ -33,12 +33,12 @@ Summary
      - Populations
      - Total sources
      - :math:`z` range
-   * - `[Ronconi et al. (2026)] https://ui.adsabs.harvard.edu/abs/2026arXiv260325650R/abstract`_
+   * - `[Ronconi et al. (2026)] <https://ui.adsabs.harvard.edu/abs/2026arXiv260325650R/abstract>`_
      - Shallow
      - CoG (AGN + SFG), HIG, cross
      - ~269M
      - CoG: :math:`0 < z \leq 5`; HIG: :math:`0 < z \leq 0.5`
-   * - `[Ronconi et al. (2026)] https://ui.adsabs.harvard.edu/abs/2026arXiv260325650R/abstract`_
+   * - `[Ronconi et al. (2026)] <https://ui.adsabs.harvard.edu/abs/2026arXiv260325650R/abstract>`_
      - Deep
      - CoG (AGN + SFG), HIG, cross
      - ~1.1B
@@ -51,7 +51,7 @@ Summary
 RadioMocks — Ronconi et al. (2026)
 -----------------------------------
 
-These catalogues are described in Sec. 3.2 of `[Ronconi et al. (2026)] https://ui.adsabs.harvard.edu/abs/2026arXiv260325650R/abstract`_.
+These catalogues are described in Sec. 3.2 of `[Ronconi et al. (2026)] <https://ui.adsabs.harvard.edu/abs/2026arXiv260325650R/abstract>`_.
 They are built on a DEMNUni dark-matter light-cone simulation (Carbone et al. 2016, Parimbelli et al. 2022) using the full SCAMPy pipeline: a
 probabilistic halo-occupation distribution (HOD) selects host sub-haloes, and
 sub-halo abundance matching (SHAM) assigns observed radio properties to each
@@ -95,7 +95,7 @@ Shallow catalogue
    * - **Cross-catalogue (CoG** :math:`\times` **HIG)**
      - 7 084 155
    * - **Download**
-     - `[Google Drive — shallow] https://drive.google.com/drive/folders/17UlI0uvlIjzX0TwgDX2A1A7ECgF9FZI-?usp=sharing`_
+     - `[Google Drive — shallow] <https://drive.google.com/drive/folders/17UlI0uvlIjzX0TwgDX2A1A7ECgF9FZI-?usp=sharing>`_
 
 .. _catalogues-radiomocks-deep:
 
@@ -123,7 +123,7 @@ Deep catalogue
    * - **Cross-catalogue (CoG** :math:`\times` **HIG)**
      - 32 531 743
    * - **Download**
-     - `[Google Drive — deep] https://drive.google.com/drive/folders/1FouNVty4qduCcBbZRg-YX9oudfGskDr1?usp=sharing`_
+     - `[Google Drive — deep] <https://drive.google.com/drive/folders/1FouNVty4qduCcBbZRg-YX9oudfGskDr1?usp=sharing>`_
 
 .. _catalogues-radiomocks-format:
 
