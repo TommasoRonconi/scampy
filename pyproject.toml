@@ -3,31 +3,62 @@
 [build-system]
 requires = [
     "setuptools",
+    "numpy",
     "wheel",
     "pybind11>=2.10.0",
-    'numpy'
 ]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "scampy"
+description = "Sub-halo Clustering and Abundance Matching in Python"
 authors = [{ name = "Tommaso Ronconi", email = "tronconi@sissa.it" }]
 readme = "README.rst"
-version = "0.0.1"
-# license = { file = "LICENSE" }
+license = { text = "GPL-3.0-or-later" }
+dynamic = ["version"]
 classifiers = [
     "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
     "Operating System :: POSIX :: Linux",
     "Operating System :: MacOS",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: C++",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Astronomy",
 ]
 dependencies = [
     'numpy',
     'scipy',
     'matplotlib>=3.6',
-    'h5py'
+    'h5py',
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.8"
+
+[project.optional-dependencies]
+dev = ["bumpver"]
+doc = ["sphinx","sphinx_rtd_theme"]
+
+[project.urls]
+Homepage = "https://scampy.readthedocs.io/"
+Documentation = "https://scampy.readthedocs.io/"
+Repository = "https://github.com/TommasoRonconi/scampy"
+"Bug Tracker" = "https://github.com/TommasoRonconi/scampy/issues"
+
+
+[tool.bumpver]
+current_version = "2.0.0"
+version_pattern = "MAJOR.MINOR.PATCH"
+commit_message = "bump version {old_version} -> {new_version}"
+tag_message = "{new_version}"
+tag_scope = "default"
+pre_commit_hook = ""
+post_commit_hook = ""
+commit = true
+tag = true
+push = true
+
+[tool.bumpver.file_patterns]
+"pyproject.toml" = [ 'current_version = "{version}"' ]
+"scampy/__init__.py" = [ '__version__ = "{version}"' ]
+"setup.py" = [ 'version = "{version}"' ]
+
 
