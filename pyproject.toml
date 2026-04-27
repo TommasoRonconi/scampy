@@ -34,7 +34,7 @@ dependencies = [
 requires-python = ">=3.8"
 
 [project.optional-dependencies]
-dev = ["bumpver"]
+dev = ["bumpver", "pytest"]
 doc = ["sphinx","sphinx_rtd_theme"]
 
 [project.urls]
