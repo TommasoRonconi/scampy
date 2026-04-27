@@ -1,6 +1,6 @@
 """Pair-counting kernels for two-point statistics.
 
-Provides brute-force O(N²) pair counters used by the two-point estimators
+Provides brute-force :math:`O(N^2)` pair counters used by the two-point estimators
 in :mod:`scampy.measure.clustering`.  Pairs are binned in log-spaced
 separation bins; the ``_omp`` variants are provided for API compatibility
 and are identical to their serial counterparts.

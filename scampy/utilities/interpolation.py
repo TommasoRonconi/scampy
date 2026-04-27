@@ -11,7 +11,7 @@ Available classes
    * - :class:`lin_interp`
      - Piecewise-linear interpolation in (x, y) space.
    * - :class:`log_interp`
-     - Piecewise-linear interpolation in (log₁₀ x, log₁₀ y) space.
+     - Piecewise-linear interpolation in :math:`(\\log_{10} x,\\,\\log_{10} y)` space.
 
 Both classes expose the same methods: ``__call__``, ``get_x``, ``get_y``,
 and ``integrate``.

@@ -29,9 +29,9 @@ Available methods of :class:`model`
    :widths: 30 70
 
    * - :meth:`~model.comoving_volume_unit`
-     - Comoving volume element dV/(dz dΩ) [(Mpc/h)³/sr].
+     - Comoving volume element :math:`dV/(dz\\,d\\Omega)` :math:`[(\\mathrm{Mpc}/h)^3\\,\\mathrm{sr}^{-1}]`.
    * - :meth:`~model.comoving_volume`
-     - Total comoving volume V(z) [(Mpc/h)³].
+     - Total comoving volume V(z) :math:`[(\\mathrm{Mpc}/h)^3]`.
    * - :meth:`~model.cosmic_time`
      - Age of the Universe at redshift z [Gyr].
 
@@ -41,13 +41,13 @@ Available methods of :class:`model`
    :widths: 30 70
 
    * - :meth:`~model.critical_density_comoving`
-     - Critical density in comoving units [M☉ Mpc⁻³ h²].
+     - Critical density in comoving units :math:`[M_\\odot\\,\\mathrm{Mpc}^{-3}\\,h^2]`.
    * - :meth:`~model.critical_density`
-     - Critical density in physical units [M☉ Mpc⁻³].
+     - Critical density in physical units :math:`[M_\\odot\\,\\mathrm{Mpc}^{-3}]`.
    * - :meth:`~model.OmegaM`
-     - Total matter density parameter Ω_M(z).
+     - Total matter density parameter :math:`\\Omega_M(z)`.
    * - :meth:`~model.Omegab`
-     - Baryonic matter density parameter Ω_b(z).
+     - Baryonic matter density parameter :math:`\\Omega_b(z)`.
 
 **Structure growth**
 
@@ -55,13 +55,13 @@ Available methods of :class:`model`
    :widths: 30 70
 
    * - :meth:`~model.deltac`
-     - Linear critical overdensity δ_c(z).
+     - Linear critical overdensity :math:`\\delta_c(z)`.
    * - :meth:`~model.D`
      - Linear growth factor D(z).
    * - :meth:`~model.gz`
      - Unnormalised growth factor (1+z) D(z).
    * - :meth:`~model.Delta_c`
-     - Virial overdensity Δ_c(z) (Nakamura & Suto 1998).
+     - Virial overdensity :math:`\\Delta_c(z)` (Nakamura & Suto 1998).
 """
 
 import numpy
