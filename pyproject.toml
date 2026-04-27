@@ -60,5 +60,3 @@ push = true
 "pyproject.toml" = [ 'current_version = "{version}"' ]
 "scampy/__init__.py" = [ '__version__ = "{version}"' ]
 "setup.py" = [ 'version = "{version}"' ]
-
-
