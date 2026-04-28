@@ -138,8 +138,6 @@ class model:
 
         self.zmin  = float(zmin)
         self.zmax  = float(zmax)
-        self.z_min = self.zmin
-        self.z_max = self.zmax
 
         self.H0   = 100.0 * hh                    # km/s/Mpc
         self.t_H0 = 1e3 * _pc / (_yr * self.H0)   # Hubble time [yr]
@@ -152,14 +150,14 @@ class model:
 
     def _build_tables(self, thin):
         # Log-spaced redshift grid (matches C++ logic exactly)
-        if self.z_min > 0.0:
-            zz = numpy.geomspace(self.z_min, self.z_max, thin)
+        if self.zmin > 0.0:
+            zz = numpy.geomspace(self.zmin, self.zmax, thin)
         else:
-            zz = numpy.geomspace(1e-3, self.z_max, thin)
+            zz = numpy.geomspace(1e-3, self.zmax, thin)
             zz[0] = 0.0
 
         self._zz   = zz
-        Ez2_tab    = self._Ez2_arr(zz)
+        Ez2_tab    = self._Ez2(zz)
         Ez_tab     = numpy.sqrt(Ez2_tab)
         zE_tab     = 1.0 / Ez_tab
 
@@ -172,29 +170,20 @@ class model:
 
         # Growth-factor integral from right: int_z^zmax (1+z')/E(z')^3 dz'
         D_intgd   = (1.0 + zz) * zE_tab ** 3
-        D_int     = cumulative_trapezoid(D_intgd[::-1], zz[::-1], initial=0.0)[::-1]
+        D_int     = (-1.0) * cumulative_trapezoid(D_intgd[::-1], zz[::-1], initial=0.0)[::-1]
         D_tab     = 2.5 * self.param['Om_M'] * Ez_tab * D_int
         self._D_f = lin_interp(zz, D_tab)
 
         # Cosmic-time integral from right: int_z^zmax dz'/[(1+z')*E(z')]
         ct_intgd  = zE_tab / (1.0 + zz)
-        ct_int    = cumulative_trapezoid(ct_intgd[::-1], zz[::-1], initial=0.0)[::-1]
+        ct_int    = (-1.0) * cumulative_trapezoid(ct_intgd[::-1], zz[::-1], initial=0.0)[::-1]
         self._ct_f = lin_interp(zz, ct_int)
-
-    def _Ez2_arr(self, zz):
-        """E^2(z) on an array — used during grid construction."""
-        p   = self.param
-        red = 1.0 + numpy.asarray(zz, dtype=float)
-        return ( (p['Om_r'] + p['Om_n']) * red ** 4
-                 + p['Om_M'] * red ** 3
-                 + p['Om_K'] * red ** 2
-                 + p['Om_L'] )
 
     def _Ez2(self, zz):
         """E^2(z) = [H(z)/H0]^2 as a scalar or array."""
         p   = self.param
         red = 1.0 + numpy.asarray(zz, dtype=float)
-        return ( (p['Om_r'] + p['Om_n']) * red ** 4
+        return ( ( p['Om_r'] + p['Om_n'] ) * red ** 4
                  + p['Om_M'] * red ** 3
                  + p['Om_K'] * red ** 2
                  + p['Om_L'] )
@@ -204,9 +193,9 @@ class model:
         p  = self.param
         aa = 1.0 / (1.0 + numpy.asarray(zz, dtype=float))
         return ( p['Om_L'] * aa ** 4
-                 + p['Om_K'] * aa ** 3
-                 + p['Om_M'] * aa ** 2
-                 + (p['Om_r'] + p['Om_n']) * aa )
+                 + p['Om_K'] * aa ** 2
+                 + p['Om_M'] * aa
+                 + p['Om_r'] + p['Om_n'] )
 
     # ------------------------------------------------------------------
     # Cosmographic functions
