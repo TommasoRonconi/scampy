@@ -3,9 +3,9 @@
 Covers:
 - Boundary conditions (z=0 values)
 - Internal consistency identities (dA = dC/(1+z), OmegaM definition, …)
-- EdS analytical solutions (D ∝ a, Hz ∝ (1+z)^1.5)
+- EdS analytical solutions (D propto a, Hz propto (1+z)^1.5)
 - Monotonicity and sign checks
-- Regression: specific values for the default ΛCDM cosmology
+- Regression: specific values for the default LCDM cosmology
 """
 
 import numpy as np
@@ -61,7 +61,7 @@ class TestBoundaryConditions:
         )
 
     def test_critical_density_comoving_at_z0(self, default_cosmo):
-        """ρ_crit,comoving(0) = 2.775×10¹¹ h² M_⊙ Mpc⁻³ (within 0.1%)."""
+        """rho_crit,comoving(0) = 2.775×10^11 h^2 M_sol Mpc^-3 (within 0.1%)."""
         rho0 = default_cosmo.critical_density_comoving(0.0)
         assert rho0 == pytest.approx(2.775e11, rel=1e-3)
 
@@ -82,7 +82,7 @@ class TestInternalConsistency:
         )
 
     def test_Hz_equals_H0_times_Ez(self, default_cosmo):
-        """H(z) = H0 * E(z) where E²(z) = Ω_M(1+z)³ + Ω_Λ (flat)."""
+        """H(z) = H0 * E(z) where E^2(z) = Om_M(1+z)^3 + Om_L (flat)."""
         p = default_cosmo.param
         red = 1.0 + ZZ
         Ez2 = p['Om_M'] * red**3 + p['Om_L']
@@ -96,7 +96,7 @@ class TestInternalConsistency:
         np.testing.assert_allclose(default_cosmo.ddC(zz), expected, rtol=1e-4)
 
     def test_critical_density_ratio(self, default_cosmo):
-        """critical_density = critical_density_comoving * h²."""
+        """critical_density = critical_density_comoving * h^2."""
         hh = default_cosmo.param['hh']
         np.testing.assert_allclose(
             default_cosmo.critical_density(ZZ),
@@ -105,7 +105,7 @@ class TestInternalConsistency:
         )
 
     def test_OmegaM_plus_OmegaL_near_one_at_high_z(self, default_cosmo):
-        """At high z, matter dominates and OmegaM → 1."""
+        """At high z, matter dominates and OmegaM -> 1."""
         assert default_cosmo.OmegaM(10.0) > 0.99
 
     def test_comoving_volume_monotone(self, default_cosmo):
@@ -132,7 +132,7 @@ class TestInternalConsistency:
         assert np.all(np.diff(default_cosmo.cosmic_time(zz)) < 0)
 
     def test_deltac_weakly_increasing_with_z(self, default_cosmo):
-        """δ_c(z) increases slightly with z (matter-dominated limit = 1.686)."""
+        """delta_c(z) increases slightly with z (matter-dominated limit = 1.686)."""
         zz = np.array([0.0, 1.0, 5.0])
         dc = default_cosmo.deltac(zz)
         assert np.all(np.diff(dc) > 0)
@@ -160,7 +160,7 @@ class TestEdSCosmology:
         )
 
     def test_growth_factor_ratios(self, eds_cosmo):
-        """EdS: D(z) ∝ 1/(1+z) → D(z₀)/D(z₁) = (1+z₁)/(1+z₀)."""
+        """EdS: D(z) propto 1/(1+z) → D(z_0)/D(z=1) = (1+z_1)/(1+z_0)."""
         zz = np.array([0.0, 0.5, 1.0, 2.0, 5.0])
         D = eds_cosmo.D(zz)
         for i in range(1, len(zz)):
@@ -168,17 +168,17 @@ class TestEdSCosmology:
             assert D[0] / D[i] == pytest.approx(expected_ratio, rel=5e-3)
 
     def test_OmegaM_equals_one_at_z0(self, eds_cosmo):
-        """EdS is matter-only: Ω_M(0) = 1."""
+        """EdS is matter-only: Om_M(0) = 1."""
         assert eds_cosmo.OmegaM(0.0) == pytest.approx(1.0, rel=1e-4)
 
     def test_OmegaM_stays_one(self, eds_cosmo):
-        """EdS: Ω_M(z) = 1 for all z."""
+        """EdS: Om_M(z) = 1 for all z."""
         zz = np.array([0.0, 1.0, 5.0])
         np.testing.assert_allclose(eds_cosmo.OmegaM(zz), 1.0, rtol=1e-4)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Regression: reference values for default ΛCDM cosmology
+# Regression: reference values for default LCDM cosmology
 # ─────────────────────────────────────────────────────────────────────────────
 
 class TestRegressionDefaultCosmology:
