@@ -171,12 +171,14 @@ class model:
         # Growth-factor integral from right: int_z^zmax (1+z')/E(z')^3 dz'
         D_intgd   = (1.0 + zz) * zE_tab ** 3
         D_int     = (-1.0) * cumulative_trapezoid(D_intgd[::-1], zz[::-1], initial=0.0)[::-1]
+        D_int[-1] = 0.0
         D_tab     = 2.5 * self.param['Om_M'] * Ez_tab * D_int
         self._D_f = lin_interp(zz, D_tab)
 
         # Cosmic-time integral from right: int_z^zmax dz'/[(1+z')*E(z')]
         ct_intgd  = zE_tab / (1.0 + zz)
         ct_int    = (-1.0) * cumulative_trapezoid(ct_intgd[::-1], zz[::-1], initial=0.0)[::-1]
+        ct_int[-1] = 0.0
         self._ct_f = lin_interp(zz, ct_int)
 
     def _Ez2(self, zz):
