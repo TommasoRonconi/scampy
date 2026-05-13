@@ -46,9 +46,21 @@ class lin_interp:
         Returns
         -------
         float or ndarray
-            Interpolated value(s).
+            Interpolated value(s).  Points outside the grid are extrapolated
+            linearly using the slope of the first or last segment.
         """
-        return numpy.interp(x, self._x, self._y)
+        scalar = numpy.ndim(x) == 0
+        x = numpy.atleast_1d(numpy.asarray(x, dtype=float))
+        y = numpy.interp(x, self._x, self._y)
+        lo = x < self._x[0]
+        if numpy.any(lo):
+            slope = (self._y[1] - self._y[0]) / (self._x[1] - self._x[0])
+            y[lo] = self._y[0] + slope * (x[lo] - self._x[0])
+        hi = x > self._x[-1]
+        if numpy.any(hi):
+            slope = (self._y[-1] - self._y[-2]) / (self._x[-1] - self._x[-2])
+            y[hi] = self._y[-1] + slope * (x[hi] - self._x[-1])
+        return float(y[0]) if scalar else y
 
     def get_x(self):
         """Return the x-axis array."""
