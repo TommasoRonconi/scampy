@@ -12,9 +12,18 @@ from scampy.lightcone import (
     size_ang,
     max_fov,
 )
+from scampy.utilities.interpolation import lin_interp
 
 
 Z_ARR = np.array([0.1, 0.5, 1.0, 2.0])
+
+
+@pytest.fixture(scope="module")
+def d2z(default_cosmo):
+    """Distance-to-redshift interpolator built from default_cosmo.dC."""
+    zz = np.linspace(0.0, 20.0, 10000)
+    dc = default_cosmo.dC(zz)
+    return lin_interp(dc, zz)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -130,27 +139,35 @@ class TestMaxFov:
 
 class TestSequentialLightconesLimits:
 
-    def test_returns_two_arrays(self, default_cosmo):
-        result = sequential_lightcones_limits(zmax=1.0, Lbox=500.0, d2z=default_cosmo.dC)
+    def test_returns_two_arrays(self, d2z):
+        result = sequential_lightcones_limits(zmax=1.0, Lbox=500.0, d2z=d2z)
         assert len(result) == 2
         limits, shifts = result
         assert isinstance(np.asarray(limits), np.ndarray)
         assert isinstance(np.asarray(shifts), np.ndarray)
 
-    def test_shifts_non_negative(self, default_cosmo):
-        _, shifts = sequential_lightcones_limits(zmax=1.0, Lbox=500.0, d2z=default_cosmo.dC)
+    def test_shifts_non_negative(self, d2z):
+        _, shifts = sequential_lightcones_limits(zmax=1.0, Lbox=500.0, d2z=d2z)
         assert np.all(np.asarray(shifts) >= 0.0)
 
-    def test_shifts_at_most_half_box(self, default_cosmo):
-        """Centred lightcone shifts should be at most Lbox/2."""
+    def test_first_shift_is_half_box(self, d2z):
+        """With centre=True the first box is centred at Lbox/2."""
         _, shifts = sequential_lightcones_limits(
-            zmax=1.0, Lbox=500.0, d2z=default_cosmo.dC, centre=True
+            zmax=1.0, Lbox=500.0, d2z=d2z, centre=True
         )
-        assert np.all(np.asarray(shifts) <= 250.0)
+        assert np.asarray(shifts)[0] == pytest.approx(250.0)
 
-    def test_regression(self, default_cosmo):
+    def test_last_limit_exceeds_zmax(self, d2z):
+        """The loop exits only when the last redshift exceeds zmax."""
+        limits, _ = sequential_lightcones_limits(zmax=1.0, Lbox=500.0, d2z=d2z)
+        assert limits[-1] > 1.0
+
+    def test_regression(self, d2z):
         limits, shifts = sequential_lightcones_limits(
-            zmax=1.0, Lbox=500.0, d2z=default_cosmo.dC
+            zmax=1.0, Lbox=500.0, d2z=d2z
         )
-        np.testing.assert_allclose(np.asarray(limits), [12448.92227795], rtol=1e-4)
-        np.testing.assert_allclose(np.asarray(shifts), [250.0], rtol=1e-6)
+        expected_limits = np.array([0.05917114, 0.18288157, 0.31520124, 0.45816433,
+                                    0.61420953, 0.78629523, 0.97801941, 1.19382816])
+        expected_shifts = np.array([250., 750., 1250., 1750., 2250., 2750., 3250., 3750.])
+        np.testing.assert_allclose(np.asarray(limits), expected_limits, rtol=1e-4)
+        np.testing.assert_allclose(np.asarray(shifts), expected_shifts, rtol=1e-6)
