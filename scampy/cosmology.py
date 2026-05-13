@@ -78,7 +78,7 @@ _yr  = 3600 * 24 * 365.256363004  # year [s]
 # = 3 H0^2 / (8 pi G)  in  [M_sun Mpc^-3 h^2]
 # Verified analytically from the C++ constants (utilities.h):
 #   3.75e18 * (1/pi) * (1/G_Newton) * (1/M_sun) * pc = 2.775e11
-_RHO_CRIT0 = 2.775e11
+_RHO_CRIT0 = 2.7753586541352e11 #2.775e11
 
 
 class model:
