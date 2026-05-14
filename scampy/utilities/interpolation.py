@@ -19,6 +19,11 @@ and ``integrate``.
 
 import numpy
 
+try:
+    _trapezoid = numpy.trapezoid   # NumPy >= 2.0
+except AttributeError:
+    _trapezoid = numpy.trapz       # NumPy < 2.0
+
 
 class lin_interp:
     """Piecewise-linear interpolator built from two equal-length arrays.
@@ -88,7 +93,7 @@ class lin_interp:
         mask = (self._x > aa) & (self._x < bb)
         xv = numpy.concatenate(([aa], self._x[mask], [bb]))
         yv = numpy.interp(xv, self._x, self._y)
-        return numpy.trapz(yv, xv)
+        return _trapezoid(yv, xv)
 
 
 class log_interp:
@@ -151,4 +156,4 @@ class log_interp:
         mask = (self._x > aa) & (self._x < bb)
         xv = numpy.concatenate(([aa], self._x[mask], [bb]))
         yv = self(xv)
-        return numpy.trapz(yv, xv)
+        return _trapezoid(yv, xv)
