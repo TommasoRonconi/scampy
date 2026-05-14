@@ -213,7 +213,7 @@ def two_point_landyszalay ( data, rand, rbins, omp = True, return_error = False,
         )
         exi = numpy.zeros_like( xi )
         ww = RRn > 0
-        exi[ww] = normDD / RRn[ww] * numpy.sqrt( fact[ww] ) * numpy.sqrt( 3 )
+        exi[ww] = normDD / RRn[ww] * numpy.sqrt( numpy.maximum( fact[ww], 0.0 ) ) * numpy.sqrt( 3 )
         return xi, exi
     return xi
 

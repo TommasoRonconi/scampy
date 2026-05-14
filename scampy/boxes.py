@@ -102,7 +102,9 @@ def cartesian_to_polar ( coords, centre = (0.0,0.0,0.0) ) :
 
     rho   = numpy.sqrt( ( x-x0 )**2 + ( y-y0 )**2 + ( z-z0 )**2 )
     phi   = numpy.arctan2( ( y-y0 ), ( x-x0 ) )
-    theta = numpy.arccos( ( z-z0 ) / rho )
+    ratio = numpy.zeros_like( rho, dtype=float )
+    numpy.divide( z-z0, rho, out=ratio, where=rho > 0 )
+    theta = numpy.arccos( numpy.clip( ratio, -1.0, 1.0 ) )
 
     return rho, theta, phi
 
