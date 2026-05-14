@@ -37,7 +37,7 @@ class TestHODPcen:
     def test_at_mmin_equals_half(self, hod):
         """By definition Pcen(Mmin) = 0.5."""
         result = hod.Pcen(np.array([1e12]))
-        assert float(result) == pytest.approx(0.5, rel=1e-6)
+        assert result.item() == pytest.approx(0.5, rel=1e-6)
 
     def test_below_mmin_near_zero(self, hod):
         """Pcen ≪ 1 for Mh ≪ Mmin."""
@@ -157,7 +157,7 @@ class TestHODZdep:
         """Pcen(10^lMmin) = 0.5 regardless of redshift."""
         Mmin = 10 ** 12.0
         result = hz.Pcen(np.array([Mmin]))
-        assert float(result) == pytest.approx(0.5, rel=1e-4)
+        assert result.item() == pytest.approx(0.5, rel=1e-4)
 
     def test_psat_non_negative(self, hz):
         assert np.all(hz.Psat(MH) >= 0.0)
