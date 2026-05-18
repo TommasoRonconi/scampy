@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 def main () :
 
     setup( name = "scampy",
-           version = "2.0.0",
+           version = "2.0.2",
            package_dir = {
                'scampy'            : 'scampy',
                'scampy.io'        : os.path.join( 'scampy', 'io' ),
