@@ -1,19 +1,15 @@
 name: scampy
 
 channels:
-  - anaconda
   - conda-forge
-  - conda-forge/label/cf201901
   - defaults
 
 dependencies:
-  - python=3.11
-  - gcc
-  - pybind11
+  - python>=3.10
   - setuptools
   - numpy
   - scipy
-  - matplotlib
+  - matplotlib>=3.6
   - ipython
   - notebook
   - h5py

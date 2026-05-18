@@ -97,14 +97,19 @@ The :code:`magnitudes` array contains the UV magnitude assigned to each mock gal
 Installation
 ^^^^^^^^^^^^
 
-The recommended installation uses :code:`pip` after cloning the repository:
+The recommended installation uses :code:`pip`:
+
+.. code-block:: bash
+
+   pip install scampy
+
+To install from source after cloning the repository:
 
 .. code-block:: bash
 
    git clone https://github.com/TommasoRonconi/scampy.git
    cd scampy
-   pip install pybind11
-   python setup.py install
+   pip install .
 
 Alternatively, a :code:`conda` environment file is provided:
 
@@ -112,7 +117,7 @@ Alternatively, a :code:`conda` environment file is provided:
 
    conda env create -f scampy_environment.yml
    conda activate scampy
-   python setup.py install
+   pip install .
 
 Requirements
 ^^^^^^^^^^^^
@@ -121,12 +126,10 @@ Requirements
 
 * :code:`numpy`
 * :code:`scipy`
-* :code:`matplotlib`
+* :code:`matplotlib>=3.6`
 * :code:`h5py`
 
-**Build-time:**
-
-* :code:`pybind11`
+**Python:** 3.10 or later recommended (3.8+ supported).
 
 **Documentation (optional):**
 
